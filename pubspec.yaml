@@ -1,0 +1,41 @@
+name: hispace_mobile_app
+description: A new Flutter project.
+
+publish_to: "none"
+
+version: 0.0.0+1-alpha
+
+environment:
+  sdk: ">=2.19.6 <3.0.0"
+
+dependencies:
+  authentication_repository:
+    path: packages/authentication_repository
+  bloc: ^8.1.1
+  cupertino_icons: ^1.0.2
+  equatable: ^2.0.5
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^8.1.2
+  flutter_svg: ^2.0.5
+  formz: ^0.6.0
+  google_fonts: ^4.0.4
+  http: ^0.13.5
+  local_data:
+    path: packages/local_data
+  meta: 1.8.0
+  page_transition: ^2.0.9
+  user_repository:
+    path: packages/user_repository
+
+dev_dependencies:
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/svg/
+    - assets/icons/
