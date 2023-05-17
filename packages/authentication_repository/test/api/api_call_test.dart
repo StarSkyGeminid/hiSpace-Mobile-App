@@ -322,7 +322,7 @@ void main() {
         await apiClient.init(sharedPreferences: pref);
 
         when(httpClient.post(baseUri, body: json))
-            .thenAnswer((_) async => http.Response('', 404));
+            .thenAnswer((_) async => http.Response('', 401));
 
         await expectLater(apiClient.resetPassword(email: email),
             throwsA(isA<RequestFailure>()));
@@ -354,7 +354,7 @@ void main() {
         await apiClient.init(sharedPreferences: pref);
 
         when(httpClient.post(baseUri, body: json))
-            .thenAnswer((_) async => http.Response(response, 401));
+            .thenAnswer((_) async => http.Response(response, 404));
 
         await apiClient.init(sharedPreferences: pref);
 
