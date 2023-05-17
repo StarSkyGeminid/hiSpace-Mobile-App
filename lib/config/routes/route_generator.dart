@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hispace_mobile_app/screen/boarding/boarding_screen.dart';
 import 'package:hispace_mobile_app/screen/dashboard/dashboard_screen.dart';
+import 'package:hispace_mobile_app/screen/forgot_password/forgot_password_screen.dart';
 import 'package:hispace_mobile_app/screen/home/home_screen.dart';
 import 'package:hispace_mobile_app/screen/login/login_screen.dart';
 import 'package:hispace_mobile_app/screen/onboaring/onboarding_screen.dart';
@@ -39,6 +40,12 @@ class RoutesGenerator {
         return PageTransition(
           child: const LoginScreen(),
           type: PageTransitionType.fade,
+          duration: const Duration(milliseconds: 300),
+        );
+      case '/forgot_password':
+        return PageTransition(
+          child: const ForgotPasswordScreen(),
+          type: PageTransitionType.rightToLeft,
           duration: const Duration(milliseconds: 300),
         );
       case '/register':

@@ -2,37 +2,38 @@ import 'package:authentication_repository/authentication_repository.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:formz/formz.dart';
 import 'package:hispace_mobile_app/core/global/constans.dart';
 import 'package:hispace_mobile_app/formz_models/email.dart';
-import 'package:hispace_mobile_app/formz_models/models.dart';
 import 'package:hispace_mobile_app/widget/custom_form.dart';
 
-import 'bloc/login_bloc.dart';
+import 'bloc/forgot_password_bloc.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class ForgotPasswordScreen extends StatelessWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          LoginBloc(RepositoryProvider.of<AuthenticationRepository>(context)),
-      child: const _LoginScreenView(),
+      create: (context) => ForgotPasswordBloc(
+        RepositoryProvider.of<AuthenticationRepository>(context),
+      ),
+      child: const _ForgotPasswordView(),
     );
   }
 }
 
-class _LoginScreenView extends StatelessWidget {
-  const _LoginScreenView();
+class _ForgotPasswordView extends StatefulWidget {
+  const _ForgotPasswordView();
 
-  void gotoRegister(BuildContext context) {
-    Navigator.pushNamed(context, '/register');
-  }
+  @override
+  State<_ForgotPasswordView> createState() => _ForgotPasswordViewState();
+}
 
-  void gotoForgotPassword(BuildContext context) {
-    Navigator.pushNamed(context, '/forgot_password');
+class _ForgotPasswordViewState extends State<_ForgotPasswordView> {
+  void _goToRegister(BuildContext context) {
+    Navigator.pushReplacementNamed(context, '/register');
   }
 
   @override
@@ -41,7 +42,7 @@ class _LoginScreenView extends StatelessWidget {
 
     return SafeArea(
       child: Scaffold(
-        body: BlocListener<LoginBloc, LoginState>(
+        body: BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
           listener: (context, state) {
             if (state.status.isFailure) {
               ScaffoldMessenger.of(context)
@@ -60,38 +61,30 @@ class _LoginScreenView extends StatelessWidget {
                   horizontal: kDefaultSpacing,
                   vertical: kDefaultSpacing * 2,
                 ),
-                child: Text(
-                  'Masuk',
-                  style: Theme.of(context).textTheme.headlineMedium,
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back_ios_rounded,
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    Text(
+                      'Lupa Kata Sandi',
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                  ],
                 ),
               ),
               SvgPicture.asset(
-                'assets/svg/undraw_login_re_4vu2.svg',
+                'assets/svg/undraw_forgot_password_re_hxwm.svg',
                 height: size.height * .25,
               ),
               const Padding(
                 padding: EdgeInsets.all(kDefaultSpacing),
                 child: _EmailTextFormField(),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const _PasswordTextFormField(),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () => gotoForgotPassword(context),
-                        child: Text(
-                          'Lupa Kata Sandi?',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
               ),
               const Padding(
                 padding: EdgeInsets.all(kDefaultSpacing),
@@ -110,7 +103,7 @@ class _LoginScreenView extends StatelessWidget {
                         ),
                         TextSpan(
                           recognizer: TapGestureRecognizer()
-                            ..onTap = () => gotoRegister(context),
+                            ..onTap = () => _goToRegister(context),
                           text: 'Daftar',
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -137,15 +130,17 @@ class _SubmitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
+    return BlocBuilder<ForgotPasswordBloc, ForgotPasswordState>(
       buildWhen: (previous, current) =>
           previous.status != current.status ||
           previous.isValidated != current.isValidated,
       builder: (context, state) {
         return ElevatedButton(
-          key: const Key('LoginScreen_submitButton'),
+          key: const Key('ForgotPasswordScreen_submitButton'),
           onPressed: state.isValidated && !state.status.isInProgress
-              ? () => context.read<LoginBloc>().add(const LoginOnSubmitted())
+              ? () => context
+                  .read<ForgotPasswordBloc>()
+                  .add(const ForgotPasswordOnSubmitted())
               : null,
           child: state.status.isInProgress
               ? const Padding(
@@ -154,30 +149,8 @@ class _SubmitButton extends StatelessWidget {
                 )
               : const Padding(
                   padding: EdgeInsets.all(kDefaultSpacing * .8),
-                  child: Text('Masuk'),
+                  child: Text('Kirim'),
                 ),
-        );
-      },
-    );
-  }
-}
-
-class _PasswordTextFormField extends StatelessWidget {
-  const _PasswordTextFormField();
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
-      builder: (context, state) {
-        return CustomTextFormField(
-          key: const Key('LoginScreen_passwordTextFormField'),
-          title: 'Kata Sandi',
-          hintText: 'Masukkan kata sandi',
-          obscureText: true,
-          prefixIcon: const Icon(Icons.lock_rounded),
-          onChanged: (value) =>
-              context.read<LoginBloc>().add(LoginOnPasswordChanged(value)),
-          errorText: state.password.displayError?.text(),
         );
       },
     );
@@ -189,16 +162,17 @@ class _EmailTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LoginBloc, LoginState>(
+    return BlocBuilder<ForgotPasswordBloc, ForgotPasswordState>(
       builder: (context, state) {
         return CustomTextFormField(
-          key: const Key('LoginScreen_emailTextFormField'),
+          key: const Key('ForgotPasswordScreen_emailTextFormField'),
           title: 'Email',
-          hintText: 'Masukkan email',
+          hintText: 'Masukkan email yang terdaftar',
           textInputType: TextInputType.emailAddress,
           prefixIcon: const Icon(Icons.alternate_email_rounded),
-          onChanged: (value) =>
-              context.read<LoginBloc>().add(LoginOnEmailChanged(value)),
+          onChanged: (value) => context
+              .read<ForgotPasswordBloc>()
+              .add(ForgotPasswordOnEmailChanged(value)),
           errorText: state.email.displayError?.text(),
         );
       },
