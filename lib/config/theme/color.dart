@@ -12,7 +12,7 @@ class ColorLight {
   final Color yellow = const Color(0xFFF9A725);
   final Color black = const Color(0xFF000000);
   final Color white = const Color(0xFFFFFFFF);
-  final Color whiteBluish = const Color(0xFFF3F5F7);
+  final Color bluishWhite = const Color(0xFFF3F5F7);
   final Color grey = const Color(0xFFC6C6C6);
   final Color grey2 = const Color(0xFFEDEDED);
   final Color grey3 = const Color(0xFF7B7B7B);
