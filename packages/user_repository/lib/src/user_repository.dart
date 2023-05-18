@@ -24,8 +24,6 @@ class UserRepository {
       : _httpClient = httpClient ?? http.Client();
 
   Future<void> init({SharedPreferences? sharedPreferences}) async {
-    if (_headers != null) return;
-
     await _localData.init(sharedPreferences: sharedPreferences);
 
     _headers = {
