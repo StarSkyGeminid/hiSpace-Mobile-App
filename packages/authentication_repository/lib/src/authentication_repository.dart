@@ -144,7 +144,7 @@ class AuthenticationRepository {
 
     final response = await _httpClient.post(locationRequest, body: body);
 
-    if (response.statusCode == 401) throw EmailDoesNotExist();
+    if (response.statusCode == 404) throw EmailDoesNotExist();
 
     if (response.statusCode != 200) throw RequestFailure();
 
