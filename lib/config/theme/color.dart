@@ -21,6 +21,8 @@ class ColorLight {
   final Color orange = const Color(0xFFFF8439);
   final Color blue = const Color(0xFF304FFF);
 
+  final Color red = const Color(0xFFF8004A);
+
   final Color darkRed = const Color(0xFFA73131);
   final Color darkBlue = const Color(0xFF46009E);
   final Color darkGrey = const Color(0xFF3E3E3E);

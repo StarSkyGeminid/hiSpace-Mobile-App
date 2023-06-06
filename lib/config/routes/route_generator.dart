@@ -5,6 +5,7 @@ import 'package:hispace_mobile_app/screen/forgot_password/forgot_password_screen
 import 'package:hispace_mobile_app/screen/home/home_screen.dart';
 import 'package:hispace_mobile_app/screen/login/login_screen.dart';
 import 'package:hispace_mobile_app/screen/onboaring/onboarding_screen.dart';
+import 'package:hispace_mobile_app/screen/profile/profile_screen.dart';
 import 'package:hispace_mobile_app/screen/register/register_screen.dart';
 import 'package:hispace_mobile_app/screen/register/widget/first_register_screen.dart';
 import 'package:hispace_mobile_app/screen/register/widget/second_register_screen.dart';
@@ -77,6 +78,12 @@ class RoutesGenerator {
         return PageTransition(
           child: const HomeScreen(),
           type: PageTransitionType.fade,
+          duration: const Duration(milliseconds: 500),
+        );
+      case '/profile':
+        return PageTransition(
+          child: const ProfileScreen(),
+          type: PageTransitionType.bottomToTop,
           duration: const Duration(milliseconds: 500),
         );
       default:

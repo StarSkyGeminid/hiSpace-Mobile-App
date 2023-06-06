@@ -23,7 +23,7 @@ class TosTextButton extends StatelessWidget {
               ..onTap = () => goToLogin(context),
             text: 'Persyaratan Layanan',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.inversePrimary,
+                  color: Theme.of(context).colorScheme.surfaceTint,
                 ),
           ),
           TextSpan(
@@ -35,7 +35,7 @@ class TosTextButton extends StatelessWidget {
               ..onTap = () => goToLogin(context),
             text: 'Kebijakan Privasi',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.inversePrimary,
+                  color: Theme.of(context).colorScheme.surfaceTint,
                 ),
           ),
         ],

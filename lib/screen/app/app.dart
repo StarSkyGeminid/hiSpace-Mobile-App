@@ -1,4 +1,5 @@
 import 'package:authentication_repository/authentication_repository.dart';
+import 'package:cafe_repository/cafe_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hispace_mobile_app/bloc/authentication/authentication_bloc.dart';
@@ -8,7 +9,9 @@ import 'package:user_repository/user_repository.dart';
 import '../../config/theme/light_theme_data.dart';
 
 class App extends StatefulWidget {
-  const App({super.key});
+  const App({super.key, required this.cafeRepository});
+
+  final CafeRepository cafeRepository;
 
   @override
   State<App> createState() => _AppState();
@@ -33,8 +36,18 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      value: _authenticationRepository,
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider.value(
+          value: _authenticationRepository,
+        ),
+        RepositoryProvider.value(
+          value: widget.cafeRepository,
+        ),
+        RepositoryProvider.value(
+          value: _userRepository,
+        ),
+      ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(

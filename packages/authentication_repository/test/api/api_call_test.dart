@@ -20,7 +20,7 @@ void main() {
     setUp(() {
       httpClient = MockClient();
       apiClient = AuthenticationRepository(httpClient: httpClient);
-      baseUri = Uri.parse('hungry-colt-helmet.cyclic.app');
+      baseUri = Uri.parse('hispace-production.up.railway.app');
     });
 
     group('constructor', () {
@@ -71,7 +71,7 @@ void main() {
 
     group('Register', () {
       const fullname = 'John Doe';
-      const email = 'johndoelorem@hungry-colt-helmet.cyclic.app';
+      const email = 'johndoelorem@hispace-production.up.railway.app';
       const password = 'password';
 
       const RegisterModel registerModel = RegisterModel(
@@ -85,7 +85,7 @@ void main() {
       };
 
       setUp(() {
-        baseUri = Uri.https('hungry-colt-helmet.cyclic.app', '/api/signup');
+        baseUri = Uri.https('hispace-production.up.railway.app', '/api/signup');
       });
 
       test('throws RequestFailure on non-201 and non-403 response', () async {
@@ -138,7 +138,7 @@ void main() {
         "userId": "8e856259-09e1-45c5-a12b-f3573d05ec6e",
         "userName": "John",
         "fullName": "John Doe",
-        "email": "johndoelorem@hungry-colt-helmet.cyclic.app",
+        "email": "johndoelorem@hispace-production.up.railway.app",
         "profilePic": null,
         "createdAt": "2023-05-08T10:44:14.000Z",
         "updatedAt": "2023-05-08T10:44:14.000Z",
@@ -170,7 +170,7 @@ void main() {
     });
 
     group('Login', () {
-      const email = 'johndoelorem@hungry-colt-helmet.cyclic.app';
+      const email = 'johndoelorem@hispace-production.up.railway.app';
       const password = 'password';
 
       final json = {
@@ -183,7 +183,7 @@ void main() {
       };
 
       setUp(() {
-        baseUri = Uri.https('hungry-colt-helmet.cyclic.app', '/api/login');
+        baseUri = Uri.https('hispace-production.up.railway.app', '/api/login');
       });
 
       test('throws RequestFailure on non-200 response', () async {
@@ -238,7 +238,7 @@ void main() {
         "userId": "8e856259-09e1-45c5-a12b-f3573d05ec6e",
         "userName": "John",
         "fullName": "John Doe",
-        "email": "johndoelorem@hungry-colt-helmet.cyclic.app",
+        "email": "johndoelorem@hispace-production.up.railway.app",
         "profilePic": null,
         "createdAt": "2023-05-08T10:44:14.000Z",
         "updatedAt": "2023-05-08T10:44:14.000Z",
@@ -275,8 +275,8 @@ void main() {
         "userId": "8e856259-09e1-45c5-a12b-f3573d05ec6e",
         "userName": "John",
         "fullName": "John Doe",
-        "email": "johndoelorem@hungry-colt-helmet.cyclic.app",
-        "profilePic": "https://hungry-colt-helmet.cyclic.app/profile.png",
+        "email": "johndoelorem@hispace-production.up.railway.app",
+        "profilePic": "https://hispace-production.up.railway.app/profile.png",
         "createdAt": "2023-05-08T10:44:14.000Z",
         "updatedAt": "2023-05-08T10:44:14.000Z",
         "accessToken": "AccessTokenValue"
@@ -306,13 +306,13 @@ void main() {
     });
 
     group('Reset Password', () {
-      const email = 'johndoelorem@hungry-colt-helmet.cyclic.app';
+      const email = 'johndoelorem@hispace-production.up.railway.app';
 
       final json = {'email': email};
 
       setUp(() {
         baseUri = Uri.parse(
-            'https://hungry-colt-helmet.cyclic.app/api/reset-password');
+            'https://hispace-production.up.railway.app/api/reset-password');
       });
 
       test('throws RequestFailure on non-200 response', () async {

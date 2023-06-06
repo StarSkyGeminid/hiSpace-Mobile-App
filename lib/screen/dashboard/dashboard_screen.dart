@@ -36,6 +36,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           backgroundColor: Theme.of(context).colorScheme.background,
           body: _pages[_currentIndex],
           bottomNavigationBar: BottomNavigationBar(
+            type: BottomNavigationBarType.shifting,
+            useLegacyColorScheme: false,
             currentIndex: _currentIndex,
             onTap: _changePage,
             selectedItemColor: Theme.of(context).colorScheme.primary,
@@ -44,7 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             unselectedLabelStyle:
                 TextStyle(color: Theme.of(context).colorScheme.background),
             showUnselectedLabels: true,
-            iconSize: 30,
+            iconSize: 25,
             elevation: 0,
             items: [
               BottomNavigationBarItem(

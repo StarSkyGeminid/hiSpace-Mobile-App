@@ -116,7 +116,7 @@ class _LoginScreenView extends StatelessWidget {
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .inversePrimary,
+                                        .surfaceTint,
                                   ),
                         ),
                       ],

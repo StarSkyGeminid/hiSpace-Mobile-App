@@ -19,7 +19,7 @@ void main() {
     setUp(() {
       httpClient = MockClient();
       apiClient = UserRepository(httpClient: httpClient);
-      baseUri = Uri.parse('hungry-colt-helmet.cyclic.app');
+      baseUri = Uri.parse('hispace-production.up.railway.app');
     });
 
     group('Constructor', () {
@@ -33,7 +33,7 @@ void main() {
       const headers = {'Authorization': "bearer $token"};
 
       setUp(() async {
-        baseUri = Uri.https('hungry-colt-helmet.cyclic.app', '/api/me');
+        baseUri = Uri.https('hispace-production.up.railway.app', '/api/me');
 
         SharedPreferences.setMockInitialValues({
           'auth.AuthenticationToken': token,
@@ -67,7 +67,7 @@ void main() {
         "userId": "8e856259-09e1-45c5-a12b-f3573d05ec6e",
         "userName": "John",
         "fullName": "John Doe",
-        "email": "johndoelorem@hungry-colt-helmet.cyclic.app",
+        "email": "johndoelorem@hispace-production.up.railway.app",
         "profilePic": null,
         "createdAt": "2023-05-04T15:31:02.000Z",
         "updatedAt": "2023-05-04T15:31:02.000Z",
@@ -88,7 +88,7 @@ void main() {
               .having((user) => user.userName, 'userName', "John")
               .having((user) => user.fullName, 'fullName', "John Doe")
               .having((user) => user.email, 'email',
-                  'johndoelorem@hungry-colt-helmet.cyclic.app')
+                  'johndoelorem@hispace-production.up.railway.app')
               .having((user) => user.profilePic, 'profilePic', isNull),
         );
       });
@@ -101,8 +101,8 @@ void main() {
         "userId": "8e856259-09e1-45c5-a12b-f3573d05ec6e",
         "userName": "John",
         "fullName": "John Doe",
-        "email": "johndoelorem@hungry-colt-helmet.cyclic.app",
-        "profilePic": "https://hungry-colt-helmet.cyclic.app/profile.png",
+        "email": "johndoelorem@hispace-production.up.railway.app",
+        "profilePic": "https://hispace-production.up.railway.app/profile.png",
         "createdAt": "2023-05-04T15:31:02.000Z",
         "updatedAt": "2023-05-04T15:31:02.000Z",
         "wishLists": []
@@ -122,9 +122,9 @@ void main() {
               .having((user) => user.userName, 'userName', "John")
               .having((user) => user.fullName, 'fullName', "John Doe")
               .having((user) => user.email, 'email',
-                  'johndoelorem@hungry-colt-helmet.cyclic.app')
+                  'johndoelorem@hispace-production.up.railway.app')
               .having((user) => user.profilePic, 'profilePic',
-                  'https://hungry-colt-helmet.cyclic.app/profile.png'),
+                  'https://hispace-production.up.railway.app/profile.png'),
         );
       });
 
@@ -138,9 +138,9 @@ void main() {
       //             "8e856259-09e1-45c5-a12b-f3573d05ec6e")
       //         .having((user) => user.userName, 'userName', "John")
       //         .having((user) => user.fullName, 'fullName', "John Doe")
-      //         .having((user) => user.email, 'email', 'johndoelorem@hungry-colt-helmet.cyclic.app')
+      //         .having((user) => user.email, 'email', 'johndoelorem@hispace-production.up.railway.app')
       //         .having((user) => user.profilePic, 'profilePic',
-      //             'https://hungry-colt-helmet.cyclic.app/profile.png'),
+      //             'https://hispace-production.up.railway.app/profile.png'),
       //   );
       // });
     });
@@ -157,14 +157,14 @@ void main() {
       const userModel = UserModel(
           id: "8e856259-09e1-45c5-a12b-f3573d05ec6e",
           fullName: fullName,
-          email: 'johndoelorem@hungry-colt-helmet.cyclic.app',
+          email: 'johndoelorem@hispace-production.up.railway.app',
           profilePic: profilePic);
 
       const token = "AccessTokenValue";
       const headers = {'Authorization': "bearer $token"};
 
       setUp(() async {
-        baseUri = Uri.https('hungry-colt-helmet.cyclic.app', '/api/me');
+        baseUri = Uri.https('hispace-production.up.railway.app', '/api/me');
 
         SharedPreferences.setMockInitialValues({
           'auth.AuthenticationToken': token,
@@ -210,7 +210,7 @@ void main() {
               .having((user) => user.userName, 'userName', "John")
               .having((user) => user.fullName, 'fullName', "John Doe")
               .having((user) => user.email, 'email',
-                  'johndoelorem@hungry-colt-helmet.cyclic.app')
+                  'johndoelorem@hispace-production.up.railway.app')
               .having((user) => user.profilePic, 'profilePic', profilePic),
         );
       });
@@ -235,7 +235,7 @@ void main() {
               .having((user) => user.userName, 'userName', "John")
               .having((user) => user.fullName, 'fullName', "John Doe")
               .having((user) => user.email, 'email',
-                  'johndoelorem@hungry-colt-helmet.cyclic.app')
+                  'johndoelorem@hispace-production.up.railway.app')
               .having((user) => user.profilePic, 'profilePic', profilePic),
         );
       });
@@ -250,9 +250,9 @@ void main() {
       //             "8e856259-09e1-45c5-a12b-f3573d05ec6e")
       //         .having((user) => user.userName, 'userName', "John")
       //         .having((user) => user.fullName, 'fullName', "John Doe")
-      //         .having((user) => user.email, 'email', 'johndoelorem@hungry-colt-helmet.cyclic.app')
+      //         .having((user) => user.email, 'email', 'johndoelorem@hispace-production.up.railway.app')
       //         .having((user) => user.profilePic, 'profilePic',
-      //             'https://hungry-colt-helmet.cyclic.app/profile.png'),
+      //             'https://hispace-production.up.railway.app/profile.png'),
       //   );
       // });
     });

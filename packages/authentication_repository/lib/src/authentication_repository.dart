@@ -25,7 +25,7 @@ class AuthenticationRepository {
 
   late final http.Client _httpClient;
 
-  static const _baseUrl = 'hungry-colt-helmet.cyclic.app';
+  static const _baseUrl = 'hispace-production.up.railway.app';
 
   final _controller = StreamController<AuthenticationStatus>();
 

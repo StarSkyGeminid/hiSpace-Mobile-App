@@ -41,9 +41,6 @@ class UserModel extends Equatable {
   factory UserModel.fromJsonString(String source) =>
       UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
-  factory UserModel.fromJsonMap(Map<String, dynamic> source) =>
-      UserModel.fromMap(source);
-
   static const empty = UserModel(id: '', fullName: '', email: '');
 
   UserModel copyWith({

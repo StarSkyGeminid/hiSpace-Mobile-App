@@ -16,7 +16,7 @@ class UserRepository {
 
   late final http.Client _httpClient;
 
-  static const _baseUrl = 'hungry-colt-helmet.cyclic.app';
+  static const _baseUrl = 'hispace-production.up.railway.app';
 
   Map<String, String>? _headers;
 
@@ -61,7 +61,7 @@ class UserRepository {
 
     if (data.isEmpty) throw ResponseFailure();
 
-    _user = UserModel.fromJsonMap(data as Map<String, dynamic>);
+    _user = UserModel.fromMap(data as Map<String, dynamic>);
 
     return _user;
   }

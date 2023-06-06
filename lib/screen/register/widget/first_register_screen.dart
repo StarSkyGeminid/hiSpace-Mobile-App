@@ -7,7 +7,7 @@ import 'package:hispace_mobile_app/formz_models/models.dart';
 import 'package:hispace_mobile_app/widget/custom_form.dart';
 
 import '../bloc/register_bloc.dart';
-import 'term_and_polcy_text.dart';
+import 'term_and_policy_text.dart';
 
 class FirstRegisterScreen extends StatelessWidget {
   const FirstRegisterScreen({super.key});
