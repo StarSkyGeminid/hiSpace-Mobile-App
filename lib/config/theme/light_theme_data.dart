@@ -8,47 +8,47 @@ final kLightTheme = ThemeData(
   colorScheme: lightColorScheme,
   textTheme: TextTheme(
     headlineLarge: GoogleFonts.nunito(
-      fontSize: 38,
-      fontWeight: FontWeight.w800,
-      color: ColorPallete.light.primary,
-    ),
-    headlineMedium: GoogleFonts.nunito(
-      fontSize: 34,
-      fontWeight: FontWeight.w800,
-      color: ColorPallete.light.primary,
-    ),
-    headlineSmall: GoogleFonts.nunito(
       fontSize: 30,
       fontWeight: FontWeight.w800,
       color: ColorPallete.light.primary,
     ),
-    titleLarge: GoogleFonts.nunito(
+    headlineMedium: GoogleFonts.nunito(
+      fontSize: 28,
+      fontWeight: FontWeight.w800,
+      color: ColorPallete.light.primary,
+    ),
+    headlineSmall: GoogleFonts.nunito(
       fontSize: 26,
       fontWeight: FontWeight.w800,
       color: ColorPallete.light.primary,
     ),
-    titleMedium: GoogleFonts.nunito(
+    titleLarge: GoogleFonts.nunito(
       fontSize: 24,
       fontWeight: FontWeight.w800,
       color: ColorPallete.light.primary,
     ),
-    titleSmall: GoogleFonts.nunito(
+    titleMedium: GoogleFonts.nunito(
       fontSize: 22,
       fontWeight: FontWeight.w800,
       color: ColorPallete.light.primary,
     ),
-    bodyLarge: GoogleFonts.nunito(
+    titleSmall: GoogleFonts.nunito(
       fontSize: 20,
-      fontWeight: FontWeight.w400,
+      fontWeight: FontWeight.w800,
       color: ColorPallete.light.primary,
     ),
-    bodyMedium: GoogleFonts.nunito(
+    bodyLarge: GoogleFonts.nunito(
       fontSize: 18,
       fontWeight: FontWeight.w400,
       color: ColorPallete.light.primary,
     ),
-    bodySmall: GoogleFonts.nunito(
+    bodyMedium: GoogleFonts.nunito(
       fontSize: 16,
+      fontWeight: FontWeight.w400,
+      color: ColorPallete.light.primary,
+    ),
+    bodySmall: GoogleFonts.nunito(
+      fontSize: 14,
       fontWeight: FontWeight.w400,
       color: ColorPallete.light.primary,
     ),

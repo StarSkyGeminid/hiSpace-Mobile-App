@@ -38,6 +38,7 @@ class _WishlistScreenViewState extends State<WishlistScreenView> {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
         title: Text('Wishlist', style: Theme.of(context).textTheme.titleMedium),

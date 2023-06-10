@@ -42,7 +42,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
         title: Text('Profil', style: Theme.of(context).textTheme.titleMedium),
-        elevation: 0,
         toolbarHeight: 80,
         centerTitle: true,
       ),
