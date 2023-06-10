@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hispace_mobile_app/screen/boarding/boarding_screen.dart';
+import 'package:hispace_mobile_app/screen/cafe_details/cafe_details.dart';
 import 'package:hispace_mobile_app/screen/dashboard/dashboard_screen.dart';
 import 'package:hispace_mobile_app/screen/forgot_password/forgot_password_screen.dart';
 import 'package:hispace_mobile_app/screen/home/home_screen.dart';
@@ -83,6 +84,20 @@ class RoutesGenerator {
       case '/profile':
         return PageTransition(
           child: const ProfileScreen(),
+          type: PageTransitionType.bottomToTop,
+          duration: const Duration(milliseconds: 500),
+        );
+      case '/licenses':
+        return PageTransition(
+          child: const LicensePage(
+            applicationIcon: FlutterLogo(),
+          ),
+          type: PageTransitionType.rightToLeft,
+          duration: const Duration(milliseconds: 500),
+        );
+      case '/cafe-details':
+        return PageTransition(
+          child: const CafeDetails(),
           type: PageTransitionType.bottomToTop,
           duration: const Duration(milliseconds: 500),
         );

@@ -9,51 +9,41 @@ import 'package:user_repository/user_repository.dart';
 import '../../config/theme/light_theme_data.dart';
 
 class App extends StatefulWidget {
-  const App({super.key, required this.cafeRepository});
+  const App(
+      {super.key,
+      required this.cafeRepository,
+      required this.userRepository,
+      required this.authenticationRepository});
 
   final CafeRepository cafeRepository;
+  final AuthenticationRepository authenticationRepository;
+  final UserRepository userRepository;
 
   @override
   State<App> createState() => _AppState();
 }
 
 class _AppState extends State<App> {
-  late final AuthenticationRepository _authenticationRepository;
-  late final UserRepository _userRepository;
-
-  @override
-  void initState() {
-    super.initState();
-    _authenticationRepository = AuthenticationRepository();
-    _userRepository = UserRepository();
-  }
-
-  @override
-  void dispose() {
-    _authenticationRepository.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider.value(
-          value: _authenticationRepository,
+          value: widget.authenticationRepository,
         ),
         RepositoryProvider.value(
           value: widget.cafeRepository,
         ),
         RepositoryProvider.value(
-          value: _userRepository,
+          value: widget.userRepository,
         ),
       ],
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
             create: (_) => AuthenticationBloc(
-              authenticationRepository: _authenticationRepository,
-              userRepository: _userRepository,
+              authenticationRepository: widget.authenticationRepository,
+              userRepository: widget.userRepository,
             ),
           ),
         ],

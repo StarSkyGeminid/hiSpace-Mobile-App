@@ -45,7 +45,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 IconThemeData(color: Theme.of(context).colorScheme.tertiary),
             unselectedLabelStyle:
                 TextStyle(color: Theme.of(context).colorScheme.background),
-            showUnselectedLabels: true,
+            showUnselectedLabels: false,
             iconSize: 25,
             elevation: 0,
             items: [

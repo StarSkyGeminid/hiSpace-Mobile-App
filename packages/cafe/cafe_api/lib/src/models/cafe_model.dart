@@ -2,11 +2,12 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
 import 'gallery_model.dart';
 
-class Cafe {
+class Cafe extends Equatable {
   final String locationId;
   final String userUserId;
   final String name;
@@ -25,7 +26,7 @@ class Cafe {
   final List<Galery>? galeries;
   final List<dynamic>? facilities;
 
-  Cafe({
+  const Cafe({
     required this.locationId,
     required this.userUserId,
     required this.name,
@@ -38,8 +39,8 @@ class Cafe {
     required this.time,
     required this.rating,
     required this.isFavorite,
-    this.reviews,
     required this.user,
+    this.reviews,
     this.menus,
     this.galeries,
     this.facilities,
@@ -76,6 +77,22 @@ class Cafe {
 
   String get getRating => rating.toString().substring(0, 3);
 
+  static const empty = Cafe(
+    locationId: '',
+    userUserId: '',
+    name: '',
+    address: '',
+    longitude: 0,
+    latitude: 0,
+    owner: '',
+    galeryId: '',
+    description: '',
+    time: '',
+    rating: 0,
+    isFavorite: false,
+    user: '',
+  );
+
   Cafe copyWith({
     String? locationId,
     String? userUserId,
@@ -89,8 +106,8 @@ class Cafe {
     String? time,
     double? rating,
     bool? isFavorite,
-    List<dynamic>? reviews,
     String? user,
+    List<dynamic>? reviews,
     List<dynamic>? menus,
     List<Galery>? galeries,
     List<dynamic>? facilities,
@@ -108,8 +125,8 @@ class Cafe {
       time: time ?? this.time,
       rating: rating ?? this.rating,
       isFavorite: isFavorite ?? this.isFavorite,
-      reviews: reviews ?? this.reviews,
       user: user ?? this.user,
+      reviews: reviews ?? this.reviews,
       menus: menus ?? this.menus,
       galeries: galeries ?? this.galeries,
       facilities: facilities ?? this.facilities,
@@ -130,10 +147,10 @@ class Cafe {
       'time': time,
       'rating': rating,
       'isFavorite': isFavorite,
-      'reviews': reviews,
       'user': user,
+      'reviews': reviews,
       'menus': menus,
-      'galeries': galeries,
+      'galeries': galeries?.map((x) => x.toMap()).toList(),
       'facilities': facilities,
     };
   }
@@ -161,11 +178,11 @@ class Cafe {
       menus: map['menus'] != null
           ? List<dynamic>.from(map['menus'] as List<dynamic>)
           : null,
-      galeries: map['galeries'] != null
+      galeries: map['galeries'] != null && map['galeries'].isNotEmpty
           ? List<Galery>.from(
               map['galeries'].map((e) => Galery.fromMap(e)).toList())
           : null,
-      facilities: map['facilities'] != null
+      facilities: map['facilities'] != null && map['facilities'].isNotEmpty
           ? List<dynamic>.from(map['facilities'] as List<dynamic>)
           : null,
     );
@@ -224,4 +241,26 @@ class Cafe {
         galeries.hashCode ^
         facilities.hashCode;
   }
+
+  @override
+  List<Object> get props {
+    return [
+      locationId,
+      userUserId,
+      name,
+      address,
+      longitude,
+      latitude,
+      owner,
+      galeryId,
+      description,
+      time,
+      rating,
+      isFavorite,
+      user,
+    ];
+  }
+
+  @override
+  bool get stringify => true;
 }

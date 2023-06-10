@@ -48,8 +48,8 @@ class HomeState extends Equatable {
   List<Object> get props => [
         status,
         message,
-        currentTabIndex,
         cafes,
+        currentTabIndex,
         hasReachedMax,
       ];
 }

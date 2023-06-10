@@ -1,30 +1,27 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:local_data/src/local_settings.dart';
+import 'package:local_data/src/local_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   group('Local Settings Test', () {
-    final LocalSettings localSettings = LocalSettings();
+    late LocalData localData;
+    late SharedPreferences pref;
 
-    test('Initial Screen Status', () async {});
-    test('try get Initial Status', () async {
+    setUpAll(() async {
       SharedPreferences.setMockInitialValues({});
-      final SharedPreferences pref = await SharedPreferences.getInstance();
+      pref = await SharedPreferences.getInstance();
 
-      await localSettings.init(sharedPreferences: pref);
+      localData = LocalData(pref);
+    });
 
-      bool status = await localSettings.getInitialScreenStatus();
+    test('try get Initial Status', () async {
+      bool status = await localData.settings.getInitialScreenStatus();
 
       expect(status, false);
     });
 
     test('try set Status', () async {
-      SharedPreferences.setMockInitialValues({});
-      final SharedPreferences pref = await SharedPreferences.getInstance();
-
-      await localSettings.init(sharedPreferences: pref);
-
-      bool status = await localSettings.setInitialScreenStatus(true);
+      bool status = await localData.settings.setInitialScreenStatus(true);
 
       expect(status, true);
       expect(pref.getBool('settings.InitialScreenStatus'), true);

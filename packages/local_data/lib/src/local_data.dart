@@ -1,17 +1,16 @@
 import 'package:local_data/src/local_settings.dart';
 import 'package:local_data/src/local_token.dart';
-import 'package:local_data/src/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalData {
+  final LocalToken _localToken;
+  final LocalSettings _localSettings;
 
-  final LocalToken _localToken = LocalToken();
-  final LocalSettings _localSettings = LocalSettings();
+  SharedPreferences sharedPreferences;
 
-  Future<void> init({SharedPreferences? sharedPreferences}) async {
-    await Preferences.instance
-        .initPreferences(sharedPreferences: sharedPreferences);
-  }
+  LocalData(this.sharedPreferences)
+      : _localToken = LocalToken(sharedPreferences),
+        _localSettings = LocalSettings(sharedPreferences);
 
   LocalToken get token => _localToken;
 

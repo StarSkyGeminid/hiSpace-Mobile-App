@@ -7,7 +7,6 @@ abstract class HomeEvent extends Equatable {
   List<Object> get props => [];
 }
 
-
 class HomeOnInitial extends HomeEvent {
   const HomeOnInitial();
 }
@@ -29,3 +28,11 @@ class HomeOnTabChanged extends HomeEvent {
   List<Object> get props => [index];
 }
 
+class HomeOnToggleFavorite extends HomeEvent {
+  const HomeOnToggleFavorite({required this.locationId});
+
+  final String locationId;
+
+  @override
+  List<Object> get props => [locationId];
+}

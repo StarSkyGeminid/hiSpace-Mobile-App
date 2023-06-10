@@ -11,6 +11,8 @@ class CafeRepository {
 
   Future<void> fetchCafes({int page = 0}) => _cafeApi.fetchCafes(page: page);
 
+  Future<void> getWishlist({int page = 0}) => _cafeApi.getWishlist(page: page);
+
   Future<void> add(Cafe cafe) => _cafeApi.add(cafe);
 
   Future<void> remove(Cafe cafe) => _cafeApi.remove(cafe);
@@ -19,5 +21,6 @@ class CafeRepository {
 
   Future<void> search(String query) => _cafeApi.search(query);
 
-  Future<void> addToWishlist(Cafe cafe) => _cafeApi.addToWishlist(cafe);
+  Future<void> toggleFavorite(String locationId) =>
+      _cafeApi.toggleFavorite(locationId);
 }

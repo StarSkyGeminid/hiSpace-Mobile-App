@@ -15,6 +15,7 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
     on<HomeOnRefresh>(_onRefresh);
     on<HomeOnFetchedMore>(_onFetchedMore);
     on<HomeOnTabChanged>(_onTabChanged);
+    on<HomeOnToggleFavorite>(_onToggleFavorite);
     on<HomeEvent>((event, emit) {});
   }
 
@@ -27,12 +28,14 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
   Future<void> _onInitial(HomeOnInitial event, Emitter<HomeState> emit) async {
     emit(state.copyWith(status: HomeStatus.loading));
 
+    await _cafeRepository.fetchCafes(page: currentPageIndex++);
+
     await emit.forEach<List<Cafe>>(
       _cafeRepository.getCafes(),
       onData: (cafes) => state.copyWith(
+        hasReachedMax: state.cafes.length == cafes.length,
         status: HomeStatus.success,
         cafes: cafes,
-        hasReachedMax: state.cafes.length == cafes.length,
       ),
       onError: (_, __) => state.copyWith(
         status: HomeStatus.failure,
@@ -52,7 +55,7 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
     if (isFetching) return;
 
     isFetching = true;
-    await _cafeRepository.fetchCafes(page: ++currentPageIndex);
+    await _cafeRepository.fetchCafes(page: currentPageIndex++);
     isFetching = false;
   }
 
@@ -60,6 +63,13 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
       HomeOnTabChanged event, Emitter<HomeState> emit) async {
     currentPageIndex = 0;
     _cafeRepository.fetchCafes(page: currentPageIndex);
+  }
+
+  Future<void> _onToggleFavorite(
+      HomeOnToggleFavorite event, Emitter<HomeState> emit) async {
+    emit(state.copyWith(status: HomeStatus.loading));
+    
+    _cafeRepository.toggleFavorite(event.locationId);
   }
 
   @override

@@ -10,40 +10,39 @@ class RequestFailure implements Exception {}
 class ResponseFailure implements Exception {}
 
 class UserRepository {
-  UserModel? _user;
+  User? _user;
 
-  final LocalData _localData = LocalData();
+  final LocalData _localData;
 
   late final http.Client _httpClient;
 
   static const _baseUrl = 'hispace-production.up.railway.app';
 
-  Map<String, String>? _headers;
+  UserRepository(LocalData localData, {http.Client? httpClient})
+      : _localData = localData,
+        _httpClient = httpClient ?? http.Client();
 
-  UserRepository({http.Client? httpClient})
-      : _httpClient = httpClient ?? http.Client();
+  Map<String, String>? getAuthorization() {
+    if (_localData.token.getToken().isEmpty) return null;
 
-  Future<void> init({SharedPreferences? sharedPreferences}) async {
-    await _localData.init(sharedPreferences: sharedPreferences);
-
-    _headers = {
-      'Authorization': 'bearer ${await _localData.token.getToken()}',
+    return {
+      'Authorization': 'bearer ${_localData.token.getToken()}',
     };
   }
 
-  Future<UserModel?> getUserModel({bool force = false}) async {
+  Future<User?> getUserModel({bool force = false}) async {
     if (_user != null && !force) return _user;
-
-    await init();
 
     final uri = Uri.https(
       _baseUrl,
       '/api/me',
     );
 
-    if (_headers == null) throw RequestFailure();
+    var headers = getAuthorization();
 
-    final response = await _httpClient.get(uri, headers: _headers);
+    if (headers == null) throw RequestFailure();
+
+    final response = await _httpClient.get(uri, headers: headers);
 
     if (response.statusCode != 200) throw RequestFailure();
 
@@ -61,14 +60,12 @@ class UserRepository {
 
     if (data.isEmpty) throw ResponseFailure();
 
-    _user = UserModel.fromMap(data as Map<String, dynamic>);
+    _user = User.fromMap(data as Map<String, dynamic>);
 
     return _user;
   }
 
-  Future<UserModel?> updateUser(UserModel userModel) async {
-    await init();
-
+  Future<User?> updateUser(User userModel) async {
     final uri = Uri.https(
       _baseUrl,
       '/api/me',
@@ -79,9 +76,11 @@ class UserRepository {
       if (userModel.profilePic != null) 'profilePic': userModel.profilePic,
     };
 
-    if (_headers == null) throw RequestFailure();
+    var headers = getAuthorization();
 
-    final response = await _httpClient.put(uri, body: body, headers: _headers);
+    if (headers == null) throw RequestFailure();
+
+    final response = await _httpClient.put(uri, body: body, headers: headers);
 
     if (response.statusCode != 200) throw RequestFailure();
 

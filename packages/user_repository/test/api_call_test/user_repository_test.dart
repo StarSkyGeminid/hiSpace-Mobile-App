@@ -15,16 +15,24 @@ void main() {
     late MockClient httpClient;
     late Uri baseUri;
     late UserRepository apiClient;
+    late LocalData localData;
 
-    setUp(() {
+    setUpAll(() async {
+      SharedPreferences.setMockInitialValues({
+        'auth.AuthenticationToken': 'AccessTokenValue',
+      });
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      localData = LocalData(pref);
+
       httpClient = MockClient();
-      apiClient = UserRepository(httpClient: httpClient);
+
+      apiClient = UserRepository(localData, httpClient: httpClient);
       baseUri = Uri.parse('hispace-production.up.railway.app');
     });
 
     group('Constructor', () {
       test('does not require an httpClient', () {
-        expect(UserRepository(), isNotNull);
+        expect(UserRepository(localData), isNotNull);
       });
     });
 
@@ -36,11 +44,12 @@ void main() {
         baseUri = Uri.https('hispace-production.up.railway.app', '/api/me');
 
         SharedPreferences.setMockInitialValues({
-          'auth.AuthenticationToken': token,
+          'auth.AuthenticationToken': 'AccessTokenValue',
         });
-        final SharedPreferences pref = await SharedPreferences.getInstance();
+        SharedPreferences pref = await SharedPreferences.getInstance();
+        localData = LocalData(pref);
 
-        apiClient.init(sharedPreferences: pref);
+        apiClient = UserRepository(localData, httpClient: httpClient);
       });
 
       test('throws RequestFailure on non-200 response', () async {
@@ -82,7 +91,7 @@ void main() {
 
         expect(
           userModel,
-          isA<UserModel>()
+          isA<User>()
               .having((user) => user.id, 'id',
                   "8e856259-09e1-45c5-a12b-f3573d05ec6e")
               .having((user) => user.userName, 'userName', "John")
@@ -116,7 +125,7 @@ void main() {
 
         expect(
           userModel,
-          isA<UserModel>()
+          isA<User>()
               .having((user) => user.id, 'id',
                   "8e856259-09e1-45c5-a12b-f3573d05ec6e")
               .having((user) => user.userName, 'userName', "John")
@@ -127,22 +136,6 @@ void main() {
                   'https://hispace-production.up.railway.app/profile.png'),
         );
       });
-
-      // test('get user without request http', () async {
-      //   final userModel = await apiClient.getUserModel();
-
-      //   expect(
-      //     userModel,
-      //     isA<UserModel>()
-      //         .having((user) => user.id, 'id',
-      //             "8e856259-09e1-45c5-a12b-f3573d05ec6e")
-      //         .having((user) => user.userName, 'userName', "John")
-      //         .having((user) => user.fullName, 'fullName', "John Doe")
-      //         .having((user) => user.email, 'email', 'johndoelorem@hispace-production.up.railway.app')
-      //         .having((user) => user.profilePic, 'profilePic',
-      //             'https://hispace-production.up.railway.app/profile.png'),
-      //   );
-      // });
     });
 
     group('Update Profile', () {
@@ -154,7 +147,7 @@ void main() {
         'profilePic': profilePic,
       };
 
-      const userModel = UserModel(
+      const userModel = User(
           id: "8e856259-09e1-45c5-a12b-f3573d05ec6e",
           fullName: fullName,
           email: 'johndoelorem@hispace-production.up.railway.app',
@@ -166,12 +159,7 @@ void main() {
       setUp(() async {
         baseUri = Uri.https('hispace-production.up.railway.app', '/api/me');
 
-        SharedPreferences.setMockInitialValues({
-          'auth.AuthenticationToken': token,
-        });
-        final SharedPreferences pref = await SharedPreferences.getInstance();
-
-        apiClient.init(sharedPreferences: pref);
+        apiClient.getAuthorization();
       });
 
       test('throws RequestFailure on non-200 response', () async {
@@ -204,7 +192,7 @@ void main() {
 
         expect(
           response,
-          isA<UserModel>()
+          isA<User>()
               .having((user) => user.id, 'id',
                   "8e856259-09e1-45c5-a12b-f3573d05ec6e")
               .having((user) => user.userName, 'userName', "John")
@@ -229,7 +217,7 @@ void main() {
 
         expect(
           response,
-          isA<UserModel>()
+          isA<User>()
               .having((user) => user.id, 'id',
                   "8e856259-09e1-45c5-a12b-f3573d05ec6e")
               .having((user) => user.userName, 'userName', "John")

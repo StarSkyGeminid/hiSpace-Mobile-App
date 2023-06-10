@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import 'models/models.dart';
 
 /// {@template todos_api}
@@ -18,7 +20,17 @@ abstract class ICafeApi {
 
   Future<void> search(String query);
 
-  Future<void> addToWishlist(Cafe cafe);
+  Future<Cafe> getCafeByLocationId(String locationId);
+
+  Future<void> getWishlist({int page = 0});
+
+  @protected
+  Future<bool> addToFavorite(String locationId);
+
+  @protected
+  Future<bool> removeFromFavorite(String locationId);
+
+  Future<void> toggleFavorite(String locationId);
 
   // Future<List<Cafe>> filter(String query);
 }

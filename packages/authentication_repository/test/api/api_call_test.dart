@@ -16,30 +16,28 @@ void main() {
     late MockClient httpClient;
     late Uri baseUri;
     late AuthenticationRepository apiClient;
+    late LocalData localData;
+    late SharedPreferences pref;
 
-    setUp(() {
+    setUpAll(() async {
+      SharedPreferences.setMockInitialValues({});
+      pref = await SharedPreferences.getInstance();
+      localData = LocalData(pref);
+
       httpClient = MockClient();
-      apiClient = AuthenticationRepository(httpClient: httpClient);
+
+      apiClient = AuthenticationRepository(localData, httpClient: httpClient);
       baseUri = Uri.parse('hispace-production.up.railway.app');
     });
 
     group('constructor', () {
-      test('does not require an httpClient or sharedPreferences', () {
-        expect(AuthenticationRepository(), isNotNull);
-      });
-
-      test('does not require an sharedPreferences', () {
-        expect(AuthenticationRepository(httpClient: httpClient), isNotNull);
+      test('does not require an httpClient', () {
+        expect(AuthenticationRepository(localData), isNotNull);
       });
     });
 
     group('init', () {
-      test('does not have authentication token', () async {
-        SharedPreferences.setMockInitialValues({});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
-
-        await apiClient.init(sharedPreferences: pref);
-
+      test('does not have authentication token', () {
         expect(apiClient.getToken, isEmpty);
         expect(
           apiClient.status,
@@ -53,9 +51,10 @@ void main() {
       test('does have authentication token', () async {
         SharedPreferences.setMockInitialValues(
             {'auth.AuthenticationToken': 'Test Token'});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
+        pref = await SharedPreferences.getInstance();
+        localData = LocalData(pref);
 
-        await apiClient.init(sharedPreferences: pref);
+        apiClient = AuthenticationRepository(localData, httpClient: httpClient);
 
         expect(apiClient.getToken, isNotEmpty);
         expect(apiClient.getToken, 'Test Token');
@@ -84,50 +83,74 @@ void main() {
         'Content-Type': 'application/json',
       };
 
-      setUp(() {
+      setUp(() async {
         baseUri = Uri.https('hispace-production.up.railway.app', '/api/signup');
+
+        SharedPreferences.setMockInitialValues({});
+        pref = await SharedPreferences.getInstance();
+        localData = LocalData(pref);
+
+        apiClient = AuthenticationRepository(localData, httpClient: httpClient);
       });
 
       test('throws RequestFailure on non-201 and non-403 response', () async {
-        SharedPreferences.setMockInitialValues({});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
-
         when(httpClient.post(baseUri,
                 body: registerModel.toJson(), headers: headers))
             .thenAnswer((_) async => http.Response('', 404));
-
-        await apiClient.init(sharedPreferences: pref);
 
         await expectLater(apiClient.register(registerModel: registerModel),
             throwsA(isA<RequestFailure>()));
       });
 
       test('throws EmailAlreadyExists on 403 response', () async {
-        SharedPreferences.setMockInitialValues({});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
-
         when(httpClient.post(baseUri,
                 body: registerModel.toJson(), headers: headers))
             .thenAnswer((_) async => http.Response('', 403));
-
-        await apiClient.init(sharedPreferences: pref);
 
         await expectLater(apiClient.register(registerModel: registerModel),
             throwsA(isA<EmailAlreadyExists>()));
       });
 
       test('throws RequestFailure on empty response', () async {
-        SharedPreferences.setMockInitialValues({});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
-
-        await apiClient.init(sharedPreferences: pref);
-
         when(httpClient.post(baseUri,
                 body: registerModel.toJson(), headers: headers))
             .thenAnswer((_) async => http.Response('', 200));
 
         await expectLater(apiClient.register(registerModel: registerModel),
             throwsA(isA<RequestFailure>()));
+      });
+
+      test('makes correct http request with profile picture', () async {
+        const result = '''
+{
+    "status": "success",
+    "data": {
+        "userId": "8e856259-09e1-45c5-a12b-f3573d05ec6e",
+        "userName": "John",
+        "fullName": "John Doe",
+        "email": "johndoelorem@hispace-production.up.railway.app",
+        "profilePic": "https://hispace-production.up.railway.app/api/profile/8e856259-09e1-45c5-a12b-f3573d05ec6e.png",
+        "createdAt": "2023-05-08T10:44:14.000Z",
+        "updatedAt": "2023-05-08T10:44:14.000Z",
+        "accessToken": "AccessTokenValue"
+    }
+}''';
+
+        when(httpClient.post(baseUri,
+                body: registerModel.toJson(), headers: headers))
+            .thenAnswer((_) async => http.Response(result, 201));
+
+        await apiClient.register(registerModel: registerModel);
+
+        expect(pref.getString('auth.AuthenticationToken'), 'AccessTokenValue');
+        expect(
+          apiClient.status,
+          emitsInOrder(<dynamic>[
+            AuthenticationStatus.unknown,
+            AuthenticationStatus.unauthenticated,
+            AuthenticationStatus.authenticated,
+          ]),
+        );
       });
 
       test('makes correct http request without profile picture', () async {
@@ -145,11 +168,6 @@ void main() {
         "accessToken": "AccessTokenValue"
     }
 }''';
-
-        SharedPreferences.setMockInitialValues({});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
-
-        await apiClient.init(sharedPreferences: pref);
 
         when(httpClient.post(baseUri,
                 body: registerModel.toJson(), headers: headers))
@@ -182,29 +200,25 @@ void main() {
         'Content-Type': 'application/json',
       };
 
-      setUp(() {
+      setUp(() async {
         baseUri = Uri.https('hispace-production.up.railway.app', '/api/login');
+
+        SharedPreferences.setMockInitialValues({});
+        pref = await SharedPreferences.getInstance();
+        localData = LocalData(pref);
+
+        apiClient = AuthenticationRepository(localData, httpClient: httpClient);
       });
 
       test('throws RequestFailure on non-200 response', () async {
-        SharedPreferences.setMockInitialValues({});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
-
         when(httpClient.post(baseUri, body: jsonEncode(json), headers: headers))
             .thenAnswer((_) async => http.Response('', 404));
-
-        await apiClient.init(sharedPreferences: pref);
 
         await expectLater(apiClient.logIn(email: email, password: password),
             throwsA(isA<RequestFailure>()));
       });
 
       test('throws ResponseFailure on empty response', () async {
-        SharedPreferences.setMockInitialValues({});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
-
-        await apiClient.init(sharedPreferences: pref);
-
         when(httpClient.post(baseUri, body: jsonEncode(json), headers: headers))
             .thenAnswer((_) async => http.Response('', 200));
 
@@ -217,11 +231,6 @@ void main() {
     "status": "failed",
     "message": "Email is not associated with any account"
 }''';
-
-        SharedPreferences.setMockInitialValues({});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
-
-        await apiClient.init(sharedPreferences: pref);
 
         when(httpClient.post(baseUri, body: jsonEncode(json), headers: headers))
             .thenAnswer((_) async => http.Response(result, 401));
@@ -245,12 +254,6 @@ void main() {
         "accessToken": "AccessTokenValue"
     }
 }''';
-
-        SharedPreferences.setMockInitialValues({});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
-
-        await apiClient.init(sharedPreferences: pref);
-
         when(httpClient.post(baseUri, body: jsonEncode(json), headers: headers))
             .thenAnswer((_) async => http.Response(result, 200));
 
@@ -283,11 +286,6 @@ void main() {
     }
 }''';
 
-        SharedPreferences.setMockInitialValues({});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
-
-        await apiClient.init(sharedPreferences: pref);
-
         when(httpClient.post(baseUri, body: jsonEncode(json), headers: headers))
             .thenAnswer((_) async => http.Response(result, 200));
 
@@ -316,11 +314,6 @@ void main() {
       });
 
       test('throws RequestFailure on non-200 response', () async {
-        SharedPreferences.setMockInitialValues({});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
-
-        await apiClient.init(sharedPreferences: pref);
-
         when(httpClient.post(baseUri, body: json))
             .thenAnswer((_) async => http.Response('', 401));
 
@@ -329,11 +322,6 @@ void main() {
       });
 
       test('throws ResponseFailure on empty response', () async {
-        SharedPreferences.setMockInitialValues({});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
-
-        await apiClient.init(sharedPreferences: pref);
-
         when(httpClient.post(baseUri, body: json))
             .thenAnswer((_) async => http.Response('', 200));
 
@@ -348,15 +336,8 @@ void main() {
     "message": "Email is not associated with any account"
 }''';
 
-        SharedPreferences.setMockInitialValues({});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
-
-        await apiClient.init(sharedPreferences: pref);
-
         when(httpClient.post(baseUri, body: json))
             .thenAnswer((_) async => http.Response(response, 404));
-
-        await apiClient.init(sharedPreferences: pref);
 
         await expectLater(apiClient.resetPassword(email: email),
             throwsA(isA<EmailDoesNotExist>()));
@@ -368,11 +349,6 @@ void main() {
     "status": "success",
     "message": "Reset password success, please check your email"
 }''';
-
-        SharedPreferences.setMockInitialValues({});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
-
-        await apiClient.init(sharedPreferences: pref);
 
         when(httpClient.post(baseUri, body: json))
             .thenAnswer((_) async => http.Response(response, 200));
@@ -390,11 +366,6 @@ void main() {
     "message": "Email is not associated with any account"
 }''';
 
-        SharedPreferences.setMockInitialValues({});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
-
-        await apiClient.init(sharedPreferences: pref);
-
         when(httpClient.post(baseUri, body: json))
             .thenAnswer((_) async => http.Response(response, 200));
 
@@ -407,10 +378,11 @@ void main() {
     group('Logout', () {
       test('try logout with token', () async {
         SharedPreferences.setMockInitialValues(
-            {'auth.AuthenticationToken': 'Test Token'});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
+            {'auth.AuthenticationToken': 'AccessTokenValue'});
+        pref = await SharedPreferences.getInstance();
+        localData = LocalData(pref);
 
-        await apiClient.init(sharedPreferences: pref);
+        apiClient = AuthenticationRepository(localData, httpClient: httpClient);
 
         final result = await apiClient.logOut();
 
@@ -427,9 +399,10 @@ void main() {
 
       test('try logout without token', () async {
         SharedPreferences.setMockInitialValues({});
-        final SharedPreferences pref = await SharedPreferences.getInstance();
+        pref = await SharedPreferences.getInstance();
+        localData = LocalData(pref);
 
-        await apiClient.init(sharedPreferences: pref);
+        apiClient = AuthenticationRepository(localData, httpClient: httpClient);
 
         final result = await apiClient.logOut();
 

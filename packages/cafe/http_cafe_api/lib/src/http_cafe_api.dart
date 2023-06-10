@@ -10,26 +10,23 @@ class RequestFailure implements Exception {}
 class ResponseFailure implements Exception {}
 
 class HttpCafeApi extends ICafeApi {
-  final LocalData _localData = LocalData();
+  final LocalData _localData;
 
   late final http.Client _httpClient;
 
   static const _baseUrl = 'hispace-production.up.railway.app';
 
-  Map<String, String>? _headers;
+  final _cafeStreamController = BehaviorSubject<List<Cafe>>();
 
-  final _cafeStreamController = BehaviorSubject<List<Cafe>>.seeded(const []);
+  HttpCafeApi(LocalData localData, {http.Client? httpClient})
+      : _localData = localData,
+        _httpClient = httpClient ?? http.Client();
 
-  HttpCafeApi({http.Client? httpClient})
-      : _httpClient = httpClient ?? http.Client() {
-    fetchCafes();
-  }
+  Map<String, String>? getAuthorization() {
+    if (_localData.token.getToken().isEmpty) return null;
 
-  Future<void> init({SharedPreferences? sharedPreferences}) async {
-    await _localData.init(sharedPreferences: sharedPreferences);
-
-    _headers = {
-      'Authorization': 'bearer ${await _localData.token.getToken()}',
+    return {
+      'Authorization': 'bearer ${_localData.token.getToken()}',
     };
   }
 
@@ -38,7 +35,9 @@ class HttpCafeApi extends ICafeApi {
 
   @override
   Future<void> fetchCafes({int page = 0}) async {
-    await init();
+    if (page == 0 && _cafeStreamController.valueOrNull != null) {
+      _cafeStreamController.add([]);
+    }
 
     final uri = Uri.https(
       _baseUrl,
@@ -48,9 +47,11 @@ class HttpCafeApi extends ICafeApi {
       },
     );
 
-    if (_headers == null) throw RequestFailure();
+    var headers = getAuthorization();
 
-    final response = await _httpClient.get(uri, headers: _headers);
+    if (headers == null) throw RequestFailure();
+
+    final response = await _httpClient.get(uri, headers: headers);
 
     if (response.statusCode != 200) throw RequestFailure();
 
@@ -67,9 +68,13 @@ class HttpCafeApi extends ICafeApi {
     final data = resultJson['data'];
 
     if (data.isEmpty) return;
-    
-    _cafeStreamController
-        .add(List<Cafe>.from(data.map((e) => Cafe.fromMap(e)).toList()));
+
+    var listCafes = _cafeStreamController.valueOrNull ?? [];
+
+    listCafes
+        .addAll(List<Cafe>.from(data.map((e) => Cafe.fromMap(e)).toList()));
+
+    _cafeStreamController.add(listCafes);
   }
 
   @override
@@ -97,8 +102,155 @@ class HttpCafeApi extends ICafeApi {
   }
 
   @override
-  Future<void> addToWishlist(Cafe cafe) {
-    // TODO: implement addToWishlist
-    throw UnimplementedError();
+  Future<bool> addToFavorite(String locationId) async {
+    final uri = Uri.https(
+      _baseUrl,
+      '/api/user/wishlist',
+      {
+        'locationId': locationId,
+      },
+    );
+
+    var headers = getAuthorization();
+
+    if (headers == null) throw RequestFailure();
+
+    final response = await _httpClient.get(uri, headers: headers);
+
+    if (response.statusCode != 200) throw RequestFailure;
+
+    if (response.body.isEmpty) throw ResponseFailure();
+
+    final resultJson = jsonDecode(response.body) as Map;
+
+    if (resultJson.containsKey('status')) {
+      if (resultJson['status'] != 'success') throw RequestFailure();
+    }
+
+    return true;
+  }
+
+  @override
+  Future<bool> removeFromFavorite(String locationId) async {
+    final uri = Uri.https(
+      _baseUrl,
+      '/api/user/wishlist',
+      {
+        'locationId': locationId,
+      },
+    );
+
+    var headers = getAuthorization();
+
+    if (headers == null) throw RequestFailure();
+
+    final response = await _httpClient.get(uri, headers: headers);
+
+    if (response.statusCode != 200) throw RequestFailure;
+
+    if (response.body.isEmpty) throw ResponseFailure();
+
+    final resultJson = jsonDecode(response.body) as Map;
+
+    if (resultJson.containsKey('status')) {
+      if (resultJson['status'] != 'success') throw RequestFailure();
+    }
+
+    return true;
+  }
+
+  @override
+  Future<void> toggleFavorite(String locationId) async {
+    var cafes = _cafeStreamController.value;
+
+    if (cafes.isEmpty) return;
+
+    final index = cafes.indexWhere((item) => item.locationId == locationId);
+
+    cafes[index] = cafes[index].copyWith(isFavorite: !cafes[index].isFavorite);
+
+    _cafeStreamController.sink.add(cafes);
+
+    if (cafes[index].isFavorite) {
+      await addToFavorite(locationId);
+    } else {
+      // await removeFromFavorite(locationId);
+    }
+  }
+
+  @override
+  Future<Cafe> getCafeByLocationId(String locationId) async {
+    final uri = Uri.https(
+      _baseUrl,
+      '/api/location/$locationId',
+    );
+
+    var headers = getAuthorization();
+
+    if (headers == null) throw RequestFailure();
+
+    final response = await _httpClient.get(uri, headers: headers);
+
+    if (response.statusCode != 200) throw RequestFailure();
+
+    if (response.body.isEmpty) throw ResponseFailure();
+
+    final resultJson = jsonDecode(response.body) as Map;
+
+    if (resultJson.containsKey('status')) {
+      if (resultJson['status'] != 'success') throw RequestFailure();
+    }
+
+    if (!resultJson.containsKey('data')) throw ResponseFailure();
+
+    final data = resultJson['data'];
+
+    if (data.isEmpty) throw ResponseFailure();
+
+    return Cafe.fromMap(data);
+  }
+
+  @override
+  Future<void> getWishlist({int page = 0}) async {
+    if (page == 0 && _cafeStreamController.valueOrNull != null) {
+      _cafeStreamController.add([]);
+    }
+
+    final uri = Uri.https(
+      _baseUrl,
+      '/api/user/wishlist',
+      {
+        'page': '$page',
+      },
+    );
+
+    var headers = getAuthorization();
+
+    if (headers == null) throw RequestFailure();
+
+    final response = await _httpClient.get(uri, headers: headers);
+
+    if (response.statusCode != 200) throw RequestFailure();
+
+    if (response.body.isEmpty) throw ResponseFailure();
+
+    final resultJson = jsonDecode(response.body) as Map;
+
+    if (resultJson.containsKey('status')) {
+      if (resultJson['status'] != 'success') throw RequestFailure();
+    }
+
+    if (!resultJson.containsKey('data')) throw ResponseFailure();
+
+    final data = resultJson['data'];
+
+    if (data.isEmpty) return;
+
+    var listCafes = _cafeStreamController.valueOrNull ?? [];
+
+    listCafes
+        .addAll(List<Cafe>.from(data.map((e) => Cafe.fromMap(e)).toList()));
+
+    _cafeStreamController.add(listCafes);
   }
 }

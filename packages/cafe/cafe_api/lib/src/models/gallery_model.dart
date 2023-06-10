@@ -1,10 +1,12 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-class Galery {
+import 'package:equatable/equatable.dart';
+
+class Galery extends Equatable {
   final String id;
   final String url;
-  Galery({
+
+  const Galery({
     required this.id,
     required this.url,
   });
@@ -42,12 +44,5 @@ class Galery {
   String toString() => 'Galery(id: $id, url: $url)';
 
   @override
-  bool operator ==(covariant Galery other) {
-    if (identical(this, other)) return true;
-
-    return other.id == id && other.url == url;
-  }
-
-  @override
-  int get hashCode => id.hashCode ^ url.hashCode;
+  List<Object?> get props => [id, url];
 }

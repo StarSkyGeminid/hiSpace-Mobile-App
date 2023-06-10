@@ -21,7 +21,7 @@ class WrongPassword implements Exception {}
 class AuthenticationException implements Exception {}
 
 class AuthenticationRepository {
-  final LocalData _localData = LocalData();
+  final LocalData _localData;
 
   late final http.Client _httpClient;
 
@@ -38,12 +38,14 @@ class AuthenticationRepository {
 
   String get getToken => _token;
 
-  AuthenticationRepository({http.Client? httpClient})
-      : _httpClient = httpClient ?? http.Client();
+  AuthenticationRepository(LocalData localData, {http.Client? httpClient})
+      : _localData = localData,
+        _httpClient = httpClient ?? http.Client() {
+    init();
+  }
 
-  Future<void> init({SharedPreferences? sharedPreferences}) async {
-    await _localData.init(sharedPreferences: sharedPreferences);
-    _token = await _localData.token.getToken();
+  Future<void> init() async {
+    _token = _localData.token.getToken();
 
     if (_token.isNotEmpty) {
       _controller.add(AuthenticationStatus.authenticated);

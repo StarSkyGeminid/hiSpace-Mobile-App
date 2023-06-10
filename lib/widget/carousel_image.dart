@@ -48,32 +48,33 @@ class _CarousselImageState extends State<CarousselImage> {
           itemBuilder: (context, index) => builder(index),
           padEnds: false,
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: kDefaultSpacing / 2),
-            child: SmoothPageIndicator(
-              controller: controller,
-              count: widget.cafePictureModel.length,
-              axisDirection: Axis.horizontal,
-              onDotClicked: (index) => controller.animateToPage(
-                index,
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.ease,
-              ),
-              effect: SlideEffect(
-                spacing: 8.0,
-                dotWidth: 12.0,
-                dotHeight: 12.0,
-                paintStyle: PaintingStyle.fill,
-                strokeWidth: 1.5,
-                dotColor:
-                    Theme.of(context).colorScheme.background.withOpacity(0.5),
-                activeDotColor: Theme.of(context).colorScheme.background,
+        if (widget.cafePictureModel.length > 1)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: kDefaultSpacing / 2),
+              child: SmoothPageIndicator(
+                controller: controller,
+                count: widget.cafePictureModel.length,
+                axisDirection: Axis.horizontal,
+                onDotClicked: (index) => controller.animateToPage(
+                  index,
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.ease,
+                ),
+                effect: SlideEffect(
+                  spacing: 8.0,
+                  dotWidth: 10.0,
+                  dotHeight: 10.0,
+                  paintStyle: PaintingStyle.fill,
+                  strokeWidth: 1.5,
+                  dotColor:
+                      Theme.of(context).colorScheme.background.withOpacity(0.5),
+                  activeDotColor: Theme.of(context).colorScheme.background,
+                ),
               ),
             ),
-          ),
-        )
+          )
       ],
     );
   }
