@@ -90,7 +90,10 @@ class RoutesGenerator {
       case '/licenses':
         return PageTransition(
           child: const LicensePage(
-            applicationIcon: FlutterLogo(),
+            applicationIcon: FlutterLogo(
+              size: 100,
+            ),
+            applicationLegalese: '© 202 HiSpace Corp',
           ),
           type: PageTransitionType.rightToLeft,
           duration: const Duration(milliseconds: 500),

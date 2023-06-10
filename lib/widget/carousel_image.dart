@@ -64,8 +64,8 @@ class _CarousselImageState extends State<CarousselImage> {
                 ),
                 effect: SlideEffect(
                   spacing: 8.0,
-                  dotWidth: 10.0,
-                  dotHeight: 10.0,
+                  dotWidth: 8.0,
+                  dotHeight: 8.0,
                   paintStyle: PaintingStyle.fill,
                   strokeWidth: 1.5,
                   dotColor:
