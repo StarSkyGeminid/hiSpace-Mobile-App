@@ -60,7 +60,7 @@ class CafeCard extends StatelessWidget {
             SizedBox(
               width: size.width * 0.7,
               child: Text(
-                cafe.address,
+                cafe.address.toTitleCase(),
                 maxLines: 2,
                 style: Theme.of(context)
                     .textTheme

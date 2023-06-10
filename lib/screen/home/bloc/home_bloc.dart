@@ -34,7 +34,7 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
       _cafeRepository.getCafes(),
       onData: (cafes) => state.copyWith(
         hasReachedMax: state.cafes.length == cafes.length,
-        status: HomeStatus.success,
+        status: cafes.isNotEmpty ? HomeStatus.success : HomeStatus.failure,
         cafes: cafes,
       ),
       onError: (_, __) => state.copyWith(
@@ -68,7 +68,7 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
   Future<void> _onToggleFavorite(
       HomeOnToggleFavorite event, Emitter<HomeState> emit) async {
     emit(state.copyWith(status: HomeStatus.loading));
-    
+
     _cafeRepository.toggleFavorite(event.locationId);
   }
 

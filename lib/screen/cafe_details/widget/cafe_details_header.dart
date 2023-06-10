@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hispace_mobile_app/core/global/constans.dart';
 
 class CafeDetailsHeader extends StatefulWidget {
   final ScrollController controller;
@@ -30,7 +29,6 @@ class _CafeDetailsHeaderState extends State<CafeDetailsHeader> {
     final double devicePixelRatio =
         WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio;
     final double width = physicalWidth / devicePixelRatio;
-
 
     widget.controller.addListener(() {
       if (widget.controller.offset >= width &&
