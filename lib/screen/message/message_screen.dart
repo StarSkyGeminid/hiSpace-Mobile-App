@@ -5,6 +5,14 @@ class MessageScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        title: Text('Chat', style: Theme.of(context).textTheme.titleMedium),
+        elevation: 0,
+        toolbarHeight: 80,
+        centerTitle: true,
+      ),
+    );
   }
 }
