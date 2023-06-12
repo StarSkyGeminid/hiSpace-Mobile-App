@@ -55,7 +55,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               unselectedLabelStyle:
                   TextStyle(color: Theme.of(context).colorScheme.background),
               showUnselectedLabels: false,
-              iconSize: 25,
+              iconSize: 18,
               elevation: 0,
               items: [
                 BottomNavigationBarItem(
@@ -64,6 +64,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     colorFilter: _currentIndex != 0
                         ? null
                         : const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+                    height: 22,
+                    width: 22,
                   ),
                   label: '•',
                   backgroundColor: Theme.of(context).colorScheme.background,
@@ -74,6 +76,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     colorFilter: _currentIndex != 1
                         ? null
                         : const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+                    height: 22,
+                    width: 22,
                   ),
                   label: '•',
                   backgroundColor: Theme.of(context).colorScheme.background,
@@ -84,6 +88,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     colorFilter: _currentIndex != 2
                         ? null
                         : const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+                    height: 22,
+                    width: 22,
                   ),
                   label: '•',
                   backgroundColor: Theme.of(context).colorScheme.background,
@@ -94,6 +100,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     colorFilter: _currentIndex != 3
                         ? null
                         : const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+                    height: 22,
+                    width: 22,
                   ),
                   label: '•',
                   backgroundColor: Theme.of(context).colorScheme.background,

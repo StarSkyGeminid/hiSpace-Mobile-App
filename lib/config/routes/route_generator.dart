@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hispace_mobile_app/screen/accout_settings/account_settings.dart';
 import 'package:hispace_mobile_app/screen/boarding/boarding_screen.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/cafe_details.dart';
+import 'package:hispace_mobile_app/screen/cafe_owned/cafe_owned_screen.dart';
 import 'package:hispace_mobile_app/screen/dashboard/dashboard_screen.dart';
 import 'package:hispace_mobile_app/screen/forgot_password/forgot_password_screen.dart';
 import 'package:hispace_mobile_app/screen/home/home_screen.dart';
@@ -93,7 +95,7 @@ class RoutesGenerator {
             applicationIcon: FlutterLogo(
               size: 100,
             ),
-            applicationLegalese: '© 202 HiSpace Corp',
+            applicationLegalese: '© 2023 HiSpace Corp',
           ),
           type: PageTransitionType.rightToLeft,
           duration: const Duration(milliseconds: 500),
@@ -104,6 +106,19 @@ class RoutesGenerator {
           type: PageTransitionType.bottomToTop,
           duration: const Duration(milliseconds: 500),
         );
+      case '/user/cafe-owned':
+        return PageTransition(
+          child: const CafeOwned(),
+          type: PageTransitionType.rightToLeft,
+          duration: const Duration(milliseconds: 500),
+        );
+      case '/user/settings':
+        return PageTransition(
+          child: const AccountSettings(),
+          type: PageTransitionType.rightToLeft,
+          duration: const Duration(milliseconds: 500),
+        );
+
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

@@ -13,12 +13,12 @@ List<ProfileMenuModel> listProfileMenu = [
   ProfileMenuModel(
     title: 'Akun',
     icon: Icons.person_outline_outlined,
-    route: '/profile_settings',
+    route: '/user/settings',
   ),
   ProfileMenuModel(
     title: 'Kafe Saya',
     icon: Icons.storefront_outlined,
-    route: '/profile_settings',
+    route: '/user/cafe-owned',
   ),
   ProfileMenuModel(
     title: 'Persyaratan dan Ketentuan',

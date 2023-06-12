@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:local_data/local_data.dart';
 
@@ -30,7 +31,7 @@ class UserRepository {
     };
   }
 
-  Future<User?> getUserModel({bool force = false}) async {
+  Future<User?> getUser({bool force = false}) async {
     if (_user != null && !force) return _user;
 
     final uri = Uri.https(
@@ -65,38 +66,36 @@ class UserRepository {
     return _user;
   }
 
-  Future<User?> updateUser(User userModel) async {
+  Future<void> updateUser(
+      {String? fullName, Uint8List? imageBytes, String? fileName}) async {
+    if (fullName == null && imageBytes == null) return;
+
     final uri = Uri.https(
       _baseUrl,
       '/api/me',
     );
 
-    final body = {
-      'fullName': userModel.fullName,
-      if (userModel.profilePic != null) 'profilePic': userModel.profilePic,
-    };
-
     var headers = getAuthorization();
 
     if (headers == null) throw RequestFailure();
 
-    final response = await _httpClient.put(uri, body: body, headers: headers);
+    var request = http.MultipartRequest('PUT', uri);
 
-    if (response.statusCode != 200) throw RequestFailure();
+    request.headers.addAll(headers);
 
-    if (response.body.isEmpty) throw ResponseFailure();
-
-    final resultJson = jsonDecode(response.body) as Map;
-
-    if (resultJson.containsKey('status')) {
-      if (resultJson['status'] != 'success') throw RequestFailure();
+    if (fullName != null) {
+      request.fields.addAll({
+        'fullName': fullName,
+      });
     }
 
-    _user = userModel.copyWith(
-      fullName: userModel.fullName,
-      profilePic: userModel.profilePic,
-    );
+    if (imageBytes != null) {
+      request.files.add(http.MultipartFile.fromBytes('profilePic', imageBytes,
+          filename: fileName));
+    }
 
-    return _user;
+    var streamedResponse = await request.send();
+
+    if (streamedResponse.statusCode != 200) throw RequestFailure();
   }
 }

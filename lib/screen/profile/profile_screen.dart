@@ -1,13 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hispace_mobile_app/bloc/authentication/authentication_bloc.dart';
 import 'package:hispace_mobile_app/core/extension/string_extension.dart';
 
-import 'dart:math' as math;
-
 import 'package:hispace_mobile_app/core/global/constans.dart';
 import 'package:hispace_mobile_app/screen/profile/model/profile_menu_model.dart';
+import 'package:hispace_mobile_app/widget/circular_profile_picture.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -23,6 +21,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+
+    BlocProvider.of<AuthenticationBloc>(context)
+        .add(AuthenticationProfileRefresh());
+
     _getAppVersion();
   }
 
@@ -36,8 +38,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
@@ -47,56 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: CustomScrollView(
         slivers: [
-          SliverToBoxAdapter(
-            child: ClipOval(
-              child: Builder(builder: (context) {
-                String? imageUrl = context.select(
-                  (AuthenticationBloc bloc) => bloc.state.user.profilePic,
-                );
-
-                if (imageUrl == null) {
-                  return CircleAvatar(
-                    backgroundColor: Theme.of(context)
-                        .colorScheme
-                        .onSurfaceVariant
-                        .withOpacity(.2),
-                    radius: math.min(size.width / 4, 90),
-                    child: Icon(
-                      Icons.person_rounded,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurfaceVariant
-                          .withOpacity(.8),
-                    ),
-                  );
-                }
-
-                return CachedNetworkImage(
-                  imageUrl: context
-                          .read<AuthenticationBloc>()
-                          .state
-                          .user
-                          .profilePic ??
-                      '',
-                  placeholder: (context, url) => CircleAvatar(
-                    backgroundColor: Colors.grey,
-                    radius: math.min(size.width / 4, 90),
-                    child: Icon(
-                      Icons.person_rounded,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurfaceVariant
-                          .withOpacity(.8),
-                    ),
-                  ),
-                  imageBuilder: (context, image) => CircleAvatar(
-                    backgroundImage: image,
-                    radius: math.min(size.width / 4, 90),
-                  ),
-                );
-              }),
-            ),
-          ),
+          const SliverToBoxAdapter(child: Center(child: CircularProfilePicture())),
           SliverToBoxAdapter(
             child: Align(
               alignment: Alignment.topCenter,

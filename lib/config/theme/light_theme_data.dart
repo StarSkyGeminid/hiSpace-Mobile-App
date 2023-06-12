@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'color_pallete.dart';
@@ -9,6 +10,11 @@ final kLightTheme = ThemeData(
   colorScheme: lightColorScheme,
   scaffoldBackgroundColor: lightColorScheme.background,
   appBarTheme: AppBarTheme(
+    systemOverlayStyle: SystemUiOverlayStyle(
+      statusBarColor: lightColorScheme.background,
+      statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
+      statusBarBrightness: Brightness.light, // For iOS (dark icons)
+    ),
     backgroundColor: lightColorScheme.background,
     foregroundColor: ColorPallete.light.primary,
     elevation: 0,
@@ -21,7 +27,6 @@ final kLightTheme = ThemeData(
       color: ColorPallete.light.primary,
     ),
   ),
-  
   iconTheme: IconThemeData(
     color: ColorPallete.light.primary,
   ),
