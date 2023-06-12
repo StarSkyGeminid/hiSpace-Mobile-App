@@ -68,7 +68,7 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
             onSearchTap: _goToSearchScreen,
             toolbarHeight: 90,
             bottom: CafeTabBar(
-              toolbarHeight: 60,
+              toolbarHeight: 45,
             ),
           ),
           body: BlocBuilder<HomeBloc, HomeState>(

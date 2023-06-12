@@ -1,9 +1,11 @@
 import 'package:authentication_repository/authentication_repository.dart';
 import 'package:cafe_repository/cafe_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hispace_mobile_app/bloc/authentication/authentication_bloc.dart';
 import 'package:hispace_mobile_app/config/routes/route_generator.dart';
+import 'package:hispace_mobile_app/config/theme/color_scheme.dart';
 import 'package:user_repository/user_repository.dart';
 
 import '../../config/theme/light_theme_data.dart';
@@ -26,6 +28,8 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(statusBarColor: lightColorScheme.background));
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider.value(

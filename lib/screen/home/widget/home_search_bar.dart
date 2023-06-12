@@ -14,7 +14,7 @@ class HomeSearchBar extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 60,
+        height: 50,
         padding: const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.background,
@@ -66,7 +66,7 @@ class _FilterButton extends StatelessWidget {
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(kDefaultSpacing / 3),
+        padding: const EdgeInsets.all(kDefaultSpacing / 4),
         child: SvgPicture.asset(
           'assets/icons/settings_icon.svg',
           colorFilter: ColorFilter.mode(

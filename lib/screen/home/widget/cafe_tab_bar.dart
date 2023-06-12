@@ -45,7 +45,7 @@ class CafeTabBar extends StatelessWidget implements PreferredSizeWidget {
           .map((room) => Tab(
                 text: room.name,
                 icon: Icon(room.icon, size: 25),
-                iconMargin: const EdgeInsets.only(bottom: 5),
+                iconMargin: const EdgeInsets.only(bottom: 0),
                 height: toolbarHeight,
               ))
           .toList(),
