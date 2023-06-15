@@ -12,15 +12,15 @@ dependencies:
   equatable: ^2.0.5
   flutter:
     sdk: flutter
-  http: ^0.13.6
+  http: ^1.0.0
   local_data:
     path: ../local_data
 
 dev_dependencies:
-  mockito: ^5.4.0
   build_runner: ^2.3.3
   flutter_lints: ^2.0.0
   flutter_test:
     sdk: flutter
+  mockito: ^5.4.0
 
 flutter: null

@@ -13,7 +13,7 @@ dependencies:
     path: ../cafe_api
   flutter:
     sdk: flutter
-  http: ^0.13.6
+  http: ^1.0.0
   local_data:
     path: ../../local_data
   rxdart: ^0.27.7

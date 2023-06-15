@@ -17,7 +17,7 @@ class Cafe extends Equatable {
   final String owner;
   final String galeryId;
   final String description;
-  final String time;
+  final String rawTime;
   final double rating;
   final bool isFavorite;
   final String user;
@@ -36,7 +36,7 @@ class Cafe extends Equatable {
     required this.owner,
     required this.galeryId,
     required this.description,
-    required this.time,
+    required this.rawTime,
     required this.rating,
     required this.isFavorite,
     required this.user,
@@ -60,21 +60,6 @@ class Cafe extends Equatable {
     return true;
   }
 
-  double getDistance() {
-    const double earthRadius = 6378137;
-    final double lat1 = latitude * (pi / 180);
-    final double lng1 = longitude * (pi / 180);
-    final double lat2 = latitude * (pi / 180);
-    final double lng2 = longitude * (pi / 180);
-    final double calcLongitude = lng1 - lng2;
-    final double calcLatitude = lat1 - lat2;
-    double stepOne = pow(sin(calcLatitude / 2), 2) +
-        cos(lat1) * cos(lat2) * pow(sin(calcLongitude / 2), 2);
-    double stepTwo = 2 * asin(sqrt(stepOne));
-    double finalResult = earthRadius * stepTwo;
-    return finalResult / 1000;
-  }
-
   String get getRating => rating.toString().substring(0, 3);
 
   static const empty = Cafe(
@@ -87,7 +72,7 @@ class Cafe extends Equatable {
     owner: '',
     galeryId: '',
     description: '',
-    time: '',
+    rawTime: '',
     rating: 0,
     isFavorite: false,
     user: '',
@@ -103,7 +88,7 @@ class Cafe extends Equatable {
     String? owner,
     String? galeryId,
     String? description,
-    String? time,
+    String? rawTime,
     double? rating,
     bool? isFavorite,
     String? user,
@@ -122,7 +107,7 @@ class Cafe extends Equatable {
       owner: owner ?? this.owner,
       galeryId: galeryId ?? this.galeryId,
       description: description ?? this.description,
-      time: time ?? this.time,
+      rawTime: rawTime ?? this.rawTime,
       rating: rating ?? this.rating,
       isFavorite: isFavorite ?? this.isFavorite,
       user: user ?? this.user,
@@ -144,7 +129,7 @@ class Cafe extends Equatable {
       'owner': owner,
       'galeryId': galeryId,
       'description': description,
-      'time': time,
+      'time': rawTime,
       'rating': rating,
       'isFavorite': isFavorite,
       'user': user,
@@ -165,16 +150,16 @@ class Cafe extends Equatable {
       longitude:
           map.containsKey('longitude') ? map['longitude'] as double : 0.0,
       latitude: map.containsKey('latitude') ? map['latitude'] as double : 0.0,
-      owner: map.containsKey('') ? map['owner'] as String : '',
-      galeryId: map.containsKey('') ? map['galeryId'] as String : '',
-      description: map.containsKey('') ? map['description'] as String : '',
-      time: map['time'] as String,
+      owner: map.containsKey('owner') ? map['owner'] as String : '',
+      galeryId: map.containsKey('galeryId') ? map['galeryId'] as String : '',
+      description: map.containsKey('description') ? map['description'] as String : '',
+      rawTime: map['time'] as String,
       rating: map['rating'] != null ? map['rating'].toDouble() : 0.0,
-      isFavorite: map.containsKey('') ? map['isFavorite'] as bool : false,
-      reviews: map.containsKey('')
+      isFavorite: map.containsKey('isFavorite') ? map['isFavorite'] as bool : false,
+      reviews: map.containsKey('reviews')
           ? List<dynamic>.from(map['reviews'] as List<dynamic>)
           : null,
-      user: map.containsKey('') ? map['user'] as String : '',
+      user: map.containsKey('user') ? map['user'] as String : '',
       menus: map['menus'] != null
           ? List<dynamic>.from(map['menus'] as List<dynamic>)
           : null,
@@ -195,7 +180,7 @@ class Cafe extends Equatable {
 
   @override
   String toString() {
-    return 'Cafe(locationId: $locationId, userUserId: $userUserId, name: $name, address: $address, longitude: $longitude, latitude: $latitude, owner: $owner, galeryId: $galeryId, description: $description, time: $time, rating: $rating, isFavorite: $isFavorite, reviews: $reviews, user: $user, menus: $menus, galeries: $galeries, facilities: $facilities)';
+    return 'Cafe(locationId: $locationId, userUserId: $userUserId, name: $name, address: $address, longitude: $longitude, latitude: $latitude, owner: $owner, galeryId: $galeryId, description: $description, time: $rawTime, rating: $rating, isFavorite: $isFavorite, reviews: $reviews, user: $user, menus: $menus, galeries: $galeries, facilities: $facilities)';
   }
 
   @override
@@ -211,7 +196,7 @@ class Cafe extends Equatable {
         other.owner == owner &&
         other.galeryId == galeryId &&
         other.description == description &&
-        other.time == time &&
+        other.rawTime == rawTime &&
         other.rating == rating &&
         other.isFavorite == isFavorite &&
         listEquals(other.reviews, reviews) &&
@@ -232,7 +217,7 @@ class Cafe extends Equatable {
         owner.hashCode ^
         galeryId.hashCode ^
         description.hashCode ^
-        time.hashCode ^
+        rawTime.hashCode ^
         rating.hashCode ^
         isFavorite.hashCode ^
         reviews.hashCode ^
@@ -254,7 +239,7 @@ class Cafe extends Equatable {
       owner,
       galeryId,
       description,
-      time,
+      rawTime,
       rating,
       isFavorite,
       user,

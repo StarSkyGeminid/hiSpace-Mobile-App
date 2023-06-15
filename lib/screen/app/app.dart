@@ -3,6 +3,7 @@ import 'package:cafe_repository/cafe_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocation_repository/geolocation_repository.dart';
 import 'package:hispace_mobile_app/bloc/authentication/authentication_bloc.dart';
 import 'package:hispace_mobile_app/config/routes/route_generator.dart';
 import 'package:hispace_mobile_app/config/theme/color_scheme.dart';
@@ -11,15 +12,18 @@ import 'package:user_repository/user_repository.dart';
 import '../../config/theme/light_theme_data.dart';
 
 class App extends StatefulWidget {
-  const App(
-      {super.key,
-      required this.cafeRepository,
-      required this.userRepository,
-      required this.authenticationRepository});
+  const App({
+    super.key,
+    required this.cafeRepository,
+    required this.userRepository,
+    required this.authenticationRepository,
+    required this.geoLocationRepository,
+  });
 
   final CafeRepository cafeRepository;
   final AuthenticationRepository authenticationRepository;
   final UserRepository userRepository;
+  final GeoLocationRepository geoLocationRepository;
 
   @override
   State<App> createState() => _AppState();
@@ -40,6 +44,9 @@ class _AppState extends State<App> {
         ),
         RepositoryProvider.value(
           value: widget.userRepository,
+        ),
+        RepositoryProvider.value(
+          value: widget.geoLocationRepository,
         ),
       ],
       child: MultiBlocProvider(
@@ -81,6 +88,7 @@ class _AppViewState extends State<AppView> {
       title: 'hiSpace',
       builder: (context, child) {
         return BlocListener<AuthenticationBloc, AuthenticationState>(
+          listenWhen: (previous, current) => previous.status != current.status,
           listener: (context, state) {
             switch (state.status) {
               case AuthenticationStatus.authenticated:

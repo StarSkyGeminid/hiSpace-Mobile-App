@@ -11,9 +11,14 @@ class CafeRepository {
 
   Future<void> fetchCafes({int page = 0}) => _cafeApi.fetchCafes(page: page);
 
+  Future<List<Cafe>?> getCafeByOwner(String email) => _cafeApi.getCafeByOwner(email);
+
+  Future<Cafe> getCafeByLocationId(String locationId) =>
+      _cafeApi.getCafeByLocationId(locationId);
+
   Future<void> getWishlist({int page = 0}) => _cafeApi.getWishlist(page: page);
 
-  Future<void> add(Cafe cafe) => _cafeApi.add(cafe);
+  Future<void> addLocation(Cafe cafe) => _cafeApi.addLocation(cafe);
 
   Future<void> remove(Cafe cafe) => _cafeApi.remove(cafe);
 

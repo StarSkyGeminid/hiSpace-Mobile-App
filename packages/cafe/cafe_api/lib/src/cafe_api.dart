@@ -12,13 +12,15 @@ abstract class ICafeApi {
 
   Future<void> fetchCafes({int page = 0});
 
-  Future<void> add(Cafe cafe);
+  Future<void> addLocation(Cafe cafe);
 
   Future<void> remove(Cafe cafe);
 
   Future<void> update(Cafe cafe);
 
   Future<void> search(String query);
+
+  Future<List<Cafe>?> getCafeByOwner(String email);
 
   Future<Cafe> getCafeByLocationId(String locationId);
 

@@ -3,6 +3,7 @@ import 'package:hispace_mobile_app/screen/accout_settings/account_settings.dart'
 import 'package:hispace_mobile_app/screen/boarding/boarding_screen.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/cafe_details.dart';
 import 'package:hispace_mobile_app/screen/cafe_owned/cafe_owned_screen.dart';
+import 'package:hispace_mobile_app/screen/create_cafe/create_cafe.dart';
 import 'package:hispace_mobile_app/screen/dashboard/dashboard_screen.dart';
 import 'package:hispace_mobile_app/screen/forgot_password/forgot_password_screen.dart';
 import 'package:hispace_mobile_app/screen/home/home_screen.dart';
@@ -17,22 +18,22 @@ import 'package:page_transition/page_transition.dart';
 
 class RoutesGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
-    // final args = settings.arguments;
+    final args = settings.arguments;
 
     switch (settings.name) {
       case '/splash':
         return PageTransition(
           child: const SplashScreen(),
           type: PageTransitionType.fade,
-          duration: const Duration(milliseconds: 500),
-          reverseDuration: const Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 300),
+          reverseDuration: const Duration(milliseconds: 300),
         );
       case '/onboarding':
         return PageTransition(
           child: const OnBoardingScreen(),
           type: PageTransitionType.fade,
           fullscreenDialog: true,
-          duration: const Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 300),
         );
       case '/boarding':
         return PageTransition(
@@ -69,25 +70,25 @@ class RoutesGenerator {
         return PageTransition(
           child: const SecondRegisterScreen(),
           type: PageTransitionType.rightToLeft,
-          duration: const Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 300),
         );
       case '/dashboard':
         return PageTransition(
           child: const DashboardScreen(),
           type: PageTransitionType.fade,
-          duration: const Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 300),
         );
       case '/home':
         return PageTransition(
           child: const HomeScreen(),
           type: PageTransitionType.fade,
-          duration: const Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 300),
         );
       case '/profile':
         return PageTransition(
           child: const ProfileScreen(),
           type: PageTransitionType.bottomToTop,
-          duration: const Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 300),
         );
       case '/licenses':
         return PageTransition(
@@ -98,25 +99,33 @@ class RoutesGenerator {
             applicationLegalese: '© 2023 HiSpace Corp',
           ),
           type: PageTransitionType.rightToLeft,
-          duration: const Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 300),
         );
       case '/cafe-details':
         return PageTransition(
-          child: const CafeDetails(),
+          child: CafeDetails(
+            locationId: args as String,
+          ),
           type: PageTransitionType.bottomToTop,
-          duration: const Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 300),
         );
       case '/user/cafe-owned':
         return PageTransition(
           child: const CafeOwned(),
           type: PageTransitionType.rightToLeft,
-          duration: const Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 300),
         );
       case '/user/settings':
         return PageTransition(
           child: const AccountSettings(),
           type: PageTransitionType.rightToLeft,
-          duration: const Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 300),
+        );
+      case '/user/create-cafe':
+        return PageTransition(
+          child: const CreateCafe(),
+          type: PageTransitionType.rightToLeft,
+          duration: const Duration(milliseconds: 300),
         );
 
       default:

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cafe_api/cafe_api.dart';
 import 'package:http/http.dart' as http;
@@ -78,9 +79,87 @@ class HttpCafeApi extends ICafeApi {
   }
 
   @override
-  Future<void> add(Cafe cafe) {
-    // TODO: implement add
-    throw UnimplementedError();
+  Future<List<Cafe>?> getCafeByOwner(String email) async {
+    final uri = Uri.https(
+      _baseUrl,
+      '/api/location/search',
+      {
+        'owner': email,
+      },
+    );
+
+    var headers = getAuthorization();
+
+    if (headers == null) throw RequestFailure();
+
+    final response = await _httpClient.get(uri, headers: headers);
+
+    if (response.statusCode != 200 && response.statusCode != 404) {
+      throw RequestFailure();
+    }
+
+    if (response.body.isEmpty) throw ResponseFailure();
+
+    final resultJson = jsonDecode(response.body) as Map;
+
+    if (resultJson.containsKey('status')) {
+      if (resultJson['status'] != 'success') throw ResponseFailure();
+    }
+
+    if (!resultJson.containsKey('data')) throw ResponseFailure();
+
+    final data = resultJson['data'];
+
+    if (data.isEmpty) return null;
+
+    return List<Cafe>.from(data.map((e) => Cafe.fromMap(e)).toList());
+  }
+
+  @override
+  Future<void> addLocation(Cafe cafe) async {
+    final uri = Uri.https(
+      _baseUrl,
+      '/api/location',
+    );
+
+    var headers = getAuthorization();
+
+    if (headers == null) throw RequestFailure();
+
+    headers.addEntries([
+      const MapEntry('Content-Type',
+          'multipart/form-data; boundary=<calculated when request is sent>'),
+    ]);
+
+    var request = http.MultipartRequest('POST', uri);
+
+    request.headers.addAll(headers);
+
+    request.fields.addAll({
+      'name': cafe.name,
+      'address': cafe.address,
+      'description': cafe.description,
+      'latitude': cafe.latitude.toString(),
+      'longitude': cafe.longitude.toString(),
+      'time': cafe.rawTime,
+    });
+
+    List<http.MultipartFile> newList = List.empty(growable: true);
+
+    for (var gallery in cafe.galeries!) {
+      File imageFile = File(gallery.url);
+
+      var stream = http.ByteStream(imageFile.openRead());
+      var length = await imageFile.length();
+
+      var multipartFile = http.MultipartFile("asdnnasjfn", stream, length,
+          filename: gallery.url.split('/').last);
+      newList.add(multipartFile);
+    }
+
+    var streamedResponse = await request.send();
+
+    if (streamedResponse.statusCode != 201) throw RequestFailure();
   }
 
   @override
@@ -106,18 +185,24 @@ class HttpCafeApi extends ICafeApi {
     final uri = Uri.https(
       _baseUrl,
       '/api/user/wishlist',
-      {
-        'locationId': locationId,
-      },
     );
+
+    var body = {
+      'locationId': locationId,
+    };
 
     var headers = getAuthorization();
 
     if (headers == null) throw RequestFailure();
 
-    final response = await _httpClient.get(uri, headers: headers);
+    headers.addAll({
+      'Content-Type': 'application/json',
+    });
 
-    if (response.statusCode != 200) throw RequestFailure;
+    final response =
+        await _httpClient.post(uri, headers: headers, body: jsonEncode(body));
+
+    if (response.statusCode != 201) throw RequestFailure;
 
     if (response.body.isEmpty) throw ResponseFailure();
 
