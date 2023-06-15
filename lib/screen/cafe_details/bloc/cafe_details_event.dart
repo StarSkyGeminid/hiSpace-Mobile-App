@@ -7,4 +7,11 @@ abstract class CafeDetailsEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class CafeDetailsInitial extends CafeDetailsEvent {}
+class CafeDetailsInitial extends CafeDetailsEvent {
+  const CafeDetailsInitial(this.locationId);
+
+  final String locationId;
+
+  @override
+  List<Object> get props => [locationId];
+}

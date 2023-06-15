@@ -41,7 +41,7 @@ void main() {
       const headers = {'Authorization': "bearer $token"};
 
       setUp(() async {
-        baseUri = Uri.https('hispace-production.up.railway.app', '/api/me');
+        baseUri = Uri.https('hispace-production.up.railway.app', '/api/user');
 
         SharedPreferences.setMockInitialValues({
           'auth.AuthenticationToken': 'AccessTokenValue',
@@ -149,7 +149,7 @@ void main() {
       const headers = {'Authorization': "bearer $token"};
 
       setUp(() async {
-        baseUri = Uri.https('hispace-production.up.railway.app', '/api/me');
+        baseUri = Uri.https('hispace-production.up.railway.app', '/api/user');
 
         apiClient.getAuthorization();
       });

@@ -15,9 +15,11 @@ class CafeDetailsState extends Equatable {
 
   CafeDetailsState copyWith({
     CafeDetailsStatus? status,
+    Cafe? cafe,
   }) {
     return CafeDetailsState(
       status: status ?? this.status,
+      cafe: cafe ?? this.cafe,
     );
   }
 

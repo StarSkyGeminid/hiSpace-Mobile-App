@@ -144,7 +144,12 @@ class AuthenticationRepository {
       'email': email,
     };
 
-    final response = await _httpClient.post(locationRequest, body: body);
+    final headers = {
+      'Content-Type': 'application/json',
+    };
+
+    final response =
+        await _httpClient.post(locationRequest, body: body, headers: headers);
 
     if (response.statusCode == 404) throw EmailDoesNotExist();
 

@@ -2,13 +2,15 @@ import 'package:cafe_repository/cafe_repository.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocation_repository/geolocation_repository.dart';
 import 'package:hispace_mobile_app/core/global/constans.dart';
 import 'package:hispace_mobile_app/screen/home/widget/cafe_tab_bar.dart';
 import 'package:hispace_mobile_app/screen/home/widget/home_app_bar.dart';
+import 'package:latlong2/latlong.dart';
 
 import 'bloc/home_bloc.dart';
 import 'model/home_tab_model.dart';
-import 'widget/cafe_card.dart';
+import '../../widget/cafe_card.dart';
 import 'widget/infinite_list_builder.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -19,6 +21,7 @@ class HomeScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => HomeBloc(
         cafeRepository: context.read<CafeRepository>(),
+        geoLocationRepository: context.read<GeoLocationRepository>(),
       )..add(const HomeOnInitial()),
       child: const _HomeScreenView(),
     );
@@ -33,6 +36,8 @@ class _HomeScreenView extends StatefulWidget {
 }
 
 class _HomeScreenViewState extends State<_HomeScreenView> {
+  final Distance distance = Distance();
+
   void _goToSearchScreen() {
     // Navigator.pushNamed(context, '/search');
   }
@@ -46,7 +51,7 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
   }
 
   void _goToDetailsScreen(Cafe cafe) {
-    Navigator.pushNamed(context, '/cafe-details', arguments: cafe);
+    Navigator.pushNamed(context, '/cafe-details', arguments: cafe.locationId);
   }
 
   @override
@@ -95,13 +100,29 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
                         onFetchedMore: () => context.read<HomeBloc>().add(
                               const HomeOnFetchedMore(),
                             ),
-                        itemBuilder: (context, index) => CafeCard(
-                          cafe: state.cafes[index],
-                          onToggleFavorite: () => context.read<HomeBloc>().add(
-                              HomeOnToggleFavorite(
-                                  locationId: state.cafes[index].locationId)),
-                          onTap: () => _goToDetailsScreen(state.cafes[index]),
-                        ),
+                        itemBuilder: (context, index) {
+                          final double km = distance.as(
+                              LengthUnit.Kilometer,
+                              state.currentLocation,
+                              LatLng(state.cafes[index].latitude,
+                                  state.cafes[index].longitude));
+
+                          String? distanceString =
+                              state.currentLocation.longitude != 0.0 &&
+                                      state.currentLocation.latitude != 0.0
+                                  ? '${km.toStringAsFixed(1)} km'
+                                  : null;
+
+                          return CafeCard(
+                            cafe: state.cafes[index],
+                            onToggleFavorite: () => context
+                                .read<HomeBloc>()
+                                .add(HomeOnToggleFavorite(
+                                    locationId: state.cafes[index].locationId)),
+                            onTap: () => _goToDetailsScreen(state.cafes[index]),
+                            distance: distanceString,
+                          );
+                        },
                         itemCount: state.cafes.length,
                       );
                     },

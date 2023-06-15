@@ -5,7 +5,7 @@ import 'package:hispace_mobile_app/core/global/constans.dart';
 import 'package:hispace_mobile_app/screen/home/widget/infinite_list_builder.dart';
 import 'package:hispace_mobile_app/screen/wishlist/bloc/wishlist_bloc.dart';
 
-import '../home/widget/cafe_card.dart';
+import '../../widget/cafe_card.dart';
 
 class WishlistScreen extends StatelessWidget {
   const WishlistScreen({super.key});
@@ -30,7 +30,7 @@ class WishlistScreenView extends StatefulWidget {
 
 class _WishlistScreenViewState extends State<WishlistScreenView> {
   void _goToDetailsScreen(Cafe cafe) {
-    Navigator.pushNamed(context, '/cafe-details', arguments: cafe);
+    Navigator.pushNamed(context, '/cafe-details', arguments: cafe.locationId);
   }
 
   @override

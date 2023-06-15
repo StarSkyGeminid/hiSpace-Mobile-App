@@ -17,7 +17,7 @@ class AuthenticationBloc
         _userRepository = userRepository,
         super(const AuthenticationState.unknown()) {
     on<_AuthenticationStatusChanged>(_onAuthenticationStatusChanged);
-    on<AuthenticationProfileRefresh>(_onAuthenticationProfileChanged);
+    on<AuthenticationProfileChanged>(_onAuthenticationProfileChanged);
     on<AuthenticationLogoutRequested>(_onAuthenticationLogoutRequested);
     on<AuthenticationEvent>((event, emit) {});
 
@@ -64,11 +64,15 @@ class AuthenticationBloc
     _authenticationRepository.logOut();
   }
 
-  void _onAuthenticationProfileChanged(
-    AuthenticationProfileRefresh event,
+  Future<void> _onAuthenticationProfileChanged(
+    AuthenticationProfileChanged event,
     Emitter<AuthenticationState> emit,
-  ) {
-    add(const _AuthenticationStatusChanged(AuthenticationStatus.authenticated));
+  ) async {
+    User? user = await _tryGetUser();
+
+    if (user == null) return;
+
+    emit(state.copyWith(user: user));
   }
 
   Future<User?> _tryGetUser() async {

@@ -54,6 +54,7 @@ class _LoginScreenView extends StatelessWidget {
             }
           },
           child: ListView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(

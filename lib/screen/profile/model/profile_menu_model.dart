@@ -16,7 +16,7 @@ List<ProfileMenuModel> listProfileMenu = [
     route: '/user/settings',
   ),
   ProfileMenuModel(
-    title: 'Kafe Saya',
+    title: 'Cafe Saya',
     icon: Icons.storefront_outlined,
     route: '/user/cafe-owned',
   ),

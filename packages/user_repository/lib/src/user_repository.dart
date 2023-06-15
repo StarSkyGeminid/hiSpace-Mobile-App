@@ -36,7 +36,7 @@ class UserRepository {
 
     final uri = Uri.https(
       _baseUrl,
-      '/api/me',
+      '/api/user',
     );
 
     var headers = getAuthorization();
@@ -72,12 +72,16 @@ class UserRepository {
 
     final uri = Uri.https(
       _baseUrl,
-      '/api/me',
+      '/api/user',
     );
 
     var headers = getAuthorization();
 
     if (headers == null) throw RequestFailure();
+
+    headers.addEntries([
+      const MapEntry('Content-Type', 'multipart/form-data'),
+    ]);
 
     var request = http.MultipartRequest('PUT', uri);
 

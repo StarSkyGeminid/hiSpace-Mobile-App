@@ -6,18 +6,23 @@ part 'cafe_details_event.dart';
 part 'cafe_details_state.dart';
 
 class CafeDetailsBloc extends Bloc<CafeDetailsEvent, CafeDetailsState> {
-  CafeDetailsBloc() : super(const CafeDetailsState()) {
+  CafeDetailsBloc(CafeRepository cafeRepository)
+      : _cafeRepository = cafeRepository,
+        super(const CafeDetailsState()) {
     on<CafeDetailsInitial>(_onInitial);
     on<CafeDetailsEvent>((event, emit) {});
   }
 
-  void _onInitial(CafeDetailsInitial event, Emitter<CafeDetailsState> emit) {
+  final CafeRepository _cafeRepository;
+
+  Future<void> _onInitial(
+      CafeDetailsInitial event, Emitter<CafeDetailsState> emit) async {
     emit(state.copyWith(status: CafeDetailsStatus.loading));
 
     try {
+      var cafe = await _cafeRepository.getCafeByLocationId(event.locationId);
 
-      
-      emit(state.copyWith(status: CafeDetailsStatus.success));
+      emit(state.copyWith(cafe: cafe, status: CafeDetailsStatus.success));
     } catch (e) {
       emit(state.copyWith(status: CafeDetailsStatus.failure));
     }

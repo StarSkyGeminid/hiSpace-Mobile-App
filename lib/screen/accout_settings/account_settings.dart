@@ -42,7 +42,15 @@ class AccountSettingsViewState extends State<AccountSettingsView> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    return BlocBuilder<AccountSettingsBloc, AccountSettingsState>(
+    return BlocConsumer<AccountSettingsBloc, AccountSettingsState>(
+      listenWhen: (previous, current) => previous.status != current.status,
+      listener: (context, state) {
+        if (state.status.isSuccess) {
+          BlocProvider.of<AuthenticationBloc>(context).add(
+            AuthenticationProfileChanged(),
+          );
+        }
+      },
       buildWhen: (previous, current) => previous.isChanged != current.isChanged,
       builder: (context, state) {
         return Scaffold(
@@ -218,8 +226,8 @@ class _ProfilePictureState extends State<_ProfilePicture> {
                 size: math.min(widget.size.width / 4, 60),
                 color: Theme.of(context)
                     .colorScheme
-                    .onSurfaceVariant
-                    .withOpacity(0.2),
+                    .background
+                    .withOpacity(0.4),
               ),
               onPressed: _changeProfilePicture,
             ),

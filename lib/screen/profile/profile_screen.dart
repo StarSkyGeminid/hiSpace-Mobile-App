@@ -21,10 +21,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-
-    BlocProvider.of<AuthenticationBloc>(context)
-        .add(AuthenticationProfileRefresh());
-
     _getAppVersion();
   }
 
@@ -47,7 +43,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: CustomScrollView(
         slivers: [
-          const SliverToBoxAdapter(child: Center(child: CircularProfilePicture())),
+          const SliverToBoxAdapter(
+              child: Center(child: CircularProfilePicture())),
           SliverToBoxAdapter(
             child: Align(
               alignment: Alignment.topCenter,

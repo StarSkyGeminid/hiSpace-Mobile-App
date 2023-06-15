@@ -19,6 +19,7 @@ class FirstRegisterScreen extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         body: ListView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(

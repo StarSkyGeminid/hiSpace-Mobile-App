@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../home/home_screen.dart';
-import '../message/message_screen.dart';
 import '../profile/profile_screen.dart';
 import '../wishlist/wishlist_screen.dart';
 
@@ -17,7 +16,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final List<Widget> _pages = [
     const HomeScreen(),
     const WishlistScreen(),
-    const MessageScreen(),
     const ProfileScreen(),
   ];
 
@@ -84,20 +82,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 BottomNavigationBarItem(
                   icon: SvgPicture.asset(
-                    'assets/icons/message_icon.svg',
-                    colorFilter: _currentIndex != 2
-                        ? null
-                        : const ColorFilter.mode(Colors.black, BlendMode.srcIn),
-                    height: 22,
-                    width: 22,
-                  ),
-                  label: '•',
-                  backgroundColor: Theme.of(context).colorScheme.background,
-                ),
-                BottomNavigationBarItem(
-                  icon: SvgPicture.asset(
                     'assets/icons/profile_icon.svg',
-                    colorFilter: _currentIndex != 3
+                    colorFilter: _currentIndex != 2
                         ? null
                         : const ColorFilter.mode(Colors.black, BlendMode.srcIn),
                     height: 22,

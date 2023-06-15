@@ -51,8 +51,17 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   Future<void> _onPasswordChanged(
       RegisterOnPasswordChanged event, Emitter<RegisterState> emit) async {
     final password = Password.dirty(event.password);
+
+    ConfirmPassword? confirmPassword;
+
+    if (state.confirmPassword.value.isNotEmpty) {
+      confirmPassword = ConfirmPassword.dirty(
+          password: event.password, value: state.confirmPassword.value);
+    }
+
     emit(state.copyWith(
       password: password,
+      confirmPassword: confirmPassword,
       isSecondPageValidated: Formz.validate([
         password,
         state.confirmPassword,

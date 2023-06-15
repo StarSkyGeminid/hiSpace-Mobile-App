@@ -4,23 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:hispace_mobile_app/config/theme/color_pallete.dart';
 import 'package:hispace_mobile_app/core/extension/string_extension.dart';
 import 'package:hispace_mobile_app/core/global/constans.dart';
+import 'package:hispace_mobile_app/widget/rating_star.dart';
 
-import '../../../widget/carousel_image.dart';
+import 'carousel_image.dart';
 
 class CafeCard extends StatelessWidget {
   const CafeCard({
     super.key,
     required this.cafe,
-    required this.onToggleFavorite,
     required this.onTap,
+    this.onToggleFavorite,
+    this.distance,
   });
-  
+
   final Cafe cafe;
 
   final VoidCallback onTap;
 
-  final VoidCallback onToggleFavorite;
+  final VoidCallback? onToggleFavorite;
 
+  final String? distance;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +39,7 @@ class CafeCard extends StatelessWidget {
           children: [
             _CarousselImageCard(
               cafe: cafe,
+              distance: distance,
               onToggleFavorite: onToggleFavorite,
             ),
             Padding(
@@ -110,12 +114,15 @@ class CafeCard extends StatelessWidget {
 class _CarousselImageCard extends StatelessWidget {
   const _CarousselImageCard({
     required this.cafe,
-    required this.onToggleFavorite,
+    this.distance,
+    this.onToggleFavorite,
   });
 
-  final VoidCallback onToggleFavorite;
+  final VoidCallback? onToggleFavorite;
 
   final Cafe cafe;
+
+  final String? distance;
 
   @override
   Widget build(BuildContext context) {
@@ -128,88 +135,57 @@ class _CarousselImageCard extends StatelessWidget {
             CarousselImage(
               cafePictureModel: cafe.galeries ?? [],
             ),
-            Positioned(
-              top: kDefaultSpacing,
-              left: kDefaultSpacing,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: kDefaultSpacing / 2,
-                  vertical: kDefaultSpacing / 3,
-                ),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.background,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.location_on),
-                    Text(
-                      '${cafe.getDistance().toStringAsFixed(2)} km',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Positioned(
-              top: kDefaultSpacing,
-              right: kDefaultSpacing,
-              child: InkWell(
-                onTap: onToggleFavorite,
+            if (distance != null)
+              Positioned(
+                top: kDefaultSpacing,
+                left: kDefaultSpacing,
                 child: Container(
-                  padding: const EdgeInsets.all(kDefaultSpacing / 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kDefaultSpacing / 2,
+                    vertical: kDefaultSpacing / 3,
+                  ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.background,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(
-                    cafe.isFavorite
-                        ? Icons.favorite_rounded
-                        : Icons.favorite_border_rounded,
-                    color: cafe.isFavorite ? ColorPallete.light.red : null,
-                    size: 25,
+                  child: Row(
+                    children: [
+                      const Icon(Icons.location_on),
+                      Text(
+                        distance ?? '0.0 km',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ),
+            if (onToggleFavorite != null)
+              Positioned(
+                top: kDefaultSpacing,
+                right: kDefaultSpacing,
+                child: InkWell(
+                  onTap: onToggleFavorite,
+                  child: Container(
+                    padding: const EdgeInsets.all(kDefaultSpacing / 2),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.background,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      cafe.isFavorite
+                          ? Icons.favorite_rounded
+                          : Icons.favorite_border_rounded,
+                      color: cafe.isFavorite ? ColorPallete.light.red : null,
+                      size: 25,
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
-    );
-  }
-}
-
-class RatingStar extends StatelessWidget {
-  const RatingStar({
-    super.key,
-    required this.rating,
-  });
-
-  final double rating;
-
-  @override
-  Widget build(BuildContext context) {
-    IconData starIcon = Icons.star_outline_rounded;
-
-    if (rating >= 3) {
-      starIcon = Icons.star_rounded;
-    } else if (rating > 1) {
-      Icons.star_half_rounded;
-    }
-
-    return Row(
-      children: [
-        Icon(
-          starIcon,
-          color: ColorPallete.light.yellow,
-        ),
-        Text(
-          rating.toString().substring(0, 3),
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
-      ],
     );
   }
 }

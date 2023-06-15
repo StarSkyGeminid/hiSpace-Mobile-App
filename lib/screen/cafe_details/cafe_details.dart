@@ -1,4 +1,4 @@
-import 'package:cafe_api/cafe_api.dart';
+import 'package:cafe_repository/cafe_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hispace_mobile_app/core/global/constans.dart';
@@ -9,12 +9,16 @@ import 'package:hispace_mobile_app/widget/carousel_image.dart';
 import 'bloc/cafe_details_bloc.dart';
 
 class CafeDetails extends StatelessWidget {
-  const CafeDetails({super.key});
+  const CafeDetails({super.key, required this.locationId});
+
+  final String locationId;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CafeDetailsBloc()..add(CafeDetailsInitial()),
+      create: (context) => CafeDetailsBloc(
+        RepositoryProvider.of<CafeRepository>(context),
+      )..add(CafeDetailsInitial(locationId)),
       child: const _CafeDetailsView(),
     );
   }
@@ -46,36 +50,34 @@ class _CafeDetailsViewState extends State<_CafeDetailsView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: CustomScrollView(
-          controller: scrollController,
-          slivers: [
-            CafeDetailsHeader(
+        body: BlocBuilder<CafeDetailsBloc, CafeDetailsState>(
+          builder: (context, state) {
+            return CustomScrollView(
               controller: scrollController,
-              onBack: () => Navigator.of(context).pop(),
-            ),
-            SliverToBoxAdapter(
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: BlocBuilder<CafeDetailsBloc, CafeDetailsState>(
-                  builder: (context, state) {
-                    return CarousselImage(
-                      cafePictureModel: state.cafe.galeries ??
-                          [
-                            const Galery(
-                                id: '1', url: 'https://picsum.photos/200'),
-                          ],
-                    );
-                  },
+              slivers: [
+                CafeDetailsHeader(
+                  controller: scrollController,
+                  onBack: () => Navigator.of(context).pop(),
                 ),
-              ),
-            ),
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.all(kDefaultSpacing),
-                child: CafeInformation(),
-              ),
-            )
-          ],
+                SliverToBoxAdapter(
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: CarousselImage(
+                      cafePictureModel: state.cafe.galeries ?? [],
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(kDefaultSpacing),
+                    child: CafeInformation(
+                      cafe: state.cafe,
+                    ),
+                  ),
+                )
+              ],
+            );
+          },
         ),
       ),
     );
