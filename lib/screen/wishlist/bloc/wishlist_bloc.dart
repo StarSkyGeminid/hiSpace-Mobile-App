@@ -33,7 +33,6 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
       _cafeRepository.getCafes(),
       onData: (cafes) => state.copyWith(
         status: WishlistStatus.success,
-        hasReachedMax: state.cafes.length == cafes.length,
         cafes: cafes,
       ),
       onError: (_, __) => state.copyWith(status: WishlistStatus.failure),
@@ -56,11 +55,14 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
       WishlistOnLoadMore event, Emitter<WishlistState> emit) async {
     if (isFetching) return;
 
-    if (state.hasReachedMax) return;
-
-    isFetching = true;
-    _cafeRepository.getWishlist(page: _currentPage++);
-    isFetching = false;
+    try {
+      isFetching = true;
+      _cafeRepository.getWishlist(page: _currentPage++);
+      isFetching = false;
+    } catch (e) {
+      emit(state.copyWith(status: WishlistStatus.failure));
+      isFetching = false;
+    }
   }
 
   Future<void> _onToggleFavorite(
