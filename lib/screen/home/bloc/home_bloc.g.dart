@@ -14,14 +14,16 @@ HomeState _$HomeStateFromJson(Map<String, dynamic> json) => HomeState(
               ?.map((e) => Cafe.fromJson(e as String))
               .toList() ??
           const [],
-      hasReachedMax: json['hasReachedMax'] as bool? ?? false,
+      currentLocation: json['currentLocation'] == null
+          ? const LatLng(0, 0)
+          : LatLng.fromJson(json['currentLocation'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$HomeStateToJson(HomeState instance) => <String, dynamic>{
       'status': _$HomeStatusEnumMap[instance.status]!,
       'message': instance.message,
       'cafes': instance.cafes,
-      'hasReachedMax': instance.hasReachedMax,
+      'currentLocation': instance.currentLocation,
     };
 
 const _$HomeStatusEnumMap = {

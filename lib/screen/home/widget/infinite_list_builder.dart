@@ -8,6 +8,7 @@ class InfiniteListBuilder extends StatefulWidget {
   final ScrollPhysics? scrollPhysics;
   final Widget? loadingPlaceholder;
   final bool blockController;
+  final bool? primary;
 
   const InfiniteListBuilder({
     Key? key,
@@ -18,6 +19,7 @@ class InfiniteListBuilder extends StatefulWidget {
     this.loadingPlaceholder,
     this.scrollPhysics,
     this.blockController = false,
+    this.primary,
   }) : super(key: key);
 
   @override
@@ -59,6 +61,7 @@ class _InfiniteListBuilderState extends State<InfiniteListBuilder> {
       removeTop: true,
       removeBottom: true,
       child: ListView.builder(
+        primary: widget.primary,
         physics: widget.scrollPhysics,
         controller: widget.blockController ? null : _scrollController,
         itemBuilder: widget.itemBuilder,

@@ -36,7 +36,7 @@ class _HomeScreenView extends StatefulWidget {
 }
 
 class _HomeScreenViewState extends State<_HomeScreenView> {
-  final Distance distance = Distance();
+  final Distance distance = const Distance();
 
   void _goToSearchScreen() {
     // Navigator.pushNamed(context, '/search');
@@ -58,25 +58,25 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
-    return RefreshIndicator(
-      onRefresh: () {
-        return Future.delayed(const Duration(seconds: 1), () {
-          context.read<HomeBloc>().add(const HomeOnRefresh());
-        });
-      },
-      child: DefaultTabController(
-        length: listHomeTabModel.length,
-        child: Scaffold(
-          appBar: HomeAppBar(
-            onFilterTap: _goToFilterScreen,
-            onProfileTap: _goToProfileScreen,
-            onSearchTap: _goToSearchScreen,
-            toolbarHeight: 90,
-            bottom: CafeTabBar(
-              toolbarHeight: 45,
-            ),
+    return DefaultTabController(
+      length: listHomeTabModel.length,
+      child: Scaffold(
+        appBar: HomeAppBar(
+          onFilterTap: _goToFilterScreen,
+          onProfileTap: _goToProfileScreen,
+          onSearchTap: _goToSearchScreen,
+          toolbarHeight: 90,
+          bottom: CafeTabBar(
+            toolbarHeight: 45,
           ),
-          body: BlocBuilder<HomeBloc, HomeState>(
+        ),
+        body: RefreshIndicator(
+          onRefresh: () {
+            return Future.delayed(const Duration(seconds: 1), () {
+              context.read<HomeBloc>().add(const HomeOnRefresh());
+            });
+          },
+          child: BlocBuilder<HomeBloc, HomeState>(
             buildWhen: (previous, current) =>
                 previous.cafes != current.cafes ||
                 previous.status != current.status,
@@ -97,6 +97,7 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
                       return InfiniteListBuilder(
                         key: PageStorageKey(
                             'HomeScreen_ListView_${tabModel.name}'),
+                        primary: false,
                         onFetchedMore: () => context.read<HomeBloc>().add(
                               const HomeOnFetchedMore(),
                             ),

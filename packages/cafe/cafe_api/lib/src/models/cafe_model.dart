@@ -1,6 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
@@ -152,10 +150,12 @@ class Cafe extends Equatable {
       latitude: map.containsKey('latitude') ? map['latitude'] as double : 0.0,
       owner: map.containsKey('owner') ? map['owner'] as String : '',
       galeryId: map.containsKey('galeryId') ? map['galeryId'] as String : '',
-      description: map.containsKey('description') ? map['description'] as String : '',
+      description:
+          map.containsKey('description') ? map['description'] as String : '',
       rawTime: map['time'] as String,
       rating: map['rating'] != null ? map['rating'].toDouble() : 0.0,
-      isFavorite: map.containsKey('isFavorite') ? map['isFavorite'] as bool : false,
+      isFavorite:
+          map.containsKey('isFavorite') ? map['isFavorite'] as bool : false,
       reviews: map.containsKey('reviews')
           ? List<dynamic>.from(map['reviews'] as List<dynamic>)
           : null,

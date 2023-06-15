@@ -41,7 +41,6 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
     await emit.forEach<List<Cafe>>(
       _cafeRepository.getCafes(),
       onData: (cafes) => state.copyWith(
-        hasReachedMax: state.cafes.length == cafes.length,
         status: cafes.isNotEmpty ? HomeStatus.success : HomeStatus.failure,
         currentLocation: coordinates != null
             ? LatLng(
@@ -64,11 +63,9 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
 
   Future<void> _onFetchedMore(
       HomeOnFetchedMore event, Emitter<HomeState> emit) async {
-    if (state.hasReachedMax) return;
+    // if (state.hasReachedMax) return;
 
     if (isFetching) return;
-
-    emit(state.copyWith(status: HomeStatus.loading));
 
     try {
       isFetching = true;

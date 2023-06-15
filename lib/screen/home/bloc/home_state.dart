@@ -9,7 +9,6 @@ class HomeState extends Equatable {
     this.message = '',
     this.currentTabIndex = 0,
     this.cafes = const [],
-    this.hasReachedMax = false,
     this.currentLocation = const LatLng(0, 0),
   });
 
@@ -18,8 +17,6 @@ class HomeState extends Equatable {
   final String message;
 
   final List<Cafe> cafes;
-
-  final bool hasReachedMax;
 
   final LatLng currentLocation;
 
@@ -31,7 +28,6 @@ class HomeState extends Equatable {
     String? message,
     int? currentTabIndex,
     List<Cafe>? cafes,
-    bool? hasReachedMax,
     LatLng? currentLocation,
   }) {
     return HomeState(
@@ -39,7 +35,6 @@ class HomeState extends Equatable {
       message: message ?? this.message,
       currentTabIndex: currentTabIndex ?? this.currentTabIndex,
       cafes: cafes ?? this.cafes,
-      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       currentLocation: currentLocation ?? this.currentLocation,
     );
   }
@@ -55,7 +50,6 @@ class HomeState extends Equatable {
         message,
         cafes,
         currentTabIndex,
-        hasReachedMax,
         currentLocation,
       ];
 }
