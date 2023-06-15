@@ -169,7 +169,8 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
     ));
   }
 
-  void _onNextPage(CreateCafeNextPage event, Emitter<CreateCafeState> emit) {
+  Future<void> _onNextPage(
+      CreateCafeNextPage event, Emitter<CreateCafeState> emit) async {
     emit(state.copyWith(isValidated: false));
 
     currentPage++;
@@ -198,7 +199,8 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
         userUserId: '',
       );
 
-      _cafeRepository.addLocation(cafe);
+      await _cafeRepository.addLocation(cafe);
+      emit(state.copyWith(status: CreateCafeStatus.success));
     } catch (e) {
       emit(state.copyWith(status: CreateCafeStatus.failure));
     }

@@ -70,12 +70,11 @@ class HttpCafeApi extends ICafeApi {
 
     if (data.isEmpty) return;
 
-    var listCafes = _cafeStreamController.valueOrNull ?? [];
+    List<Cafe> listCafes =
+        List<Cafe>.from(data.map((e) => Cafe.fromMap(e)).toList());
 
-    listCafes
-        .addAll(List<Cafe>.from(data.map((e) => Cafe.fromMap(e)).toList()));
-
-    _cafeStreamController.add(listCafes);
+    _cafeStreamController
+        .add([..._cafeStreamController.valueOrNull ?? [], ...listCafes]);
   }
 
   @override
@@ -127,8 +126,7 @@ class HttpCafeApi extends ICafeApi {
     if (headers == null) throw RequestFailure();
 
     headers.addEntries([
-      const MapEntry('Content-Type',
-          'multipart/form-data; boundary=<calculated when request is sent>'),
+      const MapEntry('Content-Type', 'multipart/form-data'),
     ]);
 
     var request = http.MultipartRequest('POST', uri);
@@ -152,10 +150,12 @@ class HttpCafeApi extends ICafeApi {
       var stream = http.ByteStream(imageFile.openRead());
       var length = await imageFile.length();
 
-      var multipartFile = http.MultipartFile("asdnnasjfn", stream, length,
-          filename: gallery.url.split('/').last);
+      var multipartFile =
+          http.MultipartFile("images", stream, length, filename: gallery.id);
       newList.add(multipartFile);
     }
+
+    request.files.addAll(newList);
 
     var streamedResponse = await request.send();
 
@@ -219,17 +219,14 @@ class HttpCafeApi extends ICafeApi {
   Future<bool> removeFromFavorite(String locationId) async {
     final uri = Uri.https(
       _baseUrl,
-      '/api/user/wishlist',
-      {
-        'locationId': locationId,
-      },
+      '/api/user/wishlist/$locationId',
     );
 
     var headers = getAuthorization();
 
     if (headers == null) throw RequestFailure();
 
-    final response = await _httpClient.get(uri, headers: headers);
+    final response = await _httpClient.delete(uri, headers: headers);
 
     if (response.statusCode != 200) throw RequestFailure;
 
@@ -252,15 +249,15 @@ class HttpCafeApi extends ICafeApi {
 
     final index = cafes.indexWhere((item) => item.locationId == locationId);
 
-    cafes[index] = cafes[index].copyWith(isFavorite: !cafes[index].isFavorite);
-
-    _cafeStreamController.sink.add(cafes);
-
-    if (cafes[index].isFavorite) {
+    if (!cafes[index].isFavorite) {
       await addToFavorite(locationId);
     } else {
-      // await removeFromFavorite(locationId);
+      await removeFromFavorite(locationId);
     }
+
+    cafes.removeAt(index);
+
+    _cafeStreamController.sink.add(cafes);
   }
 
   @override
@@ -333,8 +330,8 @@ class HttpCafeApi extends ICafeApi {
 
     var listCafes = _cafeStreamController.valueOrNull ?? [];
 
-    listCafes
-        .addAll(List<Cafe>.from(data.map((e) => Cafe.fromMap(e)).toList()));
+    listCafes.addAll(List<Cafe>.from(
+        data.map((e) => Cafe.fromMap(e).copyWith(isFavorite: true)).toList()));
 
     _cafeStreamController.add(listCafes);
   }
