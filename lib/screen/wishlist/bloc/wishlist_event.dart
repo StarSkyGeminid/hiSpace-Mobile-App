@@ -23,10 +23,10 @@ class WishlistOnRefresh extends WishlistEvent {}
 class WishlistOnLoadMore extends WishlistEvent {}
 
 class WishlistOnToggleFavorite extends WishlistEvent {
-  const WishlistOnToggleFavorite(this.cafe);
+  const WishlistOnToggleFavorite(this.index);
 
-  final Cafe cafe;
+  final int index;
 
   @override
-  List<Object> get props => [cafe];
+  List<Object> get props => [index];
 }

@@ -1,5 +1,4 @@
 import 'package:cafe_repository/cafe_repository.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocation_repository/geolocation_repository.dart';
@@ -36,8 +35,6 @@ class _HomeScreenView extends StatefulWidget {
 }
 
 class _HomeScreenViewState extends State<_HomeScreenView> {
-  final Distance distance = const Distance();
-
   void _goToSearchScreen() {
     // Navigator.pushNamed(context, '/search');
   }
@@ -50,14 +47,8 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
     // Navigator.pushNamed(context, '/profile');
   }
 
-  void _goToDetailsScreen(Cafe cafe) {
-    Navigator.pushNamed(context, '/cafe-details', arguments: cafe.locationId);
-  }
-
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
     return DefaultTabController(
       length: listHomeTabModel.length,
       child: Scaffold(
@@ -76,62 +67,91 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
               context.read<HomeBloc>().add(const HomeOnRefresh());
             });
           },
-          child: BlocBuilder<HomeBloc, HomeState>(
+          child: const _TabView(),
+        ),
+      ),
+    );
+  }
+}
+
+class _TabView extends StatefulWidget {
+  const _TabView();
+
+  @override
+  State<_TabView> createState() => _TabViewState();
+}
+
+class _TabViewState extends State<_TabView> {
+  final Distance distance = const Distance();
+
+  void _goToDetailsScreen(Cafe cafe) {
+    Navigator.pushNamed(context, '/cafe-details', arguments: cafe.locationId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    return TabBarView(
+      // dragStartBehavior: DragStartBehavior.down,
+      physics: const NeverScrollableScrollPhysics(),
+      children: listHomeTabModel.map(
+        (tabModel) {
+          return BlocBuilder<HomeBloc, HomeState>(
             buildWhen: (previous, current) =>
                 previous.cafes != current.cafes ||
                 previous.status != current.status,
             builder: (context, state) {
-              return TabBarView(
-                  dragStartBehavior: DragStartBehavior.down,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: listHomeTabModel.map(
-                    (tabModel) {
-                      if (state.status != HomeStatus.success ||
-                          state.cafes.isEmpty) {
-                        return _LoadingBackground(
-                          size: size,
-                          status: state.status,
-                        );
-                      }
+              if ((state.status != HomeStatus.success || state.cafes.isEmpty) &&
+                  state.status != HomeStatus.initial) {
+                return _LoadingBackground(
+                  size: size,
+                  status: state.status,
+                );
+              }
 
-                      return InfiniteListBuilder(
-                        key: PageStorageKey(
-                            'HomeScreen_ListView_${tabModel.name}'),
-                        primary: false,
-                        onFetchedMore: () => context.read<HomeBloc>().add(
-                              const HomeOnFetchedMore(),
-                            ),
-                        itemBuilder: (context, index) {
-                          final double km = distance.as(
-                              LengthUnit.Kilometer,
-                              state.currentLocation,
-                              LatLng(state.cafes[index].latitude,
-                                  state.cafes[index].longitude));
+              return InfiniteListBuilder(
+                key: PageStorageKey('HomeScreen_ListView_${tabModel.name}'),
+                primary: false,
+                onFetchedMore: () => context.read<HomeBloc>().add(
+                      const HomeOnFetchedMore(),
+                    ),
+                itemBuilder: (context, index) {
+                  final double km = distance.as(
+                      LengthUnit.Kilometer,
+                      state.currentLocation,
+                      LatLng(state.cafes[index].latitude,
+                          state.cafes[index].longitude));
 
-                          String? distanceString =
-                              state.currentLocation.longitude != 0.0 &&
-                                      state.currentLocation.latitude != 0.0
-                                  ? '${km.toStringAsFixed(1)} km'
-                                  : null;
+                  String? distanceString =
+                      state.currentLocation.longitude != 0.0 &&
+                              state.currentLocation.latitude != 0.0
+                          ? '${km.toStringAsFixed(1)} km'
+                          : null;
 
-                          return CafeCard(
-                            cafe: state.cafes[index],
-                            onToggleFavorite: () => context
-                                .read<HomeBloc>()
-                                .add(HomeOnToggleFavorite(
-                                    locationId: state.cafes[index].locationId)),
-                            onTap: () => _goToDetailsScreen(state.cafes[index]),
-                            distance: distanceString,
-                          );
-                        },
-                        itemCount: state.cafes.length,
+                  return BlocBuilder<HomeBloc, HomeState>(
+                    buildWhen: (previous, current) =>
+                        previous.cafes[index] != current.cafes[index] ||
+                        previous.cafes[index].isFavorite !=
+                            current.cafes[index].isFavorite,
+                    builder: (context, state) {
+                      return CafeCard(
+                        cafe: state.cafes[index],
+                        onToggleFavorite: () => context
+                            .read<HomeBloc>()
+                            .add(HomeOnToggleFavorite(index: index)),
+                        onTap: () => _goToDetailsScreen(state.cafes[index]),
+                        distance: distanceString,
                       );
                     },
-                  ).toList());
+                  );
+                },
+                itemCount: state.cafes.length,
+              );
             },
-          ),
-        ),
-      ),
+          );
+        },
+      ).toList(),
     );
   }
 }

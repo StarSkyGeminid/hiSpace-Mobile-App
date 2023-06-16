@@ -9,8 +9,6 @@ import 'package:hispace_mobile_app/formz_models/cafe_description.dart';
 import 'package:hispace_mobile_app/formz_models/cafe_name.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../model/open_time.dart';
-
 part 'create_cafe_event.dart';
 part 'create_cafe_state.dart';
 

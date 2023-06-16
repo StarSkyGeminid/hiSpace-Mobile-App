@@ -62,16 +62,16 @@ void main() {
         when(httpClient.get(baseUri, headers: headers))
             .thenAnswer((_) async => http.Response('', 404));
 
-        await expectLater(
-            apiClient.fetchCafes(), throwsA(isA<RequestFailure>()));
+        await expectLater(apiClient.fetchCafes(type: FetchType.recomendation),
+            throwsA(isA<RequestFailure>()));
       });
 
       test('throws ResponseFailure on empty response', () async {
         when(httpClient.get(baseUri, headers: headers))
             .thenAnswer((_) async => http.Response('', 200));
 
-        await expectLater(
-            apiClient.fetchCafes(), throwsA(isA<ResponseFailure>()));
+        await expectLater(apiClient.fetchCafes(type: FetchType.recomendation),
+            throwsA(isA<ResponseFailure>()));
       });
 
       test('makes correct http request without profile picture', () async {
@@ -79,11 +79,10 @@ void main() {
 {
  
 }''';
-
         when(httpClient.get(baseUri, headers: headers))
             .thenAnswer((_) async => http.Response(result, 200));
 
-        await apiClient.fetchCafes();
+        await apiClient.fetchCafes(type: FetchType.recomendation);
 
         expect(
           apiClient.getCafes(),

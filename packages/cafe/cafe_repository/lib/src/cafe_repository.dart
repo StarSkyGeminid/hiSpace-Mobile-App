@@ -9,9 +9,11 @@ class CafeRepository {
 
   Stream<List<Cafe>> getCafes() => _cafeApi.getCafes();
 
-  Future<void> fetchCafes({int page = 0}) => _cafeApi.fetchCafes(page: page);
+  Future<void> fetchCafes({int page = 0, required FetchType type}) =>
+      _cafeApi.fetchCafes(page: page, type: type);
 
-  Future<List<Cafe>?> getCafeByOwner(String email) => _cafeApi.getCafeByOwner(email);
+  Future<List<Cafe>?> getCafeByOwner(String email) =>
+      _cafeApi.getCafeByOwner(email);
 
   Future<Cafe> getCafeByLocationId(String locationId) =>
       _cafeApi.getCafeByLocationId(locationId);
@@ -26,6 +28,6 @@ class CafeRepository {
 
   Future<void> search(String query) => _cafeApi.search(query);
 
-  Future<void> toggleFavorite(String locationId) =>
-      _cafeApi.toggleFavorite(locationId);
+  Future<void> toggleFavorite(int index) =>
+      _cafeApi.toggleFavorite(index);
 }

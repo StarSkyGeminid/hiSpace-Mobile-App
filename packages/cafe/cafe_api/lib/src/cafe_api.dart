@@ -2,6 +2,18 @@ import 'package:flutter/foundation.dart';
 
 import 'models/models.dart';
 
+enum FetchType { recomendation, favorite, rating }
+
+extension FetchTypeExtension on FetchType {
+  String get text => ['recomendation', 'favorite', 'rating'][index];
+
+  bool get isRecomendation => this == FetchType.recomendation;
+
+  bool get isFavorite => this == FetchType.favorite;
+
+  bool get isRating => this == FetchType.rating;
+}
+
 /// {@template todos_api}
 /// The interface for an API that provides access to a list of cafes.
 /// {@endtemplate}
@@ -10,7 +22,7 @@ abstract class ICafeApi {
 
   Stream<List<Cafe>> getCafes();
 
-  Future<void> fetchCafes({int page = 0});
+  Future<void> fetchCafes({int page = 0, required FetchType type});
 
   Future<void> addLocation(Cafe cafe);
 
@@ -32,7 +44,7 @@ abstract class ICafeApi {
   @protected
   Future<bool> removeFromFavorite(String locationId);
 
-  Future<void> toggleFavorite(String locationId);
+  Future<void> toggleFavorite(int index);
 
   // Future<List<Cafe>> filter(String query);
 }

@@ -67,8 +67,12 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
 
   Future<void> _onToggleFavorite(
       WishlistOnToggleFavorite event, Emitter<WishlistState> emit) async {
-    emit(state.copyWith(status: WishlistStatus.loading));
+    try {
+      emit(state.copyWith(status: WishlistStatus.initial));
 
-    _cafeRepository.toggleFavorite(event.cafe.locationId);
+      _cafeRepository.toggleFavorite(event.index);
+    } catch (e) {
+      emit(state.copyWith(status: WishlistStatus.failure));
+    }
   }
 }

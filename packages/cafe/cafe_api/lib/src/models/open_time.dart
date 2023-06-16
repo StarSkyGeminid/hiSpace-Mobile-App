@@ -110,6 +110,18 @@ class OpenTime {
   }
 
   String toJson() => json.encode(toMap());
+
+  bool isValid() {
+    bool status = monday?.isValid() ?? true;
+    status = tuesday?.isValid() ?? status;
+    status = wednesday?.isValid() ?? status;
+    status = thursday?.isValid() ?? status;
+    status = friday?.isValid() ?? status;
+    status = saturday?.isValid() ?? status;
+    status = sunday?.isValid() ?? status;
+
+    return status;
+  }
 }
 
 class Day {
@@ -147,5 +159,9 @@ class Day {
       'open': DateFormat('HH:mm').format(openTime),
       'close': DateFormat('HH:mm').format(closeTime),
     };
+  }
+
+  bool isValid() {
+    return open != null && close != null || open == null && close == null;
   }
 }

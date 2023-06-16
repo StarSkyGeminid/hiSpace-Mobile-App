@@ -47,6 +47,9 @@ class _WishlistScreenViewState extends State<WishlistScreenView> {
         centerTitle: true,
       ),
       body: BlocBuilder<WishlistBloc, WishlistState>(
+        buildWhen: (previous, current) =>
+            previous.cafes.length != current.cafes.length ||
+            previous.status != current.status,
         builder: (context, state) {
           if (state.status == WishlistStatus.loading ||
               state.status == WishlistStatus.success && state.cafes.isEmpty) {
@@ -87,12 +90,16 @@ class _WishlistScreenViewState extends State<WishlistScreenView> {
                 ),
             itemBuilder: (context, index) =>
                 BlocBuilder<WishlistBloc, WishlistState>(
+              buildWhen: (previous, current) =>
+                  previous.cafes[index] != current.cafes[index] ||
+                  previous.cafes[index].isFavorite !=
+                      current.cafes[index].isFavorite,
               builder: (context, state) {
                 return CafeCard(
                   cafe: state.cafes[index],
                   onToggleFavorite: () => context
                       .read<WishlistBloc>()
-                      .add(WishlistOnToggleFavorite(state.cafes[index])),
+                      .add(WishlistOnToggleFavorite(index)),
                   onTap: () => _goToDetailsScreen(state.cafes[index]),
                 );
               },

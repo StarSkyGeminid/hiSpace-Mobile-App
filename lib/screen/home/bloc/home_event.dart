@@ -29,10 +29,10 @@ class HomeOnTabChanged extends HomeEvent {
 }
 
 class HomeOnToggleFavorite extends HomeEvent {
-  const HomeOnToggleFavorite({required this.locationId});
+  const HomeOnToggleFavorite({required this.index});
 
-  final String locationId;
+  final int index;
 
   @override
-  List<Object> get props => [locationId];
+  List<Object> get props => [index];
 }

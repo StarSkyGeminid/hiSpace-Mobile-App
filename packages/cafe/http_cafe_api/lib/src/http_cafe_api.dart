@@ -35,7 +35,7 @@ class HttpCafeApi extends ICafeApi {
   Stream<List<Cafe>> getCafes() => _cafeStreamController.asBroadcastStream();
 
   @override
-  Future<void> fetchCafes({int page = 0}) async {
+  Future<void> fetchCafes({int page = 0, required FetchType type}) async {
     if (page == 0 && _cafeStreamController.valueOrNull != null) {
       _cafeStreamController.add([]);
     }
@@ -45,6 +45,7 @@ class HttpCafeApi extends ICafeApi {
       '/api/location',
       {
         'page': '$page',
+        if (!type.isRecomendation) 'sortBy': type.text,
       },
     );
 
@@ -202,6 +203,8 @@ class HttpCafeApi extends ICafeApi {
     final response =
         await _httpClient.post(uri, headers: headers, body: jsonEncode(body));
 
+    if (response.statusCode == 400) return false;
+
     if (response.statusCode != 201) throw RequestFailure;
 
     if (response.body.isEmpty) throw ResponseFailure();
@@ -228,6 +231,8 @@ class HttpCafeApi extends ICafeApi {
 
     final response = await _httpClient.delete(uri, headers: headers);
 
+    if (response.statusCode == 400) return false;
+
     if (response.statusCode != 200) throw RequestFailure;
 
     if (response.body.isEmpty) throw ResponseFailure();
@@ -242,22 +247,25 @@ class HttpCafeApi extends ICafeApi {
   }
 
   @override
-  Future<void> toggleFavorite(String locationId) async {
-    var cafes = _cafeStreamController.value;
+  Future<void> toggleFavorite(int index) async {
+    try {
+      List<Cafe> cafes = _cafeStreamController.value;
 
-    if (cafes.isEmpty) return;
+      if (cafes.isEmpty) return;
 
-    final index = cafes.indexWhere((item) => item.locationId == locationId);
+      if (!cafes[index].isFavorite) {
+        await addToFavorite(cafes[index].locationId);
+      } else {
+        await removeFromFavorite(cafes[index].locationId);
+      }
+      
+      cafes[index] =
+          cafes[index].copyWith(isFavorite: !cafes[index].isFavorite);
 
-    if (!cafes[index].isFavorite) {
-      await addToFavorite(locationId);
-    } else {
-      await removeFromFavorite(locationId);
+      _cafeStreamController.add(cafes);
+    } catch (e) {
+      rethrow;
     }
-
-    cafes.removeAt(index);
-
-    _cafeStreamController.sink.add(cafes);
   }
 
   @override

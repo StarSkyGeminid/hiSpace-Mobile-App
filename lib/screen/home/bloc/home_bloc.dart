@@ -1,3 +1,4 @@
+import 'package:cafe_api/cafe_api.dart';
 import 'package:cafe_repository/cafe_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocation_repository/geolocation_repository.dart';
@@ -34,7 +35,9 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
   Future<void> _onInitial(HomeOnInitial event, Emitter<HomeState> emit) async {
     emit(state.copyWith(status: HomeStatus.loading));
 
-    await _cafeRepository.fetchCafes(page: currentPageIndex++);
+    await _cafeRepository.fetchCafes(
+        page: currentPageIndex++,
+        type: FetchType.values[state.currentTabIndex]);
 
     final coordinates = await _geoLocationRepository.getCurrentPosition();
 
@@ -58,18 +61,19 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
 
   Future<void> _onRefresh(HomeOnRefresh event, Emitter<HomeState> emit) async {
     currentPageIndex = 0;
-    _cafeRepository.fetchCafes(page: currentPageIndex);
+    _cafeRepository.fetchCafes(
+        page: currentPageIndex, type: FetchType.values[state.currentTabIndex]);
   }
 
   Future<void> _onFetchedMore(
       HomeOnFetchedMore event, Emitter<HomeState> emit) async {
-    // if (state.hasReachedMax) return;
-
     if (isFetching) return;
 
     try {
       isFetching = true;
-      await _cafeRepository.fetchCafes(page: currentPageIndex++);
+      await _cafeRepository.fetchCafes(
+          page: currentPageIndex++,
+          type: FetchType.values[state.currentTabIndex]);
       isFetching = false;
     } catch (e) {
       emit(state.copyWith(status: HomeStatus.failure));
@@ -79,11 +83,14 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
 
   Future<void> _onTabChanged(
       HomeOnTabChanged event, Emitter<HomeState> emit) async {
+    emit(state.copyWith(
+        status: HomeStatus.loading, currentTabIndex: event.index));
     currentPageIndex = 0;
-    emit(state.copyWith(status: HomeStatus.loading));
 
     try {
-      _cafeRepository.fetchCafes(page: currentPageIndex);
+      _cafeRepository.fetchCafes(
+          page: currentPageIndex,
+          type: FetchType.values[state.currentTabIndex]);
     } catch (e) {
       emit(state.copyWith(status: HomeStatus.failure));
     }
@@ -91,10 +98,10 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
 
   Future<void> _onToggleFavorite(
       HomeOnToggleFavorite event, Emitter<HomeState> emit) async {
-    emit(state.copyWith(status: HomeStatus.loading));
-
+      emit(state.copyWith(status: HomeStatus.initial));
+    
     try {
-      _cafeRepository.toggleFavorite(event.locationId);
+      _cafeRepository.toggleFavorite(event.index);
     } catch (e) {
       emit(state.copyWith(status: HomeStatus.failure));
     }
