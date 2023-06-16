@@ -136,7 +136,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
   void _onOpenTimeChanged(
       CreateCafeOpenTimeChanged event, Emitter<CreateCafeState> emit) {
     emit(state.copyWith(
-      isValidated: true,
+      isValidated: event.openTime.isValid(),
       openTime: event.openTime,
     ));
   }
