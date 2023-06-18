@@ -8,6 +8,7 @@ import 'package:hispace_mobile_app/bloc/authentication/authentication_bloc.dart'
 import 'package:hispace_mobile_app/config/routes/route_generator.dart';
 import 'package:hispace_mobile_app/config/theme/color_scheme.dart';
 import 'package:user_repository/user_repository.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../../config/theme/light_theme_data.dart';
 
@@ -86,6 +87,11 @@ class _AppViewState extends State<AppView> {
     return MaterialApp(
       navigatorKey: _navigatorKey,
       title: 'hiSpace',
+      localizationsDelegates: <LocalizationsDelegate<Object>>[
+        // ... app-specific localization delegate(s) here
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
       builder: (context, child) {
         return BlocListener<AuthenticationBloc, AuthenticationState>(
           listenWhen: (previous, current) => previous.status != current.status,
