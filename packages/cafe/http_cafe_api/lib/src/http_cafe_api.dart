@@ -35,7 +35,12 @@ class HttpCafeApi extends ICafeApi {
   Stream<List<Cafe>> getCafes() => _cafeStreamController.asBroadcastStream();
 
   @override
-  Future<void> fetchCafes({int page = 0, required FetchType type}) async {
+  Future<void> fetchCafes({
+    int page = 0,
+    required FetchType type,
+    double? latitude,
+    double? longitude,
+  }) async {
     if (page == 0 && _cafeStreamController.valueOrNull != null) {
       _cafeStreamController.add([]);
     }
@@ -46,6 +51,8 @@ class HttpCafeApi extends ICafeApi {
       {
         'page': '$page',
         if (!type.isRecomendation) 'sortBy': type.text,
+        if (latitude != null && longitude != null) 'latitude': '$latitude',
+        if (latitude != null && longitude != null) 'longitude': '$longitude',
       },
     );
 
@@ -211,16 +218,25 @@ class HttpCafeApi extends ICafeApi {
 
       if (cafes.isEmpty) return;
 
-      if (!cafes[index].isFavorite) {
-        await addToFavorite(cafes[index].locationId);
-      } else {
-        await removeFromFavorite(cafes[index].locationId);
-      }
-
       cafes[index] =
           cafes[index].copyWith(isFavorite: !cafes[index].isFavorite);
 
       _cafeStreamController.add(cafes);
+
+      bool status = false;
+
+      if (cafes[index].isFavorite) {
+        status = await addToFavorite(cafes[index].locationId);
+      } else {
+        status = await removeFromFavorite(cafes[index].locationId);
+      }
+
+      if (!status) {
+        cafes[index] =
+            cafes[index].copyWith(isFavorite: !cafes[index].isFavorite);
+
+        _cafeStreamController.add(cafes);
+      }
     } catch (e) {
       rethrow;
     }

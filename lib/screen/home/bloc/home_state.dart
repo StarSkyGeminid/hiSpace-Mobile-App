@@ -9,7 +9,7 @@ class HomeState extends Equatable {
     this.message = '',
     this.currentTabIndex = 0,
     this.cafes = const [],
-    this.currentLocation = const LatLng(0, 0),
+    this.currentLocation,
   });
 
   final HomeStatus status;
@@ -18,7 +18,7 @@ class HomeState extends Equatable {
 
   final List<Cafe> cafes;
 
-  final LatLng currentLocation;
+  final LatLng? currentLocation;
 
   @JsonKey(includeFromJson: false)
   final int currentTabIndex;
@@ -50,6 +50,5 @@ class HomeState extends Equatable {
         message,
         cafes,
         currentTabIndex,
-        currentLocation,
       ];
 }

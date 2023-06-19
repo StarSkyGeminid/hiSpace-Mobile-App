@@ -155,8 +155,11 @@ class Cafe extends Equatable {
           map.containsKey('description') ? map['description'] as String : '',
       rawTime: map['time'] as String,
       rating: map['rating'] != null ? map['rating'].toDouble() : 0.0,
-      isFavorite:
-          map.containsKey('isFavorite') ? map['isFavorite'] as bool : false,
+      isFavorite: map.containsKey('favorite')
+          ? map['favorite'] as int == 1
+              ? true
+              : false
+          : false,
       reviews: map.containsKey('reviews')
           ? List<dynamic>.from(map['reviews'] as List<dynamic>)
           : null,

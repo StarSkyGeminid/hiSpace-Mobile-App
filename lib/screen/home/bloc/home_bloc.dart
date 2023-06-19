@@ -35,11 +35,14 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
   Future<void> _onInitial(HomeOnInitial event, Emitter<HomeState> emit) async {
     emit(state.copyWith(status: HomeStatus.loading));
 
-    await _cafeRepository.fetchCafes(
-        page: currentPageIndex++,
-        type: FetchType.values[state.currentTabIndex]);
-
     final coordinates = await _geoLocationRepository.getCurrentPosition();
+
+    await _cafeRepository.fetchCafes(
+      page: currentPageIndex++,
+      type: FetchType.values[state.currentTabIndex],
+      latitude: coordinates?.latitude,
+      longitude: coordinates?.longitude,
+    );
 
     await emit.forEach<List<Cafe>>(
       _cafeRepository.getCafes(),
@@ -72,8 +75,11 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
     try {
       isFetching = true;
       await _cafeRepository.fetchCafes(
-          page: currentPageIndex++,
-          type: FetchType.values[state.currentTabIndex]);
+        page: currentPageIndex++,
+        type: FetchType.values[state.currentTabIndex],
+        latitude: state.currentLocation?.latitude,
+        longitude: state.currentLocation?.longitude,
+      );
       isFetching = false;
     } catch (e) {
       emit(state.copyWith(status: HomeStatus.failure));
@@ -89,8 +95,11 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
 
     try {
       _cafeRepository.fetchCafes(
-          page: currentPageIndex,
-          type: FetchType.values[state.currentTabIndex]);
+        page: currentPageIndex,
+        type: FetchType.values[state.currentTabIndex],
+        latitude: state.currentLocation?.latitude,
+        longitude: state.currentLocation?.longitude,
+      );
     } catch (e) {
       emit(state.copyWith(status: HomeStatus.failure));
     }
@@ -98,8 +107,8 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
 
   Future<void> _onToggleFavorite(
       HomeOnToggleFavorite event, Emitter<HomeState> emit) async {
-      emit(state.copyWith(status: HomeStatus.initial));
-    
+    emit(state.copyWith(status: HomeStatus.initial));
+
     try {
       _cafeRepository.toggleFavorite(event.index);
     } catch (e) {

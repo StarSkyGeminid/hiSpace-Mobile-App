@@ -22,7 +22,12 @@ abstract class ICafeApi {
 
   Stream<List<Cafe>> getCafes();
 
-  Future<void> fetchCafes({int page = 0, required FetchType type});
+  Future<void> fetchCafes({
+    int page = 0,
+    required FetchType type,
+    double? latitude,
+    double? longitude,
+  });
 
   Future<String> addLocation(Cafe cafe);
 

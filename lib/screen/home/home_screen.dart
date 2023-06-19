@@ -117,17 +117,17 @@ class _TabViewState extends State<_TabView> {
                       const HomeOnFetchedMore(),
                     ),
                 itemBuilder: (context, index) {
-                  final double km = distance.as(
-                      LengthUnit.Kilometer,
-                      state.currentLocation,
-                      LatLng(state.cafes[index].latitude,
-                          state.cafes[index].longitude));
+                  double? km;
+                  if (state.currentLocation != null) {
+                    km = distance.as(
+                        LengthUnit.Kilometer,
+                        state.currentLocation!,
+                        LatLng(state.cafes[index].latitude,
+                            state.cafes[index].longitude));
+                  }
 
                   String? distanceString =
-                      state.currentLocation.longitude != 0.0 &&
-                              state.currentLocation.latitude != 0.0
-                          ? '${km.toStringAsFixed(1)} km'
-                          : null;
+                      km != null ? '${km.toStringAsFixed(1)} km' : null;
 
                   return BlocBuilder<HomeBloc, HomeState>(
                     buildWhen: (previous, current) =>

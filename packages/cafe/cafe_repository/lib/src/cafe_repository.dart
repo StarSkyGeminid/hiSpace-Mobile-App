@@ -9,8 +9,18 @@ class CafeRepository {
 
   Stream<List<Cafe>> getCafes() => _cafeApi.getCafes();
 
-  Future<void> fetchCafes({int page = 0, required FetchType type}) =>
-      _cafeApi.fetchCafes(page: page, type: type);
+  Future<void> fetchCafes({
+    int page = 0,
+    required FetchType type,
+    double? latitude,
+    double? longitude,
+  }) =>
+      _cafeApi.fetchCafes(
+        page: page,
+        type: type,
+        latitude: latitude,
+        longitude: longitude,
+      );
 
   Future<List<Cafe>?> getCafeByOwner(String email) =>
       _cafeApi.getCafeByOwner(email);
