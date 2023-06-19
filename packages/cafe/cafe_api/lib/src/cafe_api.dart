@@ -24,7 +24,11 @@ abstract class ICafeApi {
 
   Future<void> fetchCafes({int page = 0, required FetchType type});
 
-  Future<void> addLocation(Cafe cafe);
+  Future<String> addLocation(Cafe cafe);
+
+  Future<void> addMenu(List<Menu> menus, String locationId);
+
+  Future<void> addFacility(List<Facility> facilities, String locationId);
 
   Future<void> remove(Cafe cafe);
 

@@ -151,7 +151,7 @@ class _DescriptionFormViewState extends State<_DescriptionFormView> {
         ),
         const SizedBox(height: kDefaultSpacing),
         Text(
-          'Kapan Saja Cafemu Buka?',
+          'Kapan saja cafemu buka?',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: kDefaultSpacing / 2),

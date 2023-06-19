@@ -21,7 +21,7 @@ class CustomTextFormField extends StatelessWidget {
   final String? errorText;
   final void Function()? onTap;
   final bool readOnly;
-  final int maxLines;
+  final int? maxLines;
   final double borderWidth;
   final TextStyle? style;
   final TextCapitalization textCapitalization;
@@ -94,37 +94,58 @@ class CustomTextFormField extends StatelessWidget {
       readOnly: readOnly,
       onEditingComplete: onEditingComplete,
       cursorColor: Theme.of(context).colorScheme.primary,
-      decoration: decoration ??
-          InputDecoration(
-            prefixIcon: prefixIcon,
-            suffixIcon: suffixIcon,
-            isDense: true,
-            contentPadding: const EdgeInsets.fromLTRB(16, 10, 10, 10),
-            hintText: hintText,
-            errorText: errorText,
-            errorStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.red,
-                ),
-            hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: const Color(0xFF969A9D),
-                ),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(radius)),
-                borderSide: BorderSide(
-                    color: const Color(0xFF707070), width: borderWidth)),
-            enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(radius)),
-                borderSide: BorderSide(
-                    color: const Color(0xFF707070), width: borderWidth)),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(radius)),
-                borderSide: BorderSide(
-                    color: const Color(0xFF707070), width: borderWidth)),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(radius)),
-              borderSide: BorderSide(color: Colors.red, width: borderWidth),
+      decoration: InputDecoration(
+        prefixIcon: prefixIcon,
+        suffixIcon: suffixIcon,
+        isDense: true,
+        contentPadding: const EdgeInsets.fromLTRB(16, 10, 10, 10),
+        hintText: hintText,
+        errorText: errorText,
+        errorStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Colors.red,
             ),
-          ),
+        hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: const Color(0xFF969A9D),
+            ),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(radius)),
+            borderSide:
+                BorderSide(color: const Color(0xFF707070), width: borderWidth)),
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(radius)),
+            borderSide:
+                BorderSide(color: const Color(0xFF707070), width: borderWidth)),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(radius)),
+            borderSide:
+                BorderSide(color: const Color(0xFF707070), width: borderWidth)),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(radius)),
+          borderSide: BorderSide(color: Colors.red, width: borderWidth),
+        ),
+      ).copyWith(
+        prefixIconConstraints: decoration?.prefixIconConstraints,
+        prefix: decoration?.prefix,
+        prefixText: decoration?.prefixText,
+        prefixStyle: decoration?.prefixStyle,
+        suffix: decoration?.suffix,
+        suffixText: decoration?.suffixText,
+        suffixStyle: decoration?.suffixStyle,
+        counter: decoration?.counter,
+        counterText: decoration?.counterText,
+        counterStyle: decoration?.counterStyle,
+        filled: decoration?.filled,
+        fillColor: decoration?.fillColor,
+        focusColor: decoration?.focusColor,
+        hoverColor: decoration?.hoverColor,
+        errorStyle: decoration?.errorStyle,
+        errorBorder: decoration?.errorBorder,
+        focusedBorder: decoration?.focusedBorder,
+        enabledBorder: decoration?.enabledBorder,
+        border: decoration?.border,
+        contentPadding: decoration?.contentPadding,
+        isDense: decoration?.isDense,
+      ),
       style: style ?? Theme.of(context).textTheme.bodyMedium,
     );
   }

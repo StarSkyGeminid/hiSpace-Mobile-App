@@ -2,6 +2,7 @@ import 'package:cafe_api/cafe_api.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:http_cafe_api/src/exception.dart';
 import 'package:http_cafe_api/src/http_cafe_api.dart';
 import 'package:local_data/local_data.dart';
 import 'package:mockito/annotations.dart';

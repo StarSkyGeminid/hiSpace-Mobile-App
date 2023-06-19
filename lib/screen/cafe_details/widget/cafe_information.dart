@@ -60,10 +60,20 @@ class CafeInformation extends StatelessWidget {
           ],
         ),
         Divider(color: ColorPallete.light.grey3),
+        Text('Deskripsi', style: Theme.of(context).textTheme.titleSmall),
         Text(
           cafe.description,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
+        Divider(color: ColorPallete.light.grey3),
+        if (cafe.menus != null)
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: cafe.menus!.length,
+            itemBuilder: (context, index) {
+              return Text(cafe.menus![index].name);
+            },
+          ),
       ],
     );
   }

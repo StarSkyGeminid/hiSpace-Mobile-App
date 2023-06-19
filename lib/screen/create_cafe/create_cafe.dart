@@ -3,14 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocation_repository/geolocation_repository.dart';
 import 'package:hispace_mobile_app/core/global/constans.dart';
+import 'package:hispace_mobile_app/screen/create_cafe/page/done.dart';
+import 'package:hispace_mobile_app/screen/create_cafe/page/menu.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 import 'bloc/create_cafe_bloc.dart';
 import 'page/description.dart';
+import 'page/facility.dart';
 import 'page/image.dart';
 import 'page/location.dart';
 import 'page/name.dart';
 import 'page/open_hour.dart';
+import 'page/upload.dart';
 
 class CreateCafe extends StatelessWidget {
   const CreateCafe({super.key});
@@ -21,7 +25,7 @@ class CreateCafe extends StatelessWidget {
       create: (context) => CreateCafeBloc(
         RepositoryProvider.of<GeoLocationRepository>(context),
         RepositoryProvider.of<CafeRepository>(context),
-      ),
+      )..add(CreateCafeInitial()),
       child: const CreateCafeView(),
     );
   }
@@ -41,10 +45,10 @@ class _CreateCafeViewState extends State<CreateCafeView> {
     const LocationForm(),
     const OpenHourForm(),
     const ImageForm(),
-    const ImageForm(),
+    const MenuForm(),
+    const FacilityForm(),
+    const UploadData(),
   ];
-
-  int currentPage = 0;
 
   late PageController _controller;
 
@@ -52,7 +56,7 @@ class _CreateCafeViewState extends State<CreateCafeView> {
   void initState() {
     super.initState();
 
-    _controller = PageController(initialPage: currentPage);
+    _controller = PageController(initialPage: 0);
   }
 
   @override
@@ -64,31 +68,57 @@ class _CreateCafeViewState extends State<CreateCafeView> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Buat cafe'),
-          automaticallyImplyLeading: false,
-        ),
-        body: PageView.builder(
-          physics: const NeverScrollableScrollPhysics(),
-          controller: _controller,
-          itemBuilder: (context, index) => _pages[index],
-        ),
-        bottomNavigationBar: _BottomMenu(
-          onNext: () {
-            _controller.nextPage(
+      child: BlocConsumer<CreateCafeBloc, CreateCafeState>(
+        listenWhen: (previous, current) =>
+            previous.currentPage != current.currentPage,
+        listener: (context, state) {
+          if (state.currentPage != _pages.length - 1) {
+            _controller.animateToPage(
+              state.currentPage,
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
             );
-            setState(() {
-              currentPage++;
-            });
-
-            BlocProvider.of<CreateCafeBloc>(context).add(
-              CreateCafeNextPage(),
+          } else {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => DoneFilling(
+                  isSuccess: state.status != CreateCafeStatus.failure,
+                ),
+              ),
             );
-          },
-          progress: (currentPage + 1) / _pages.length,
+          }
+        },
+        buildWhen: (previous, current) =>
+            previous.currentPage != current.currentPage ||
+            previous.status != current.status,
+        builder: (context, state) => Scaffold(
+          appBar: AppBar(
+            title: const Text('Buat cafe'),
+            automaticallyImplyLeading: false,
+          ),
+          body: PageView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: _controller,
+            itemBuilder: (context, index) => _pages[index],
+          ),
+          bottomNavigationBar: state.currentPage == _pages.length - 2
+              ? null
+              : state.currentPage < _pages.length - 1
+                  ? _BottomMenu(
+                      showPrevious: state.currentPage != 0,
+                      onPrevious: () {
+                        BlocProvider.of<CreateCafeBloc>(context).add(
+                          CreateCafePreviousPage(),
+                        );
+                      },
+                      onNext: () {
+                        BlocProvider.of<CreateCafeBloc>(context).add(
+                          CreateCafeNextPage(),
+                        );
+                      },
+                      progress: (state.currentPage + 1) / _pages.length,
+                    )
+                  : const _DoneButton(),
         ),
       ),
     );
@@ -96,9 +126,18 @@ class _CreateCafeViewState extends State<CreateCafeView> {
 }
 
 class _BottomMenu extends StatelessWidget {
-  const _BottomMenu({required this.onNext, required this.progress});
+  const _BottomMenu({
+    required this.onNext,
+    required this.progress,
+    this.onPrevious,
+    this.showPrevious = true,
+  });
 
   final VoidCallback onNext;
+
+  final VoidCallback? onPrevious;
+
+  final bool showPrevious;
 
   final double progress;
 
@@ -127,25 +166,77 @@ class _BottomMenu extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 0),
           ),
           const Spacer(),
-          Align(
-            alignment: Alignment.centerRight,
-            child: BlocBuilder<CreateCafeBloc, CreateCafeState>(
-              buildWhen: (previous, current) =>
-                  previous.isValidated != current.isValidated,
-              builder: (context, state) {
-                return ElevatedButton(
-                  style: ElevatedButton.styleFrom(shape: const CircleBorder()),
-                  onPressed: state.isValidated ? onNext : null,
-                  child: const Padding(
-                    padding: EdgeInsets.all(kDefaultSpacing * 0.7),
-                    child: Icon(Icons.arrow_forward_ios_rounded),
-                  ),
-                );
-              },
-            ),
+          Row(
+            mainAxisAlignment: showPrevious
+                ? MainAxisAlignment.spaceBetween
+                : MainAxisAlignment.end,
+            children: [
+              if (showPrevious)
+                BlocBuilder<CreateCafeBloc, CreateCafeState>(
+                  buildWhen: (previous, current) =>
+                      previous.isValidated != current.isValidated,
+                  builder: (context, state) {
+                    return ElevatedButton(
+                      style:
+                          ElevatedButton.styleFrom(shape: const CircleBorder()),
+                      onPressed: onPrevious,
+                      child: const Padding(
+                        padding: EdgeInsets.all(kDefaultSpacing * 0.7),
+                        child: Icon(Icons.arrow_back_ios_rounded),
+                      ),
+                    );
+                  },
+                ),
+              BlocBuilder<CreateCafeBloc, CreateCafeState>(
+                buildWhen: (previous, current) =>
+                    previous.isValidated != current.isValidated,
+                builder: (context, state) {
+                  return ElevatedButton(
+                    style:
+                        ElevatedButton.styleFrom(shape: const CircleBorder()),
+                    onPressed: state.isValidated ? onNext : null,
+                    child: const Padding(
+                      padding: EdgeInsets.all(kDefaultSpacing * 0.7),
+                      child: Icon(Icons.arrow_forward_ios_rounded),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
           const Spacer(),
         ],
+      ),
+    );
+  }
+}
+
+class _DoneButton extends StatelessWidget {
+  const _DoneButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 80,
+      child: Padding(
+        padding: const EdgeInsets.all(kDefaultSpacing / 2),
+        child: BlocBuilder<CreateCafeBloc, CreateCafeState>(
+          builder: (context, state) {
+            return ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: state.status != CreateCafeStatus.success
+                  ? const Padding(
+                      padding: EdgeInsets.all(kDefaultSpacing * 0.8),
+                      child: Text('Selesai'),
+                    )
+                  : const SizedBox(
+                      height: kDefaultSpacing,
+                      width: kDefaultSpacing,
+                      child: CircularProgressIndicator.adaptive(),
+                    ),
+            );
+          },
+        ),
       ),
     );
   }

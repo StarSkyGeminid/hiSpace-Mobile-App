@@ -22,7 +22,7 @@ class _ImageFormState extends State<ImageForm> {
 
     ImagePicker picker = ImagePicker();
 
-    final images = await picker.pickMultiImage();
+    final images = await picker.pickMultiImage(imageQuality: 40);
 
     if (images.isEmpty) return;
 
@@ -91,7 +91,7 @@ class _ImageFormState extends State<ImageForm> {
               right: kDefaultSpacing,
             ),
             child: Text(
-              'Tambahkan Foto-foto Cafemu',
+              'Tambahkan foto-foto cafemu',
               style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
@@ -109,10 +109,10 @@ class _ImageFormState extends State<ImageForm> {
             ),
           ),
         ),
-       
         BlocBuilder<CreateCafeBloc, CreateCafeState>(
           buildWhen: (previous, current) =>
-              previous.images.length != current.images.length,
+              previous.images.length != current.images.length ||
+              previous.status != current.status,
           builder: (context, state) {
             return SliverPadding(
               padding: const EdgeInsets.symmetric(
@@ -132,7 +132,10 @@ class _ImageFormState extends State<ImageForm> {
                       onTap: _pickImage,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.05),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurfaceVariant
+                              .withOpacity(0.05),
                           border: Border.all(
                             color: Theme.of(context).primaryColor,
                           ),
@@ -144,7 +147,6 @@ class _ImageFormState extends State<ImageForm> {
                       ),
                     );
                   }
-
 
                   return InkWell(
                     onLongPress: () => _requestDeleteImage(index),

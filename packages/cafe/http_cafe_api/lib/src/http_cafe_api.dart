@@ -1,14 +1,12 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:cafe_api/cafe_api.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_cafe_api/src/cafe_owner.dart';
 import 'package:local_data/local_data.dart';
 import 'package:rxdart/subjects.dart';
 
-class RequestFailure implements Exception {}
-
-class ResponseFailure implements Exception {}
+import 'exception.dart';
 
 class HttpCafeApi extends ICafeApi {
   final LocalData _localData;
@@ -19,13 +17,18 @@ class HttpCafeApi extends ICafeApi {
 
   final _cafeStreamController = BehaviorSubject<List<Cafe>>();
 
+  late final CafeOwner _cafeOwner;
+
   HttpCafeApi(LocalData localData, {http.Client? httpClient})
       : _localData = localData,
-        _httpClient = httpClient ?? http.Client();
+        _httpClient = httpClient ?? http.Client() {
+    _cafeOwner = CafeOwner(
+        baseUrl: _baseUrl,
+        httpClient: _httpClient,
+        authorization: getAuthorization());
+  }
 
-  Map<String, String>? getAuthorization() {
-    if (_localData.token.getToken().isEmpty) return null;
-
+  Map<String, String> getAuthorization() {
     return {
       'Authorization': 'bearer ${_localData.token.getToken()}',
     };
@@ -50,8 +53,6 @@ class HttpCafeApi extends ICafeApi {
     );
 
     var headers = getAuthorization();
-
-    if (headers == null) throw RequestFailure();
 
     final response = await _httpClient.get(uri, headers: headers);
 
@@ -90,8 +91,6 @@ class HttpCafeApi extends ICafeApi {
 
     var headers = getAuthorization();
 
-    if (headers == null) throw RequestFailure();
-
     final response = await _httpClient.get(uri, headers: headers);
 
     if (response.statusCode != 200 && response.statusCode != 404) {
@@ -116,57 +115,13 @@ class HttpCafeApi extends ICafeApi {
   }
 
   @override
-  Future<void> addLocation(Cafe cafe) async {
-    final uri = Uri.https(
-      _baseUrl,
-      '/api/location',
-    );
-
-    var headers = getAuthorization();
-
-    if (headers == null) throw RequestFailure();
-
-    headers.addEntries([
-      const MapEntry('Content-Type', 'multipart/form-data'),
-    ]);
-
-    var request = http.MultipartRequest('POST', uri);
-
-    request.headers.addAll(headers);
-
-    request.fields.addAll({
-      'name': cafe.name,
-      'address': cafe.address,
-      'description': cafe.description,
-      'latitude': cafe.latitude.toString(),
-      'longitude': cafe.longitude.toString(),
-      'time': cafe.rawTime,
-    });
-
-    List<http.MultipartFile> newList = List.empty(growable: true);
-
-    for (var gallery in cafe.galeries!) {
-      File imageFile = File(gallery.url);
-
-      var stream = http.ByteStream(imageFile.openRead());
-      var length = await imageFile.length();
-
-      var multipartFile =
-          http.MultipartFile("images", stream, length, filename: gallery.id);
-      newList.add(multipartFile);
-    }
-
-    request.files.addAll(newList);
-
-    var streamedResponse = await request.send();
-
-    if (streamedResponse.statusCode != 201) throw RequestFailure();
+  Future<String> addLocation(Cafe cafe) async {
+    return _cafeOwner.addLocation(cafe);
   }
 
   @override
   Future<void> remove(Cafe cafe) {
-    // TODO: implement remove
-    throw UnimplementedError();
+    return _cafeOwner.remove(cafe);
   }
 
   @override
@@ -177,8 +132,7 @@ class HttpCafeApi extends ICafeApi {
 
   @override
   Future<void> update(Cafe cafe) {
-    // TODO: implement update
-    throw UnimplementedError();
+    return _cafeOwner.update(cafe);
   }
 
   @override
@@ -193,8 +147,6 @@ class HttpCafeApi extends ICafeApi {
     };
 
     var headers = getAuthorization();
-
-    if (headers == null) throw RequestFailure();
 
     headers.addAll({
       'Content-Type': 'application/json',
@@ -227,8 +179,6 @@ class HttpCafeApi extends ICafeApi {
 
     var headers = getAuthorization();
 
-    if (headers == null) throw RequestFailure();
-
     final response = await _httpClient.delete(uri, headers: headers);
 
     if (response.statusCode == 400) return false;
@@ -258,7 +208,7 @@ class HttpCafeApi extends ICafeApi {
       } else {
         await removeFromFavorite(cafes[index].locationId);
       }
-      
+
       cafes[index] =
           cafes[index].copyWith(isFavorite: !cafes[index].isFavorite);
 
@@ -276,8 +226,6 @@ class HttpCafeApi extends ICafeApi {
     );
 
     var headers = getAuthorization();
-
-    if (headers == null) throw RequestFailure();
 
     final response = await _httpClient.get(uri, headers: headers);
 
@@ -316,8 +264,6 @@ class HttpCafeApi extends ICafeApi {
 
     var headers = getAuthorization();
 
-    if (headers == null) throw RequestFailure();
-
     final response = await _httpClient.get(uri, headers: headers);
 
     if (response.statusCode != 200) throw RequestFailure();
@@ -342,5 +288,15 @@ class HttpCafeApi extends ICafeApi {
         data.map((e) => Cafe.fromMap(e).copyWith(isFavorite: true)).toList()));
 
     _cafeStreamController.add(listCafes);
+  }
+
+  @override
+  Future<void> addMenu(List<Menu> menus, String locationId) async {
+    return _cafeOwner.addMenu(menus, locationId);
+  }
+
+  @override
+  Future<void> addFacility(List<Facility> facilities, String locationId) {
+    return _cafeOwner.addFacility(facilities, locationId);
   }
 }

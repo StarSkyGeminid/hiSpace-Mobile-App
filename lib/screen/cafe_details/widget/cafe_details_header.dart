@@ -60,11 +60,20 @@ class _CafeDetailsHeaderState extends State<CafeDetailsHeader> {
             color: Theme.of(context).colorScheme.background,
           ),
           child: Icon(
-            Icons.arrow_back_rounded,
+            Icons.arrow_back_ios_rounded,
             color: Theme.of(context).colorScheme.primary,
           ),
         ),
       ),
+      actions: [
+        IconButton(
+          onPressed: () {},
+          icon: Icon(
+            Icons.more_vert_rounded,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+      ],
       pinned: true,
       floating: true,
       snap: true,

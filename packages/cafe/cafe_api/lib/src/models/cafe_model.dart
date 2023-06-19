@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
 import 'gallery_model.dart';
+import 'menu_model.dart';
 
 class Cafe extends Equatable {
   final String locationId;
@@ -20,7 +21,7 @@ class Cafe extends Equatable {
   final bool isFavorite;
   final String user;
   final List<dynamic>? reviews;
-  final List<dynamic>? menus;
+  final List<Menu>? menus;
   final List<Galery>? galeries;
   final List<dynamic>? facilities;
 
@@ -91,7 +92,7 @@ class Cafe extends Equatable {
     bool? isFavorite,
     String? user,
     List<dynamic>? reviews,
-    List<dynamic>? menus,
+    List<Menu>? menus,
     List<Galery>? galeries,
     List<dynamic>? facilities,
   }) {
@@ -160,8 +161,8 @@ class Cafe extends Equatable {
           ? List<dynamic>.from(map['reviews'] as List<dynamic>)
           : null,
       user: map.containsKey('user') ? map['user'] as String : '',
-      menus: map['menus'] != null
-          ? List<dynamic>.from(map['menus'] as List<dynamic>)
+      menus: map['menus'] != null && map['menus'].isNotEmpty
+          ? List<Menu>.from(map['menus'].map((e) => Menu.fromJson(e)).toList())
           : null,
       galeries: map['galeries'] != null && map['galeries'].isNotEmpty
           ? List<Galery>.from(

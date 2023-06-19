@@ -11,9 +11,34 @@ class CreateCafeInitial extends CreateCafeEvent {}
 
 class CreateCafeNextPage extends CreateCafeEvent {}
 
+class CreateCafePreviousPage extends CreateCafeEvent {}
+
+class CreateCafeAddMenu extends CreateCafeEvent {}
+
+class CreateCafeMenuChanged extends CreateCafeEvent {
+  const CreateCafeMenuChanged(this.menu, this.index);
+
+  final Menu menu;
+  final int index;
+
+  @override
+  List<Object> get props => [menu, index];
+}
+
+class CreateCafeEnableFacility extends CreateCafeEvent {
+  const CreateCafeEnableFacility(this.index);
+
+  final int index;
+
+  @override
+  List<Object> get props => [index];
+}
+
 class CreateCafeGPSTaped extends CreateCafeEvent {}
 
 class CreateCafeSearchAddress extends CreateCafeEvent {}
+
+class CreateCafeOnDone extends CreateCafeEvent {}
 
 class CreateCafeNameChanged extends CreateCafeEvent {
   const CreateCafeNameChanged(this.cafeName);

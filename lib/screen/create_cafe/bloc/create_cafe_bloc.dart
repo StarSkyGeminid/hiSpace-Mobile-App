@@ -9,6 +9,8 @@ import 'package:hispace_mobile_app/formz_models/cafe_description.dart';
 import 'package:hispace_mobile_app/formz_models/cafe_name.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../model/facility_model.dart';
+
 part 'create_cafe_event.dart';
 part 'create_cafe_state.dart';
 
@@ -20,6 +22,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
         super(const CreateCafeState()) {
     on<CreateCafeInitial>(_onInitial);
     on<CreateCafeNextPage>(_onNextPage);
+    on<CreateCafePreviousPage>(_onPreviousPage);
     on<CreateCafeNameChanged>(_onNameChanged);
     on<CreateCafeGPSTaped>(_onGPSTaped);
     on<CreateCafeAddressFormChanged>(_onAddressFormChanged);
@@ -28,7 +31,11 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
     on<CreateCafeDescriptionChanged>(_onDescriptionChanged);
     on<CreateCafeOpenTimeChanged>(_onOpenTimeChanged);
     on<CreateCafeAddPicture>(_onAddPicture);
+    on<CreateCafeAddMenu>(_onAddMenu);
+    on<CreateCafeMenuChanged>(_onMenuChanged);
+    on<CreateCafeEnableFacility>(_onEnableFacility);
     on<CreateCafeDeletePicture>(_onDeletePicture);
+    on<CreateCafeOnDone>(_onDone);
 
     on<CreateCafeEvent>((event, emit) {});
   }
@@ -37,10 +44,13 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
 
   final CafeRepository _cafeRepository;
 
-  int currentPage = 0;
+  final int totalPage = 8;
 
   void _onInitial(CreateCafeInitial event, Emitter<CreateCafeState> emit) {
-    emit(state.copyWith());
+    emit(state.copyWith(
+      status: CreateCafeStatus.success,
+      menus: [Menu.empty],
+    ));
   }
 
   void _onNameChanged(
@@ -63,12 +73,14 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
 
   Future<void> _onGPSTaped(
       CreateCafeGPSTaped event, Emitter<CreateCafeState> emit) async {
-    emit(state.copyWith(isValidated: false));
+    emit(state.copyWith(isValidated: false, status: CreateCafeStatus.loading));
 
     Position? position = await _geoLocationRepository.getCurrentPosition();
 
     if (position == null) {
-      emit(state.copyWith(isValidated: false));
+      emit(
+          state.copyWith(isValidated: false, status: CreateCafeStatus.failure));
+
       return;
     }
 
@@ -77,6 +89,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
 
     emit(state.copyWith(
       isValidated: true,
+      status: CreateCafeStatus.success,
       latlng: LatLng(position.latitude, position.longitude),
       cafeAddress:
           location != null ? CafeAddress.dirty(location.address) : null,
@@ -96,24 +109,28 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
 
   Future<void> _onLocationChanged(
       CreateCafeLocationChanged event, Emitter<CreateCafeState> emit) async {
-    emit(state.copyWith(isValidated: true, latlng: event.latlng));
+    emit(state.copyWith(isValidated: false, status: CreateCafeStatus.loading));
 
     Location? location =
         await _geoLocationRepository.getLocationFromCoordinates(
             event.latlng.latitude, event.latlng.longitude);
 
-    if (location == null) return;
+    if (location == null) {
+      emit(
+          state.copyWith(isValidated: false, status: CreateCafeStatus.failure));
+      return;
+    }
 
     emit(state.copyWith(
-      isValidated: true,
-      latlng: LatLng(location.latitude, location.longitude),
-      cafeAddress: CafeAddress.dirty(location.address),
-    ));
+        isValidated: true,
+        latlng: event.latlng,
+        cafeAddress: CafeAddress.dirty(location.address),
+        status: CreateCafeStatus.success));
   }
 
   Future<void> _onSearchLocationTapped(
       CreateCafeSearchAddress event, Emitter<CreateCafeState> emit) async {
-    emit(state.copyWith(isValidated: false));
+    emit(state.copyWith(isValidated: false, status: CreateCafeStatus.loading));
 
     try {
       if (state.cafeAddress.isNotValid) return;
@@ -124,10 +141,10 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
       if (location == null) return;
 
       emit(state.copyWith(
-        isValidated: true,
-        latlng: LatLng(location.latitude, location.longitude),
-        cafeAddress: CafeAddress.dirty(location.address),
-      ));
+          isValidated: true,
+          latlng: LatLng(location.latitude, location.longitude),
+          cafeAddress: CafeAddress.dirty(location.address),
+          status: CreateCafeStatus.success));
     } catch (e) {
       emit(state.copyWith(isValidated: false));
     }
@@ -169,13 +186,99 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
 
   Future<void> _onNextPage(
       CreateCafeNextPage event, Emitter<CreateCafeState> emit) async {
-    emit(state.copyWith(isValidated: false));
+    bool isValidated = false;
 
-    currentPage++;
+    int newPage = state.currentPage + 1;
 
-    if (currentPage < 5) return;
+    switch (newPage) {
+      case 0:
+        isValidated = Formz.validate([state.cafeName]);
+        break;
+      case 1:
+        isValidated = Formz.validate([state.cafeDescription]);
+        break;
+      case 2:
+        isValidated = state.coordinate.latitude.isNaN &&
+            state.coordinate.longitude.isNaN &&
+            Formz.validate([state.cafeAddress]) &&
+            state.cafeAddress.value.isNotEmpty;
+        break;
+      case 3:
+        isValidated = state.openTime.isValid();
+        break;
+      case 4:
+        isValidated = state.images.isNotEmpty;
+        break;
+      case 5:
+        isValidated = state.menus.map((e) => e.isNotEmpty).contains(true);
+        break;
+      case 6:
+        isValidated = true;
+        break;
+      default:
+        isValidated = false;
+        break;
+    }
 
+    emit(state.copyWith(isValidated: isValidated, currentPage: newPage));
+
+    add(CreateCafeOnDone());
+  }
+
+  void _onPreviousPage(
+      CreateCafePreviousPage event, Emitter<CreateCafeState> emit) {
+    final newPage = state.currentPage - 1;
+
+    if (newPage < 0) return;
+    emit(state.copyWith(isValidated: true, currentPage: newPage));
+  }
+
+  void _onAddMenu(CreateCafeAddMenu event, Emitter<CreateCafeState> emit) {
+    final newMenus = [...state.menus, Menu.empty];
+
+    emit(state.copyWith(
+      status: CreateCafeStatus.success,
+      isValidated:
+          !newMenus.map((e) => e.isNotEmpty || e.isEmpty).contains(false),
+      menus: newMenus,
+    ));
+  }
+
+  void _onMenuChanged(
+      CreateCafeMenuChanged event, Emitter<CreateCafeState> emit) {
+    var newMenus = List<Menu>.from(state.menus);
+
+    newMenus[event.index] = event.menu;
+
+    emit(state.copyWith(
+      status: CreateCafeStatus.success,
+      isValidated: !newMenus.map((e) => e.isNotEmpty || e.isEmpty).contains(false),
+      menus: newMenus,
+    ));
+  }
+
+  void _onEnableFacility(
+      CreateCafeEnableFacility event, Emitter<CreateCafeState> emit) {
+    List<Facility> newFacilities = List.from(state.facilities);
+
+    var currentFacility = newFacilities[event.index];
+
+    newFacilities[event.index] = currentFacility.copyWith(
+      isCheck: !currentFacility.isCheck,
+    );
+
+    emit(state.copyWith(
+      status: CreateCafeStatus.success,
+      isValidated: true,
+      facilities: newFacilities,
+    ));
+  }
+
+  Future<void> _onDone(
+      CreateCafeOnDone event, Emitter<CreateCafeState> emit) async {
+    if (state.currentPage < totalPage - 1) return;
     emit(state.copyWith(status: CreateCafeStatus.loading));
+
     try {
       List<Galery> galeries =
           state.images.map((e) => Galery(id: e.name, url: e.path)).toList();
@@ -197,10 +300,26 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
         userUserId: '',
       );
 
-      await _cafeRepository.addLocation(cafe);
-      emit(state.copyWith(status: CreateCafeStatus.success));
+      String locationId = await _cafeRepository.addLocation(cafe);
+
+      await _cafeRepository.addMenus(state.menus, locationId);
+
+      var facilities = state.facilities
+          .where((element) => element.isCheck)
+          .map((e) => e)
+          .toList();
+
+      await _cafeRepository.addFacility(facilities, locationId);
+
+      emit(state.copyWith(
+          isValidated: true,
+          currentPage: state.currentPage + 1,
+          status: CreateCafeStatus.success));
     } catch (e) {
-      emit(state.copyWith(status: CreateCafeStatus.failure));
+      emit(state.copyWith(
+          isValidated: true,
+          currentPage: state.currentPage + 1,
+          status: CreateCafeStatus.failure));
     }
   }
 }

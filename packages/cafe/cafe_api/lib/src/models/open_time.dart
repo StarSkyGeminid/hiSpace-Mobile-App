@@ -109,16 +109,45 @@ class OpenTime {
     };
   }
 
+  factory OpenTime.fromMap(Map<String, dynamic> json) {
+    return OpenTime(
+      monday: json['monday']['open'] != '-' || json['monday']['close'] != '-'
+          ? Day.fromMap(json['monday'], Days.monday)
+          : null,
+      tuesday: json['tuesday']['open'] != '-' || json['tuesday']['close'] != '-'
+          ? Day.fromMap(json['tuesday'], Days.tuesday)
+          : null,
+      wednesday:
+          json['wednesday']['open'] != '-' || json['wednesday']['close'] != '-'
+              ? Day.fromMap(json['wednesday'], Days.wednesday)
+              : null,
+      thursday:
+          json['thursday']['open'] != '-' || json['thursday']['close'] != '-'
+              ? Day.fromMap(json['thursday'], Days.thursday)
+              : null,
+      friday: json['friday']['open'] != '-' || json['friday']['close'] != '-'
+          ? Day.fromMap(json['friday'], Days.friday)
+          : null,
+      saturday:
+          json['saturday']['open'] != '-' || json['saturday']['close'] != '-'
+              ? Day.fromMap(json['saturday'], Days.saturday)
+              : null,
+      sunday: json['sunday']['open'] != '-' || json['sunday']['close'] != '-'
+          ? Day.fromMap(json['sunday'], Days.sunday)
+          : null,
+    );
+  }
+
   String toJson() => json.encode(toMap());
 
   bool isValid() {
-    bool status = monday?.isValid() ?? true;
-    status = tuesday?.isValid() ?? status;
-    status = wednesday?.isValid() ?? status;
-    status = thursday?.isValid() ?? status;
-    status = friday?.isValid() ?? status;
-    status = saturday?.isValid() ?? status;
-    status = sunday?.isValid() ?? status;
+    bool status = (monday?.isValid() ?? true) &&
+        (tuesday?.isValid() ?? true) &&
+        (wednesday?.isValid() ?? true) &&
+        (thursday?.isValid() ?? true) &&
+        (friday?.isValid() ?? true) &&
+        (saturday?.isValid() ?? true) &&
+        (sunday?.isValid() ?? true);
 
     return status;
   }
@@ -160,6 +189,16 @@ class Day {
       'close': DateFormat('HH:mm').format(closeTime),
     };
   }
+
+  factory Day.fromMap(Map<String, dynamic> json, Days days) {
+    return Day(
+      day: days,
+      open: TimeOfDay.fromDateTime(DateFormat('HH:mm').parse(json['open'])),
+      close: TimeOfDay.fromDateTime(DateFormat('HH:mm').parse(json['close'])),
+    );
+  }
+
+  String toJson() => json.encode(toMap());
 
   bool isValid() {
     return open != null && close != null || open == null && close == null;

@@ -20,7 +20,7 @@ class CafeRepository {
 
   Future<void> getWishlist({int page = 0}) => _cafeApi.getWishlist(page: page);
 
-  Future<void> addLocation(Cafe cafe) => _cafeApi.addLocation(cafe);
+  Future<String> addLocation(Cafe cafe) => _cafeApi.addLocation(cafe);
 
   Future<void> remove(Cafe cafe) => _cafeApi.remove(cafe);
 
@@ -28,6 +28,11 @@ class CafeRepository {
 
   Future<void> search(String query) => _cafeApi.search(query);
 
-  Future<void> toggleFavorite(int index) =>
-      _cafeApi.toggleFavorite(index);
+  Future<void> toggleFavorite(int index) => _cafeApi.toggleFavorite(index);
+
+  Future<void> addMenus(List<Menu> menus, String locationId) =>
+      _cafeApi.addMenu(menus, locationId);
+
+  Future<void> addFacility(List<Facility> facilities, String locationId) =>
+      _cafeApi.addFacility(facilities, locationId);
 }

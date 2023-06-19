@@ -12,15 +12,6 @@ class DescriptionForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const _DescriptionFormView();
-  }
-}
-
-class _DescriptionFormView extends StatelessWidget {
-  const _DescriptionFormView();
-
-  @override
-  Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
     return ListView(
@@ -36,7 +27,7 @@ class _DescriptionFormView extends StatelessWidget {
         ),
         const SizedBox(height: kDefaultSpacing),
         Text(
-          'Deskripsikan Cafemu',
+          'Deskripsikan cafemu',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: kDefaultSpacing / 2),
@@ -50,17 +41,16 @@ class _DescriptionFormView extends StatelessWidget {
             return CustomTextFormField(
               hintText: 'Masukkan deskripsi',
               title: 'Deskripsi',
-              initialValue: BlocProvider.of<CreateCafeBloc>(context)
-                  .state
-                  .cafeDescription
-                  .value,
+              initialValue: state.cafeDescription.value,
               onChanged: (String value) =>
                   BlocProvider.of<CreateCafeBloc>(context).add(
                 CreateCafeDescriptionChanged(value),
               ),
               errorText: state.cafeDescription.displayError?.text(),
-              maxLines: 20,
+              maxLines: null,
               radius: 10,
+              decoration: InputDecoration(
+                  counter: Text('${state.cafeDescription.value.length}/50')),
             );
           },
         ),

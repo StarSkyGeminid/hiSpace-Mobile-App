@@ -57,7 +57,7 @@ class _LocationFormViewState extends State<_LocationFormView> {
         ),
         const SizedBox(height: kDefaultSpacing),
         Text(
-          'Tambahkan Lokasi Cafemu',
+          'Tambahkan lokasi cafemu',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: kDefaultSpacing / 2),
@@ -80,7 +80,8 @@ class _LocationFormViewState extends State<_LocationFormView> {
                   listenWhen: (previous, current) =>
                       previous.coordinate != current.coordinate,
                   listener: (context, state) {
-                    _mapController.move(state.coordinate, 18);
+                    _mapController.move(state.coordinate,
+                        _mapController.zoom > 15 ? _mapController.zoom : 15);
                   },
                   builder: (context, state) {
                     return FlutterMap(
@@ -90,9 +91,15 @@ class _LocationFormViewState extends State<_LocationFormView> {
                         zoom: 5.0,
                         minZoom: 3.0,
                         maxZoom: 18.0,
-                        onTap: (TapPosition position, LatLng latlng) =>
-                            BlocProvider.of<CreateCafeBloc>(context)
-                                .add(CreateCafeLocationChanged(latlng)),
+                        onTap: (TapPosition position, LatLng latlng) {
+                          BlocProvider.of<CreateCafeBloc>(context)
+                              .add(CreateCafeLocationChanged(latlng));
+                          FocusScope.of(context).unfocus();
+                        },
+                        onPointerUp: (event, point) =>
+                            FocusScope.of(context).unfocus(),
+                        onPointerDown: (event, point) =>
+                            FocusScope.of(context).unfocus(),
                       ),
                       nonRotatedChildren: [
                         TileLayer(
@@ -121,8 +128,11 @@ class _LocationFormViewState extends State<_LocationFormView> {
                   child: ElevatedButton(
                     style:
                         ElevatedButton.styleFrom(shape: const CircleBorder()),
-                    onPressed: () => BlocProvider.of<CreateCafeBloc>(context)
-                        .add(CreateCafeGPSTaped()),
+                    onPressed: () {
+                      BlocProvider.of<CreateCafeBloc>(context)
+                          .add(CreateCafeGPSTaped());
+                      FocusScope.of(context).unfocus();
+                    },
                     child: const Padding(
                       padding: EdgeInsets.all(kDefaultSpacing / 2),
                       child: Icon(Icons.gps_fixed),
@@ -196,15 +206,26 @@ class _SearchButton extends StatelessWidget {
     return BlocBuilder<CreateCafeBloc, CreateCafeState>(
       builder: (context, state) {
         return ElevatedButton(
-          onPressed: () => BlocProvider.of<CreateCafeBloc>(context)
-              .add(CreateCafeSearchAddress()),
-          child: const Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: kDefaultSpacing,
-              vertical: kDefaultSpacing / 2,
-            ),
-            child: Text('Cari alamat'),
-          ),
+          onPressed: state.status != CreateCafeStatus.loading
+              ? () {
+                  BlocProvider.of<CreateCafeBloc>(context)
+                      .add(CreateCafeSearchAddress());
+                  FocusScope.of(context).unfocus();
+                }
+              : null,
+          child: state.status != CreateCafeStatus.loading
+              ? const Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: kDefaultSpacing,
+                    vertical: kDefaultSpacing / 2,
+                  ),
+                  child: Text('Cari alamat'),
+                )
+              : const SizedBox(
+                  height: kDefaultSpacing,
+                  width: kDefaultSpacing,
+                  child: CircularProgressIndicator.adaptive(),
+                ),
         );
       },
     );
