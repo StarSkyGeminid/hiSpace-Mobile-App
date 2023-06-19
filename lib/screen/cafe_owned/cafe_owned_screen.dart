@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hispace_mobile_app/bloc/authentication/authentication_bloc.dart';
 import 'package:hispace_mobile_app/core/global/constans.dart';
+import 'package:hispace_mobile_app/screen/cafe_details/model/popupmenu_model.dart';
 import 'package:hispace_mobile_app/screen/cafe_owned/cubit/cafe_owned_cubit.dart';
 import 'package:hispace_mobile_app/widget/cafe_card.dart';
 
@@ -20,17 +21,32 @@ class CafeOwned extends StatelessWidget {
   }
 }
 
-class CafeOwnedView extends StatelessWidget {
+class CafeOwnedView extends StatefulWidget {
   const CafeOwnedView({super.key});
 
-  void _createCafe(BuildContext context) {
+  @override
+  State<CafeOwnedView> createState() => _CafeOwnedViewState();
+}
+
+class _CafeOwnedViewState extends State<CafeOwnedView> {
+  void _goToCreateCafe(BuildContext context) {
     Navigator.pushNamed(context, '/user/create-cafe');
+  }
+
+  void _goToDetailsScreen(Cafe cafe) {
+    List<PopUpMenuModel> listPopUpMenuModel = [
+      PopUpMenuModel(text: 'Edit', onPressed: () {}),
+      PopUpMenuModel(text: 'Delete', onPressed: () {}),
+    ];
+
+    Navigator.pushNamed(context, '/cafe-details', arguments: {
+      'locationId': cafe.locationId,
+      'actions': listPopUpMenuModel
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -45,45 +61,8 @@ class CafeOwnedView extends StatelessWidget {
         body: BlocBuilder<CafeOwnedCubit, CafeOwnedState>(
           builder: (context, state) {
             if (state.cafes.isEmpty) {
-              String errorText = '';
-
-              switch (state.status) {
-                case CafeOwnedStatus.loading:
-                  errorText = 'Memuat cafe kamu...';
-                  break;
-                case CafeOwnedStatus.success:
-                  errorText = 'Kamu belum memiliki cafe';
-                  break;
-                default:
-                  errorText = 'Terjadi kesalahan';
-                  break;
-              }
-
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.coffee_rounded,
-                      size: size.width * .4,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .inverseSurface
-                          .withOpacity(.1),
-                    ),
-                    const SizedBox(height: kDefaultSpacing),
-                    Text(
-                      errorText,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .inverseSurface
-                                .withOpacity(.3),
-                          ),
-                    ),
-                  ],
-                ),
+              return _CafeEmptyStatus(
+                status: state.status,
               );
             }
 
@@ -93,7 +72,7 @@ class CafeOwnedView extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return CafeCard(
                       cafe: state.cafes[index],
-                      onTap: () {},
+                      onTap: () => _goToDetailsScreen(state.cafes[index]),
                     );
                   },
                   itemCount: state.cafes.length,
@@ -103,7 +82,7 @@ class CafeOwnedView extends StatelessWidget {
           },
         ),
         bottomNavigationBar: _CreateButton(
-          onPressed: () => _createCafe(context),
+          onPressed: () => _goToCreateCafe(context),
         ),
       ),
     );
@@ -132,6 +111,55 @@ class _CreateButton extends StatelessWidget {
             },
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _CafeEmptyStatus extends StatelessWidget {
+  const _CafeEmptyStatus({required this.status});
+
+  final CafeOwnedStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    String errorText = '';
+
+    switch (status) {
+      case CafeOwnedStatus.loading:
+        errorText = 'Memuat cafe kamu...';
+        break;
+      case CafeOwnedStatus.success:
+        errorText = 'Kamu belum memiliki cafe';
+        break;
+      default:
+        errorText = 'Terjadi kesalahan';
+        break;
+    }
+
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.coffee_rounded,
+            size: size.width * .4,
+            color: Theme.of(context).colorScheme.inverseSurface.withOpacity(.1),
+          ),
+          const SizedBox(height: kDefaultSpacing),
+          Text(
+            errorText,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .inverseSurface
+                      .withOpacity(.3),
+                ),
+          ),
+        ],
       ),
     );
   }

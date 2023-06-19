@@ -55,6 +55,7 @@ class _ForgotPasswordViewState extends State<_ForgotPasswordView> {
             }
           },
           child: ListView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(

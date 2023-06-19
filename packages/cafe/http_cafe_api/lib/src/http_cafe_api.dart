@@ -22,10 +22,7 @@ class HttpCafeApi extends ICafeApi {
   HttpCafeApi(LocalData localData, {http.Client? httpClient})
       : _localData = localData,
         _httpClient = httpClient ?? http.Client() {
-    _cafeOwner = CafeOwner(
-        baseUrl: _baseUrl,
-        httpClient: _httpClient,
-        authorization: getAuthorization());
+    _cafeOwner = CafeOwner(baseUrl: _baseUrl, httpClient: _httpClient);
   }
 
   Map<String, String> getAuthorization() {
@@ -116,12 +113,12 @@ class HttpCafeApi extends ICafeApi {
 
   @override
   Future<String> addLocation(Cafe cafe) async {
-    return _cafeOwner.addLocation(cafe);
+    return _cafeOwner.addLocation(cafe, headers: getAuthorization());
   }
 
   @override
   Future<void> remove(Cafe cafe) {
-    return _cafeOwner.remove(cafe);
+    return _cafeOwner.remove(cafe, headers: getAuthorization());
   }
 
   @override
@@ -132,7 +129,18 @@ class HttpCafeApi extends ICafeApi {
 
   @override
   Future<void> update(Cafe cafe) {
-    return _cafeOwner.update(cafe);
+    return _cafeOwner.update(cafe, headers: getAuthorization());
+  }
+
+  @override
+  Future<void> addMenu(List<Menu> menus, String locationId) async {
+    return _cafeOwner.addMenu(menus, locationId, headers: getAuthorization());
+  }
+
+  @override
+  Future<void> addFacility(List<Facility> facilities, String locationId) {
+    return _cafeOwner.addFacility(facilities, locationId,
+        headers: getAuthorization());
   }
 
   @override
@@ -288,15 +296,5 @@ class HttpCafeApi extends ICafeApi {
         data.map((e) => Cafe.fromMap(e).copyWith(isFavorite: true)).toList()));
 
     _cafeStreamController.add(listCafes);
-  }
-
-  @override
-  Future<void> addMenu(List<Menu> menus, String locationId) async {
-    return _cafeOwner.addMenu(menus, locationId);
-  }
-
-  @override
-  Future<void> addFacility(List<Facility> facilities, String locationId) {
-    return _cafeOwner.addFacility(facilities, locationId);
   }
 }

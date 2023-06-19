@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../model/popupmenu_model.dart';
+
 class CafeDetailsHeader extends StatefulWidget {
   final ScrollController controller;
 
   final VoidCallback onBack;
 
+  final List<PopUpMenuModel>? actions;
+
   const CafeDetailsHeader(
-      {super.key, required this.controller, required this.onBack});
+      {super.key,
+      required this.controller,
+      required this.onBack,
+      this.actions});
 
   @override
   State<CafeDetailsHeader> createState() => _CafeDetailsHeaderState();
@@ -65,15 +72,25 @@ class _CafeDetailsHeaderState extends State<CafeDetailsHeader> {
           ),
         ),
       ),
-      actions: [
-        IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.more_vert_rounded,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-        ),
-      ],
+      actions: widget.actions != null
+          ? [
+              PopupMenuButton<PopUpMenuModel>(
+                 shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0)),
+                onSelected: ((item) => item.onPressed()),
+                itemBuilder: ((context) {
+                  return widget.actions!.map((e) {
+                    return PopupMenuItem<PopUpMenuModel>(
+                      value: e,
+                      child: Text(e.text,
+                          style: Theme.of(context).textTheme.bodyMedium),
+                      onTap: () => e.onPressed(),
+                    );
+                  }).toList();
+                }),
+              ),
+            ]
+          : null,
       pinned: true,
       floating: true,
       snap: true,

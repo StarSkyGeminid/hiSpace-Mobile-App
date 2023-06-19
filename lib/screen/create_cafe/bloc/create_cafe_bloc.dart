@@ -313,12 +313,10 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
 
       emit(state.copyWith(
           isValidated: true,
-          currentPage: state.currentPage + 1,
           status: CreateCafeStatus.success));
     } catch (e) {
       emit(state.copyWith(
           isValidated: true,
-          currentPage: state.currentPage + 1,
           status: CreateCafeStatus.failure));
     }
   }
