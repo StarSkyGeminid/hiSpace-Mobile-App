@@ -61,14 +61,7 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
             toolbarHeight: 45,
           ),
         ),
-        body: RefreshIndicator(
-          onRefresh: () {
-            return Future.delayed(const Duration(seconds: 1), () {
-              context.read<HomeBloc>().add(const HomeOnRefresh());
-            });
-          },
-          child: const _TabView(),
-        ),
+        body: const _TabView(),
       ),
     );
   }
@@ -93,7 +86,6 @@ class _TabViewState extends State<_TabView> {
     Size size = MediaQuery.of(context).size;
 
     return TabBarView(
-      // dragStartBehavior: DragStartBehavior.down,
       physics: const NeverScrollableScrollPhysics(),
       children: listHomeTabModel.map(
         (tabModel) {
@@ -110,43 +102,50 @@ class _TabViewState extends State<_TabView> {
                 );
               }
 
-              return InfiniteListBuilder(
-                key: PageStorageKey('HomeScreen_ListView_${tabModel.name}'),
-                primary: false,
-                onFetchedMore: () => context.read<HomeBloc>().add(
-                      const HomeOnFetchedMore(),
-                    ),
-                itemBuilder: (context, index) {
-                  double? km;
-                  if (state.currentLocation != null) {
-                    km = distance.as(
-                        LengthUnit.Kilometer,
-                        state.currentLocation!,
-                        LatLng(state.cafes[index].latitude,
-                            state.cafes[index].longitude));
-                  }
-
-                  String? distanceString =
-                      km != null ? '${km.toStringAsFixed(1)} km' : null;
-
-                  return BlocBuilder<HomeBloc, HomeState>(
-                    buildWhen: (previous, current) =>
-                        previous.cafes[index] != current.cafes[index] ||
-                        previous.cafes[index].isFavorite !=
-                            current.cafes[index].isFavorite,
-                    builder: (context, state) {
-                      return CafeCard(
-                        cafe: state.cafes[index],
-                        onToggleFavorite: () => context
-                            .read<HomeBloc>()
-                            .add(HomeOnToggleFavorite(index: index)),
-                        onTap: () => _goToDetailsScreen(state.cafes[index]),
-                        distance: distanceString,
-                      );
-                    },
-                  );
+              return RefreshIndicator(
+                onRefresh: () {
+                  return Future.delayed(const Duration(seconds: 1), () {
+                    context.read<HomeBloc>().add(const HomeOnRefresh());
+                  });
                 },
-                itemCount: state.cafes.length,
+                child: InfiniteListBuilder(
+                  key: PageStorageKey('HomeScreen_ListView_${tabModel.name}'),
+                  primary: false,
+                  onFetchedMore: () => context.read<HomeBloc>().add(
+                        const HomeOnFetchedMore(),
+                      ),
+                  itemBuilder: (context, index) {
+                    double? km;
+                    if (state.currentLocation != null) {
+                      km = distance.as(
+                          LengthUnit.Kilometer,
+                          state.currentLocation!,
+                          LatLng(state.cafes[index].latitude,
+                              state.cafes[index].longitude));
+                    }
+
+                    String? distanceString =
+                        km != null ? '${km.toStringAsFixed(1)} km' : null;
+
+                    return BlocBuilder<HomeBloc, HomeState>(
+                      buildWhen: (previous, current) =>
+                          previous.cafes[index] != current.cafes[index] ||
+                          previous.cafes[index].isFavorite !=
+                              current.cafes[index].isFavorite,
+                      builder: (context, state) {
+                        return CafeCard(
+                          cafe: state.cafes[index],
+                          onToggleFavorite: () => context
+                              .read<HomeBloc>()
+                              .add(HomeOnToggleFavorite(index: index)),
+                          onTap: () => _goToDetailsScreen(state.cafes[index]),
+                          distance: distanceString,
+                        );
+                      },
+                    );
+                  },
+                  itemCount: state.cafes.length,
+                ),
               );
             },
           );

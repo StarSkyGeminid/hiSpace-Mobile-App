@@ -46,67 +46,74 @@ class _WishlistScreenViewState extends State<WishlistScreenView> {
         toolbarHeight: 80,
         centerTitle: true,
       ),
-      body: BlocBuilder<WishlistBloc, WishlistState>(
-        buildWhen: (previous, current) =>
-            previous.cafes.length != current.cafes.length ||
-            previous.status != current.status,
-        builder: (context, state) {
-          if (state.status == WishlistStatus.loading ||
-              state.status == WishlistStatus.success && state.cafes.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.coffee_rounded,
-                    size: size.width * .4,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .inverseSurface
-                        .withOpacity(.1),
-                  ),
-                  const SizedBox(height: kDefaultSpacing),
-                  Text(
-                    state.status == WishlistStatus.loading
-                        ? 'Memuat wishlist kamu...'
-                        : 'Wishlist kamu masih kosong',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .inverseSurface
-                              .withOpacity(.3),
-                        ),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          return InfiniteListBuilder(
-            key: const PageStorageKey('WishlistScreen_InfiniteListBuilder'),
-            onFetchedMore: () => context.read<WishlistBloc>().add(
-                  WishlistOnLoadMore(),
-                ),
-            itemBuilder: (context, index) =>
-                BlocBuilder<WishlistBloc, WishlistState>(
-              buildWhen: (previous, current) =>
-                  previous.cafes[index] != current.cafes[index] ||
-                  previous.cafes[index].isFavorite !=
-                      current.cafes[index].isFavorite,
-              builder: (context, state) {
-                return CafeCard(
-                  cafe: state.cafes[index],
-                  onToggleFavorite: () => context
-                      .read<WishlistBloc>()
-                      .add(WishlistOnToggleFavorite(index)),
-                  onTap: () => _goToDetailsScreen(state.cafes[index]),
-                );
-              },
-            ),
-            itemCount: state.cafes.length,
-          );
+      body: RefreshIndicator(
+        onRefresh: () {
+          return Future.delayed(const Duration(seconds: 1), () {
+            context.read<WishlistBloc>().add(WishlistOnRefresh());
+          });
         },
+        child: BlocBuilder<WishlistBloc, WishlistState>(
+          buildWhen: (previous, current) =>
+              previous.cafes.length != current.cafes.length ||
+              previous.status != current.status,
+          builder: (context, state) {
+            if (state.status == WishlistStatus.loading ||
+                state.status == WishlistStatus.success && state.cafes.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.coffee_rounded,
+                      size: size.width * .4,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .inverseSurface
+                          .withOpacity(.1),
+                    ),
+                    const SizedBox(height: kDefaultSpacing),
+                    Text(
+                      state.status == WishlistStatus.loading
+                          ? 'Memuat wishlist kamu...'
+                          : 'Wishlist kamu masih kosong',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .inverseSurface
+                                .withOpacity(.3),
+                          ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return InfiniteListBuilder(
+              key: const PageStorageKey('WishlistScreen_InfiniteListBuilder'),
+              onFetchedMore: () => context.read<WishlistBloc>().add(
+                    WishlistOnLoadMore(),
+                  ),
+              itemBuilder: (context, index) =>
+                  BlocBuilder<WishlistBloc, WishlistState>(
+                buildWhen: (previous, current) =>
+                    previous.cafes[index] != current.cafes[index] ||
+                    previous.cafes[index].isFavorite !=
+                        current.cafes[index].isFavorite,
+                builder: (context, state) {
+                  return CafeCard(
+                    cafe: state.cafes[index],
+                    onToggleFavorite: () => context
+                        .read<WishlistBloc>()
+                        .add(WishlistOnToggleFavorite(index)),
+                    onTap: () => _goToDetailsScreen(state.cafes[index]),
+                  );
+                },
+              ),
+              itemCount: state.cafes.length,
+            );
+          },
+        ),
       ),
     );
   }
