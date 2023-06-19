@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hispace_mobile_app/screen/accout_settings/account_settings.dart';
 import 'package:hispace_mobile_app/screen/boarding/boarding_screen.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/cafe_details.dart';
-import 'package:hispace_mobile_app/screen/cafe_details/model/popupmenu_model.dart';
 import 'package:hispace_mobile_app/screen/cafe_owned/cafe_owned_screen.dart';
 import 'package:hispace_mobile_app/screen/create_cafe/create_cafe.dart';
 import 'package:hispace_mobile_app/screen/dashboard/dashboard_screen.dart';
@@ -104,7 +103,7 @@ class RoutesGenerator {
         );
       case '/cafe-details':
         String locationId = '';
-        List<PopUpMenuModel>? actions;
+        CafeDetailsType type = CafeDetailsType.visitor;
         if (args is String) {
           locationId = args;
         } else if (args is Map<String, Object> &&
@@ -112,14 +111,14 @@ class RoutesGenerator {
           locationId = args['locationId'] as String;
         }
 
-        if (args is Map<String, Object> && args.containsKey('actions')) {
-          actions = args['actions'] as List<PopUpMenuModel>;
+        if (args is Map<String, Object> && args.containsKey('type')) {
+          type = args['type'] as CafeDetailsType;
         }
 
         return PageTransition(
           child: CafeDetails(
             locationId: locationId,
-            actions: actions,
+            type: type,
           ),
           type: PageTransitionType.bottomToTop,
           duration: const Duration(milliseconds: 300),

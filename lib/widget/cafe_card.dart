@@ -97,7 +97,7 @@ class CafeCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: kDefaultSpacing / 2),
                     child: Text(
-                      cafe.isOpen() ? 'Buka' : 'Tutup',
+                      cafe.time.isOpenNow ? 'Buka' : 'Tutup',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),

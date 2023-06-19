@@ -111,31 +111,13 @@ class OpenTime {
 
   factory OpenTime.fromMap(Map<String, dynamic> json) {
     return OpenTime(
-      monday: json['monday']['open'] != '-' || json['monday']['close'] != '-'
-          ? Day.fromMap(json['monday'], Days.monday)
-          : null,
-      tuesday: json['tuesday']['open'] != '-' || json['tuesday']['close'] != '-'
-          ? Day.fromMap(json['tuesday'], Days.tuesday)
-          : null,
-      wednesday:
-          json['wednesday']['open'] != '-' || json['wednesday']['close'] != '-'
-              ? Day.fromMap(json['wednesday'], Days.wednesday)
-              : null,
-      thursday:
-          json['thursday']['open'] != '-' || json['thursday']['close'] != '-'
-              ? Day.fromMap(json['thursday'], Days.thursday)
-              : null,
-      friday: json['friday']['open'] != '-' || json['friday']['close'] != '-'
-          ? Day.fromMap(json['friday'], Days.friday)
-          : null,
-      saturday:
-          json['saturday']['open'] != '-' || json['saturday']['close'] != '-'
-              ? Day.fromMap(json['saturday'], Days.saturday)
-              : null,
-      sunday: json['sunday']['open'] != '-' || json['sunday']['close'] != '-'
-          ? Day.fromMap(json['sunday'], Days.sunday)
-          : null,
-    );
+        monday: Day.fromMap(json['monday'], Days.monday),
+        tuesday: Day.fromMap(json['tuesday'], Days.tuesday),
+        wednesday: Day.fromMap(json['wednesday'], Days.wednesday),
+        thursday: Day.fromMap(json['thursday'], Days.thursday),
+        friday: Day.fromMap(json['friday'], Days.friday),
+        saturday: Day.fromMap(json['saturday'], Days.saturday),
+        sunday: Day.fromMap(json['sunday'], Days.sunday));
   }
 
   String toJson() => json.encode(toMap());
@@ -150,6 +132,30 @@ class OpenTime {
         (sunday?.isValid() ?? true);
 
     return status;
+  }
+
+  bool get isOpenNow {
+    final now = DateTime.now();
+    final day = getFromIndex(now.weekday - 1);
+    if (day == null) return false;
+
+    final openTime = DateTime(now.year, now.month, now.day, day.open?.hour ?? 0,
+        day.open?.minute ?? 0);
+
+    int isOvernight = 0;
+
+    if (day.close != null &&
+        day.open != null &&
+        day.close!.hour < day.open!.hour) {
+      isOvernight = 1;
+    }
+
+    DateTime closeTime = DateTime(now.year, now.month, now.day,
+        day.close?.hour ?? 0, day.close?.minute ?? 0);
+
+    closeTime = closeTime.add(Duration(days: isOvernight));
+
+    return now.isAfter(openTime) && now.isBefore(closeTime);
   }
 }
 
@@ -190,11 +196,15 @@ class Day {
     };
   }
 
-  factory Day.fromMap(Map<String, dynamic> json, Days days) {
+  factory Day.fromMap(Map<String, dynamic>? json, Days days) {
     return Day(
       day: days,
-      open: TimeOfDay.fromDateTime(DateFormat('HH:mm').parse(json['open'])),
-      close: TimeOfDay.fromDateTime(DateFormat('HH:mm').parse(json['close'])),
+      open: json != null && json.containsKey('open')
+          ? TimeOfDay.fromDateTime(DateFormat('HH:mm').parse(json['open']))
+          : null,
+      close: json != null && json.containsKey('close')
+          ? TimeOfDay.fromDateTime(DateFormat('HH:mm').parse(json['close']))
+          : null,
     );
   }
 

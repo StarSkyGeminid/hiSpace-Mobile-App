@@ -124,8 +124,8 @@ class HttpCafeApi extends ICafeApi {
   }
 
   @override
-  Future<void> remove(Cafe cafe) {
-    return _cafeOwner.remove(cafe, headers: getAuthorization());
+  Future<void> remove(String locationId) {
+    return _cafeOwner.remove(locationId, headers: getAuthorization());
   }
 
   @override

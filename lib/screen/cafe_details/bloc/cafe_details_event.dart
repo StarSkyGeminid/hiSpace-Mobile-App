@@ -15,3 +15,7 @@ class CafeDetailsInitial extends CafeDetailsEvent {
   @override
   List<Object> get props => [locationId];
 }
+
+class CafeDetailsRemove extends CafeDetailsEvent {
+  const CafeDetailsRemove();
+}

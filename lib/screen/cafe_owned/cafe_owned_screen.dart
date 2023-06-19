@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hispace_mobile_app/bloc/authentication/authentication_bloc.dart';
 import 'package:hispace_mobile_app/core/global/constans.dart';
-import 'package:hispace_mobile_app/screen/cafe_details/model/popupmenu_model.dart';
+import 'package:hispace_mobile_app/screen/cafe_details/cafe_details.dart';
 import 'package:hispace_mobile_app/screen/cafe_owned/cubit/cafe_owned_cubit.dart';
 import 'package:hispace_mobile_app/widget/cafe_card.dart';
 
@@ -29,19 +29,22 @@ class CafeOwnedView extends StatefulWidget {
 }
 
 class _CafeOwnedViewState extends State<CafeOwnedView> {
+  @override
+  void initState() {
+    BlocProvider.of<CafeOwnedCubit>(context).initial(
+      BlocProvider.of<AuthenticationBloc>(context).state.user.email,
+    );
+    super.initState();
+  }
+
   void _goToCreateCafe(BuildContext context) {
     Navigator.pushNamed(context, '/user/create-cafe');
   }
 
   void _goToDetailsScreen(Cafe cafe) {
-    List<PopUpMenuModel> listPopUpMenuModel = [
-      PopUpMenuModel(text: 'Edit', onPressed: () {}),
-      PopUpMenuModel(text: 'Delete', onPressed: () {}),
-    ];
-
     Navigator.pushNamed(context, '/cafe-details', arguments: {
       'locationId': cafe.locationId,
-      'actions': listPopUpMenuModel
+      'type': CafeDetailsType.owner,
     });
   }
 
@@ -58,28 +61,33 @@ class _CafeOwnedViewState extends State<CafeOwnedView> {
             },
           ),
         ),
-        body: BlocBuilder<CafeOwnedCubit, CafeOwnedState>(
-          builder: (context, state) {
-            if (state.cafes.isEmpty) {
-              return _CafeEmptyStatus(
-                status: state.status,
-              );
-            }
-
-            return BlocBuilder<CafeOwnedCubit, CafeOwnedState>(
-              builder: (context, state) {
-                return ListView.builder(
-                  itemBuilder: (context, index) {
-                    return CafeCard(
-                      cafe: state.cafes[index],
-                      onTap: () => _goToDetailsScreen(state.cafes[index]),
-                    );
-                  },
-                  itemCount: state.cafes.length,
-                );
-              },
-            );
+        body: RefreshIndicator(
+          onRefresh: () async {
+            BlocProvider.of<CafeOwnedCubit>(context).refresh();
           },
+          child: BlocBuilder<CafeOwnedCubit, CafeOwnedState>(
+            builder: (context, state) {
+              if (state.cafes.isEmpty) {
+                return _CafeEmptyStatus(
+                  status: state.status,
+                );
+              }
+
+              return BlocBuilder<CafeOwnedCubit, CafeOwnedState>(
+                builder: (context, state) {
+                  return ListView.builder(
+                    itemBuilder: (context, index) {
+                      return CafeCard(
+                        cafe: state.cafes[index],
+                        onTap: () => _goToDetailsScreen(state.cafes[index]),
+                      );
+                    },
+                    itemCount: state.cafes.length,
+                  );
+                },
+              );
+            },
+          ),
         ),
         bottomNavigationBar: _CreateButton(
           onPressed: () => _goToCreateCafe(context),

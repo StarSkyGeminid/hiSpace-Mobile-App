@@ -32,7 +32,7 @@ class CafeRepository {
 
   Future<String> addLocation(Cafe cafe) => _cafeApi.addLocation(cafe);
 
-  Future<void> remove(Cafe cafe) => _cafeApi.remove(cafe);
+  Future<void> remove(String locationId) => _cafeApi.remove(locationId);
 
   Future<void> update(Cafe cafe) => _cafeApi.update(cafe);
 

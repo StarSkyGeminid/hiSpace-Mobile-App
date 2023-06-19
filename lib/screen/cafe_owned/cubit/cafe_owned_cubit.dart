@@ -13,10 +13,27 @@ class CafeOwnedCubit extends Cubit<CafeOwnedState> {
   final CafeRepository _cafeRepository;
 
   Future<void> initial(String ownerId) async {
-    emit(state.copyWith(status: CafeOwnedStatus.loading));
+    emit(state.copyWith(
+      status: CafeOwnedStatus.loading,
+      ownerId: ownerId,
+    ));
 
     try {
       var cafes = await _cafeRepository.getCafeByOwner(ownerId);
+
+      emit(state.copyWith(cafes: cafes, status: CafeOwnedStatus.success));
+    } on ResponseFailure {
+      emit(state.copyWith(status: CafeOwnedStatus.success));
+    } catch (e) {
+      emit(state.copyWith(status: CafeOwnedStatus.failure));
+    }
+  }
+
+  Future<void> refresh() async {
+    emit(state.copyWith(status: CafeOwnedStatus.loading));
+
+    try {
+      var cafes = await _cafeRepository.getCafeByOwner(state.ownerId);
 
       emit(state.copyWith(cafes: cafes, status: CafeOwnedStatus.success));
     } on ResponseFailure {

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cafe_api/src/models/models.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
@@ -17,6 +18,7 @@ class Cafe extends Equatable {
   final String galeryId;
   final String description;
   final String rawTime;
+  final OpenTime time;
   final double rating;
   final bool isFavorite;
   final String user;
@@ -36,6 +38,7 @@ class Cafe extends Equatable {
     required this.galeryId,
     required this.description,
     required this.rawTime,
+    this.time = OpenTime.empty,
     required this.rating,
     required this.isFavorite,
     required this.user,
@@ -44,20 +47,6 @@ class Cafe extends Equatable {
     this.galeries,
     this.facilities,
   });
-
-  bool isOpen() {
-    // final DateTime now = DateTime.now();
-    // final List<String> time = this.time.split('-');
-    // final List<String> open = time[0].split('.');
-    // final List<String> close = time[1].split('.');
-
-    // final DateTime openTime = DateTime(
-    //     now.year, now.month, now.day, int.parse(open[0]), int.parse(open[1]));
-    // final DateTime closeTime = DateTime(
-    //     now.year, now.month, now.day, int.parse(close[0]), int.parse(close[1]));
-    // return now.isAfter(openTime) && now.isBefore(closeTime);
-    return true;
-  }
 
   String get getRating => rating.toString().substring(0, 3);
 
@@ -154,6 +143,7 @@ class Cafe extends Equatable {
       description:
           map.containsKey('description') ? map['description'] as String : '',
       rawTime: map['time'] as String,
+      time: OpenTime.fromMap(jsonDecode(map['time'])),
       rating: map['rating'] != null ? map['rating'].toDouble() : 0.0,
       isFavorite: map.containsKey('favorite')
           ? map['favorite'] as int == 1

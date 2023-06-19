@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../model/popupmenu_model.dart';
+import '../bloc/cafe_details_bloc.dart';
+import '../cafe_details.dart';
 
 class CafeDetailsHeader extends StatefulWidget {
   final ScrollController controller;
 
   final VoidCallback onBack;
 
-  final List<PopUpMenuModel>? actions;
+  final CafeDetailsType type;
 
   const CafeDetailsHeader(
       {super.key,
       required this.controller,
       required this.onBack,
-      this.actions});
+      required this.type});
 
   @override
   State<CafeDetailsHeader> createState() => _CafeDetailsHeaderState();
@@ -28,6 +30,46 @@ class _CafeDetailsHeaderState extends State<CafeDetailsHeader> {
     super.initState();
 
     _initializeController();
+  }
+
+  Future<bool?> _deleteConfirmation() async {
+    return await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title:
+                Text('Hapus', style: Theme.of(context).textTheme.titleMedium),
+            content: Text('Apakah anda yakin untuk menghapus cafe ini?',
+                style: Theme.of(context).textTheme.bodyMedium),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context, false);
+                },
+                child: Text('Batal',
+                    style: Theme.of(context).textTheme.bodyMedium),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context, true);
+                },
+                child: Text('Hapus',
+                    style: Theme.of(context).textTheme.bodyMedium),
+              ),
+            ],
+          ),
+        ) ??
+        false;
+  }
+
+  Future<void> _deleteCafe() async {
+    var bloc = context.read<CafeDetailsBloc>();
+    var navigator = Navigator.of(context);
+    var isConfirmed = await _deleteConfirmation();
+
+    if (isConfirmed != null && isConfirmed) {
+      bloc.add(const CafeDetailsRemove());
+      navigator.pop();
+    }
   }
 
   void _initializeController() {
@@ -72,22 +114,38 @@ class _CafeDetailsHeaderState extends State<CafeDetailsHeader> {
           ),
         ),
       ),
-      actions: widget.actions != null
+      actions: widget.type == CafeDetailsType.owner
           ? [
-              PopupMenuButton<PopUpMenuModel>(
-                 shape: RoundedRectangleBorder(
+              PopupMenuButton(
+                shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15.0)),
-                onSelected: ((item) => item.onPressed()),
-                itemBuilder: ((context) {
-                  return widget.actions!.map((e) {
-                    return PopupMenuItem<PopUpMenuModel>(
-                      value: e,
-                      child: Text(e.text,
-                          style: Theme.of(context).textTheme.bodyMedium),
-                      onTap: () => e.onPressed(),
-                    );
-                  }).toList();
-                }),
+                onSelected: (value) {
+                  if (value == 'edit') {
+                    Navigator.pushNamed(context, '/edit-cafe');
+                  } else if (value == 'delete') {
+                    _deleteCafe();
+                  }
+                },
+                itemBuilder: (context) {
+                  return [
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: Text(
+                        'Edit',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      // onTap: () {},
+                    ),
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: Text(
+                        'Hapus',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      // onTap: () => _deleteCafe(),
+                    ),
+                  ];
+                },
               ),
             ]
           : null,

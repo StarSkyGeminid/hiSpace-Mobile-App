@@ -35,7 +35,7 @@ abstract class ICafeApi {
 
   Future<void> addFacility(List<Facility> facilities, String locationId);
 
-  Future<void> remove(Cafe cafe);
+  Future<void> remove(String locationId);
 
   Future<void> update(Cafe cafe);
 

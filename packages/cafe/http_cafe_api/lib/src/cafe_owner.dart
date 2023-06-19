@@ -39,8 +39,9 @@ class CafeOwner {
     if (cafe.galeries != null) {
       for (int i = 0; i < cafe.galeries!.length; i++) {
         request.files.add(await http.MultipartFile.fromPath(
-          'image$i',
+          'file',
           cafe.galeries![i].url,
+          filename: cafe.galeries![i].id,
         ));
       }
     }
@@ -62,14 +63,54 @@ class CafeOwner {
     return data['locationId'];
   }
 
-  Future<void> remove(Cafe cafe, {required Map<String, String> headers}) {
-    // TODO: implement remove
-    throw UnimplementedError();
+  Future<void> remove(String locationId,
+      {required Map<String, String> headers}) async {
+    final uri = Uri.https(
+      _baseUrl,
+      '/api/location/$locationId',
+    );
+
+    headers.addEntries([
+      const MapEntry('Content-Type', 'application/json'),
+    ]);
+
+    final response = await _httpClient.delete(uri, headers: headers);
+
+    if (response.statusCode != 200) throw RequestFailure();
   }
 
-  Future<void> update(Cafe cafe, {required Map<String, String> headers}) {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<void> update(Cafe cafe, {required Map<String, String> headers}) async {
+    final uri = Uri.https(
+      _baseUrl,
+      '/api/location',
+    );
+
+    var request = http.MultipartRequest('POST', uri);
+
+    request.headers.addAll(headers);
+
+    request.fields.addAll({
+      'name': cafe.name,
+      'address': cafe.address,
+      'description': cafe.description,
+      'latitude': cafe.latitude.toString(),
+      'longitude': cafe.longitude.toString(),
+      'time': cafe.rawTime,
+    });
+
+    if (cafe.galeries != null) {
+      for (int i = 0; i < cafe.galeries!.length; i++) {
+        request.files.add(await http.MultipartFile.fromPath(
+          'file',
+          cafe.galeries![i].url,
+          filename: cafe.galeries![i].id,
+        ));
+      }
+    }
+
+    var streamedResponse = await request.send();
+
+    if (streamedResponse.statusCode != 201) throw RequestFailure();
   }
 
   Future<void> addMenu(List<Menu> menus, String locationId,

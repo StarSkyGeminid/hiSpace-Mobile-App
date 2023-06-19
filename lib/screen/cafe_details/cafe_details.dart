@@ -7,12 +7,13 @@ import 'package:hispace_mobile_app/screen/cafe_details/widget/cafe_information.d
 import 'package:hispace_mobile_app/widget/carousel_image.dart';
 
 import 'bloc/cafe_details_bloc.dart';
-import 'model/popupmenu_model.dart';
+
+enum CafeDetailsType { owner, visitor }
 
 class CafeDetails extends StatelessWidget {
-  const CafeDetails({super.key, required this.locationId, this.actions});
+  const CafeDetails({super.key, required this.locationId, required this.type});
 
-  final List<PopUpMenuModel>? actions;
+  final CafeDetailsType type;
 
   final String locationId;
 
@@ -22,15 +23,15 @@ class CafeDetails extends StatelessWidget {
       create: (context) => CafeDetailsBloc(
         RepositoryProvider.of<CafeRepository>(context),
       )..add(CafeDetailsInitial(locationId)),
-      child:  _CafeDetailsView(actions),
+      child: _CafeDetailsView(type),
     );
   }
 }
 
 class _CafeDetailsView extends StatefulWidget {
-  const _CafeDetailsView(this.actions);
+  const _CafeDetailsView(this.type);
 
-  final List<PopUpMenuModel>? actions;
+  final CafeDetailsType type;
 
   @override
   State<_CafeDetailsView> createState() => _CafeDetailsViewState();
@@ -63,7 +64,7 @@ class _CafeDetailsViewState extends State<_CafeDetailsView> {
                 CafeDetailsHeader(
                   controller: scrollController,
                   onBack: () => Navigator.of(context).pop(),
-                  actions: widget.actions,
+                  type: widget.type,
                 ),
                 SliverToBoxAdapter(
                   child: AspectRatio(

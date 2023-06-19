@@ -10,6 +10,7 @@ class CafeDetailsBloc extends Bloc<CafeDetailsEvent, CafeDetailsState> {
       : _cafeRepository = cafeRepository,
         super(const CafeDetailsState()) {
     on<CafeDetailsInitial>(_onInitial);
+    on<CafeDetailsRemove>(_onRemove);
     on<CafeDetailsEvent>((event, emit) {});
   }
 
@@ -23,6 +24,18 @@ class CafeDetailsBloc extends Bloc<CafeDetailsEvent, CafeDetailsState> {
       var cafe = await _cafeRepository.getCafeByLocationId(event.locationId);
 
       emit(state.copyWith(cafe: cafe, status: CafeDetailsStatus.success));
+    } catch (e) {
+      emit(state.copyWith(status: CafeDetailsStatus.failure));
+    }
+  }
+
+  Future<void> _onRemove(
+      CafeDetailsRemove event, Emitter<CafeDetailsState> emit) async {
+    emit(state.copyWith(status: CafeDetailsStatus.loading));
+
+    try {
+      await _cafeRepository.remove(state.cafe.locationId);
+      emit(state.copyWith(status: CafeDetailsStatus.success));
     } catch (e) {
       emit(state.copyWith(status: CafeDetailsStatus.failure));
     }
