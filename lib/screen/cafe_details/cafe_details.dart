@@ -1,12 +1,17 @@
 import 'package:cafe_repository/cafe_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hispace_mobile_app/config/theme/color_pallete.dart';
 import 'package:hispace_mobile_app/core/global/constans.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/widget/cafe_details_header.dart';
-import 'package:hispace_mobile_app/screen/cafe_details/widget/cafe_information.dart';
-import 'package:hispace_mobile_app/widget/carousel_image.dart';
+import 'package:hispace_mobile_app/screen/cafe_details/widget/description.dart';
+import 'package:hispace_mobile_app/screen/cafe_details/widget/facility.dart';
+import 'package:hispace_mobile_app/screen/cafe_details/widget/menu.dart';
+import 'package:hispace_mobile_app/screen/cafe_details/widget/owner.dart';
+import 'package:hispace_mobile_app/screen/cafe_details/widget/title.dart';
 
 import 'bloc/cafe_details_bloc.dart';
+import 'widget/maps.dart';
 
 enum CafeDetailsType { owner, visitor }
 
@@ -23,15 +28,16 @@ class CafeDetails extends StatelessWidget {
       create: (context) => CafeDetailsBloc(
         RepositoryProvider.of<CafeRepository>(context),
       )..add(CafeDetailsInitial(locationId)),
-      child: _CafeDetailsView(type),
+      child: _CafeDetailsView(type, locationId),
     );
   }
 }
 
 class _CafeDetailsView extends StatefulWidget {
-  const _CafeDetailsView(this.type);
+  const _CafeDetailsView(this.type, this.locationId);
 
   final CafeDetailsType type;
+  final String locationId;
 
   @override
   State<_CafeDetailsView> createState() => _CafeDetailsViewState();
@@ -56,37 +62,202 @@ class _CafeDetailsViewState extends State<_CafeDetailsView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: BlocBuilder<CafeDetailsBloc, CafeDetailsState>(
-          builder: (context, state) {
-            return CustomScrollView(
-              controller: scrollController,
-              slivers: [
-                CafeDetailsHeader(
-                  controller: scrollController,
-                  onBack: () => Navigator.of(context).pop(),
-                  type: widget.type,
-                ),
-                SliverToBoxAdapter(
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: CarousselImage(
-                      cafePictureModel: state.cafe.galeries ?? [],
-                    ),
+        body: _View(scrollController: scrollController, type: widget.type),
+        bottomNavigationBar: widget.type != CafeDetailsType.owner
+            ? Container(
+                padding: const EdgeInsets.all(kDefaultSpacing),
+                color: Theme.of(context).colorScheme.background,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pushNamed(
+                      context, '/user/write-review',
+                      arguments: widget.locationId),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: kDefaultSpacing,
+                        vertical: kDefaultSpacing * 0.8),
+                    child: Text('Tulis Ulasan'),
                   ),
                 ),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(kDefaultSpacing),
-                    child: CafeInformation(
-                      cafe: state.cafe,
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
+              )
+            : null,
       ),
+    );
+  }
+}
+
+class _View extends StatelessWidget {
+  const _View({
+    required this.scrollController,
+    required this.type,
+  });
+
+  final ScrollController scrollController;
+
+  final CafeDetailsType type;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CafeDetailsBloc, CafeDetailsState>(
+      buildWhen: (previous, current) => previous.cafe != current.cafe,
+      builder: (context, state) {
+        return CustomScrollView(
+          controller: scrollController,
+          slivers: [
+            CafeDetailsHeader(
+              controller: scrollController,
+              onBack: () => Navigator.of(context).pop(),
+              type: type,
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(kDefaultSpacing),
+                child: DetailsTitle(
+                  cafe: state.cafe,
+                  type: type,
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kDefaultSpacing,
+                  ),
+                  child: Divider(color: ColorPallete.light.grey3)),
+            ),
+            SliverToBoxAdapter(
+              child: Owner(cafe: state.cafe),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kDefaultSpacing,
+                  ),
+                  child: Divider(color: ColorPallete.light.grey3)),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  kDefaultSpacing,
+                  0,
+                  kDefaultSpacing,
+                  kDefaultSpacing,
+                ),
+                child: Description(cafe: state.cafe),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kDefaultSpacing,
+                  ),
+                  child: Divider(color: ColorPallete.light.grey3)),
+            ),
+            if (state.cafe.menus != null)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
+                  child: Menu(cafe: state.cafe),
+                ),
+              ),
+            if (state.cafe.menus != null && state.cafe.menus!.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(kDefaultSpacing),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      backgroundColor: Theme.of(context).colorScheme.background,
+                      foregroundColor: Theme.of(context).colorScheme.primary,
+                      elevation: 0,
+                      side: const BorderSide(
+                        width: 1,
+                        color: Colors.black,
+                      ),
+                    ),
+                    onPressed: () {},
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: kDefaultSpacing,
+                          vertical: kDefaultSpacing * 0.8),
+                      child: Text('Lihat Semua Menu'),
+                    ),
+                  ),
+                ),
+              ),
+            SliverToBoxAdapter(
+              child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kDefaultSpacing,
+                  ),
+                  child: Divider(color: ColorPallete.light.grey3)),
+            ),
+            if (state.cafe.facilities != null)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
+                  child: Facility(
+                    cafe: state.cafe,
+                  ),
+                ),
+              ),
+            if (state.cafe.facilities != null &&
+                state.cafe.facilities!.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(kDefaultSpacing),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      backgroundColor: Theme.of(context).colorScheme.background,
+                      foregroundColor: Theme.of(context).colorScheme.primary,
+                      elevation: 0,
+                      side: const BorderSide(
+                        width: 1,
+                        color: Colors.black,
+                      ),
+                    ),
+                    onPressed: () {},
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: kDefaultSpacing,
+                          vertical: kDefaultSpacing * 0.8),
+                      child: Text('Lihat Semua Fasilitas'),
+                    ),
+                  ),
+                ),
+              ),
+            SliverToBoxAdapter(
+              child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kDefaultSpacing,
+                  ),
+                  child: Divider(color: ColorPallete.light.grey3)),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(kDefaultSpacing),
+                child: Maps(
+                  latitude: state.cafe.latitude,
+                  longitude: state.cafe.longitude,
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
+                child: Divider(color: ColorPallete.light.grey3),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

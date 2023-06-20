@@ -11,14 +11,13 @@ class Facility extends Equatable {
 
   const Facility({
     required this.name,
-    required this.iconData,
+    this.iconData = Icons.check,
     this.isCheck = false,
   });
 
   factory Facility.fromJson(Map<String, dynamic> json) {
     return Facility(
       name: json['name'],
-      iconData: json['iconData'],
     );
   }
 

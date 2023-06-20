@@ -25,7 +25,7 @@ class Cafe extends Equatable {
   final List<dynamic>? reviews;
   final List<Menu>? menus;
   final List<Galery>? galeries;
-  final List<dynamic>? facilities;
+  final List<Facility>? facilities;
 
   const Cafe({
     required this.locationId,
@@ -83,7 +83,7 @@ class Cafe extends Equatable {
     List<dynamic>? reviews,
     List<Menu>? menus,
     List<Galery>? galeries,
-    List<dynamic>? facilities,
+    List<Facility>? facilities,
   }) {
     return Cafe(
       locationId: locationId ?? this.locationId,
@@ -162,7 +162,8 @@ class Cafe extends Equatable {
               map['galeries'].map((e) => Galery.fromMap(e)).toList())
           : null,
       facilities: map['facilities'] != null && map['facilities'].isNotEmpty
-          ? List<dynamic>.from(map['facilities'] as List<dynamic>)
+          ? List<Facility>.from(
+              map['facilities'].map((e) => Facility.fromJson(e)).toList())
           : null,
     );
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hispace_mobile_app/core/global/constans.dart';
+import 'package:hispace_mobile_app/widget/carousel_image.dart';
 
 import '../bloc/cafe_details_bloc.dart';
 import '../cafe_details.dart';
@@ -63,13 +65,34 @@ class _CafeDetailsHeaderState extends State<CafeDetailsHeader> {
 
   Future<void> _deleteCafe() async {
     var bloc = context.read<CafeDetailsBloc>();
+    var scaffoldMessenger = ScaffoldMessenger.of(context);
+
     var navigator = Navigator.of(context);
     var isConfirmed = await _deleteConfirmation();
 
-    if (isConfirmed != null && isConfirmed) {
-      bloc.add(const CafeDetailsRemove());
-      navigator.pop();
+    if (isConfirmed == null || !isConfirmed) return;
+
+    bloc.add(const CafeDetailsRemove());
+
+    await bloc.stream.firstWhere(
+      (state) => state.status != CafeDetailsStatus.loading,
+    );
+    if (bloc.state.status != CafeDetailsStatus.success) {
+      scaffoldMessenger.showSnackBar(
+        const SnackBar(
+          content: Text('Gagal menghapus cafe'),
+        ),
+      );
+      return;
     }
+
+    scaffoldMessenger.showSnackBar(
+      const SnackBar(
+        content: Text('Berhasil menghapus cafe'),
+      ),
+    );
+
+    navigator.pop();
   }
 
   void _initializeController() {
@@ -93,67 +116,93 @@ class _CafeDetailsHeaderState extends State<CafeDetailsHeader> {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
     return SliverAppBar(
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: Theme.of(context).colorScheme.background,
       ),
       backgroundColor: isAppbarCollapsing
           ? Theme.of(context).colorScheme.background
-          : Colors.transparent,
+          : Theme.of(context).colorScheme.background,
       automaticallyImplyLeading: false,
-      leading: InkWell(
-        onTap: widget.onBack,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(70),
-            color: Theme.of(context).colorScheme.background,
-          ),
-          child: Icon(
-            Icons.arrow_back_ios_rounded,
-            color: Theme.of(context).colorScheme.primary,
+      leadingWidth: 80,
+      leading: Center(
+        child: InkWell(
+          onTap: widget.onBack,
+          child: Container(
+            padding: const EdgeInsets.all(kDefaultSpacing / 2),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(70),
+                color: Theme.of(context).colorScheme.background,
+                boxShadow: [
+                  BoxShadow(
+                    color:
+                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ]),
+            child: Icon(
+              Icons.arrow_back_ios_rounded,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
         ),
       ),
       actions: widget.type == CafeDetailsType.owner
           ? [
-              PopupMenuButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15.0)),
-                onSelected: (value) {
-                  if (value == 'edit') {
-                    Navigator.pushNamed(context, '/edit-cafe');
-                  } else if (value == 'delete') {
-                    _deleteCafe();
-                  }
-                },
-                itemBuilder: (context) {
-                  return [
-                    PopupMenuItem(
-                      value: 'edit',
-                      child: Text(
-                        'Edit',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      // onTap: () {},
-                    ),
-                    PopupMenuItem(
-                      value: 'delete',
-                      child: Text(
-                        'Hapus',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      // onTap: () => _deleteCafe(),
-                    ),
-                  ];
-                },
-              ),
+              _popUpMenu(context),
             ]
           : null,
+      flexibleSpace: FlexibleSpaceBar(
+        background: BlocBuilder<CafeDetailsBloc, CafeDetailsState>(
+          builder: (context, state) {
+            return CarousselImage(
+              cafePictureModel: state.cafe.galeries ?? [],
+              onTap: () => Navigator.of(context).pushNamed('/cafe/image-grid',
+                  arguments: state.cafe.galeries ?? []),
+            );
+          },
+        ),
+      ),
       pinned: true,
       floating: true,
       snap: true,
-      elevation: 0,
-      expandedHeight: 60,
+      elevation: isAppbarCollapsing ? 0 : 4,
+      toolbarHeight: 70,
+      expandedHeight: size.width,
+    );
+  }
+
+  PopupMenuButton<String> _popUpMenu(BuildContext context) {
+    return PopupMenuButton(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+      onSelected: (value) {
+        if (value == 'edit') {
+          Navigator.pushNamed(context, '/edit-cafe');
+        } else if (value == 'delete') {
+          _deleteCafe();
+        }
+      },
+      itemBuilder: (context) {
+        return [
+          PopupMenuItem(
+            value: 'edit',
+            child: Text(
+              'Edit',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+          PopupMenuItem(
+            value: 'delete',
+            child: Text(
+              'Hapus',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+        ];
+      },
     );
   }
 }

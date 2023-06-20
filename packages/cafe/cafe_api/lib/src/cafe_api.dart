@@ -50,6 +50,8 @@ abstract class ICafeApi {
   @protected
   Future<bool> addToFavorite(String locationId);
 
+  Future<bool> addReview(String locationId);
+
   @protected
   Future<bool> removeFromFavorite(String locationId);
 

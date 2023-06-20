@@ -1,7 +1,9 @@
+import 'package:cafe_api/cafe_api.dart';
 import 'package:flutter/material.dart';
 import 'package:hispace_mobile_app/screen/accout_settings/account_settings.dart';
 import 'package:hispace_mobile_app/screen/boarding/boarding_screen.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/cafe_details.dart';
+import 'package:hispace_mobile_app/screen/cafe_details/widget/image_grid.dart';
 import 'package:hispace_mobile_app/screen/cafe_owned/cafe_owned_screen.dart';
 import 'package:hispace_mobile_app/screen/create_cafe/create_cafe.dart';
 import 'package:hispace_mobile_app/screen/dashboard/dashboard_screen.dart';
@@ -14,6 +16,7 @@ import 'package:hispace_mobile_app/screen/register/register_screen.dart';
 import 'package:hispace_mobile_app/screen/register/widget/first_register_screen.dart';
 import 'package:hispace_mobile_app/screen/register/widget/second_register_screen.dart';
 import 'package:hispace_mobile_app/screen/splash/splash_screen.dart';
+import 'package:hispace_mobile_app/screen/write_review/write_review.dart';
 import 'package:page_transition/page_transition.dart';
 
 class RoutesGenerator {
@@ -137,11 +140,30 @@ class RoutesGenerator {
         );
       case '/user/create-cafe':
         return PageTransition(
-          child: const CreateCafe(),
+          child: CreateCafe(
+            isEdit: args as bool,
+          ),
           type: PageTransitionType.rightToLeft,
           duration: const Duration(milliseconds: 300),
         );
-
+      case '/user/write-review':
+        return PageTransition(
+          child: WriteReview(
+            locationId: args as String,
+          ),
+          type: PageTransitionType.bottomToTop,
+          duration: const Duration(milliseconds: 500),
+          reverseDuration: const Duration(milliseconds: 500),
+        );
+      case '/cafe/image-grid':
+        return PageTransition(
+          child: ImageGrid(
+            galeries: args as List<Galery>,
+          ),
+          type: PageTransitionType.bottomToTop,
+          duration: const Duration(milliseconds: 500),
+          reverseDuration: const Duration(milliseconds: 500),
+        );
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

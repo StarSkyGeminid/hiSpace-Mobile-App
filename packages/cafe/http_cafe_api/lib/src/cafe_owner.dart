@@ -39,7 +39,7 @@ class CafeOwner {
     if (cafe.galeries != null) {
       for (int i = 0; i < cafe.galeries!.length; i++) {
         request.files.add(await http.MultipartFile.fromPath(
-          'file',
+          'file$i',
           cafe.galeries![i].url,
           filename: cafe.galeries![i].id,
         ));
