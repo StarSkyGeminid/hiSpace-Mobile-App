@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cafe_api/cafe_api.dart';
 import 'package:flutter/material.dart';
 import 'package:hispace_mobile_app/core/global/constans.dart';
@@ -87,10 +86,9 @@ class _CarousselImageState extends State<CarousselImage> {
   }
 
   builder(int index) {
-    return CachedNetworkImage(
-      imageUrl: widget.cafePictureModel[index].url,
+    return Image.network(
+      widget.cafePictureModel[index].url,
       fit: BoxFit.cover,
-      fadeInDuration: const Duration(milliseconds: 100),
     );
   }
 }

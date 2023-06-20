@@ -152,7 +152,22 @@ class _CafeDetailsHeaderState extends State<CafeDetailsHeader> {
       ),
       actions: widget.type == CafeDetailsType.owner
           ? [
-              _popUpMenu(context),
+              Container(
+                  margin: const EdgeInsets.all(kDefaultSpacing / 2),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                      color: Theme.of(context).colorScheme.background,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ]),
+                  child: _popUpMenu(context)),
             ]
           : null,
       flexibleSpace: FlexibleSpaceBar(
@@ -180,7 +195,8 @@ class _CafeDetailsHeaderState extends State<CafeDetailsHeader> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
       onSelected: (value) {
         if (value == 'edit') {
-          Navigator.pushNamed(context, '/edit-cafe');
+          Navigator.pushNamed(context, '/user/edit-cafe',
+              arguments: BlocProvider.of<CafeDetailsBloc>(context).state.cafe);
         } else if (value == 'delete') {
           _deleteCafe();
         }

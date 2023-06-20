@@ -140,9 +140,13 @@ class RoutesGenerator {
         );
       case '/user/create-cafe':
         return PageTransition(
-          child: CreateCafe(
-            isEdit: args as bool,
-          ),
+          child: const CreateCafe(),
+          type: PageTransitionType.rightToLeft,
+          duration: const Duration(milliseconds: 300),
+        );
+      case '/user/edit-cafe':
+        return PageTransition(
+          child: CreateCafe(cafe: args as Cafe),
           type: PageTransitionType.rightToLeft,
           duration: const Duration(milliseconds: 300),
         );

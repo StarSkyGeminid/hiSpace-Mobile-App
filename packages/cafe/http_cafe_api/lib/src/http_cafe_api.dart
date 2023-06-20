@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cafe_api/cafe_api.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_cafe_api/src/cafe_owner.dart';
 import 'package:local_data/local_data.dart';
+import 'package:path/path.dart';
 import 'package:rxdart/subjects.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'exception.dart';
 
@@ -124,6 +127,11 @@ class HttpCafeApi extends ICafeApi {
   }
 
   @override
+  Future<void> addMenu(List<Menu> menus, String locationId) async {
+    return _cafeOwner.addMenu(menus, locationId, headers: getAuthorization());
+  }
+
+  @override
   Future<void> remove(String locationId) {
     return _cafeOwner.remove(locationId, headers: getAuthorization());
   }
@@ -135,18 +143,31 @@ class HttpCafeApi extends ICafeApi {
   }
 
   @override
-  Future<void> update(Cafe cafe) {
-    return _cafeOwner.update(cafe, headers: getAuthorization());
+  Future<void> updateLocation(Cafe cafe) async {
+    await _cafeOwner.updateLocation(cafe, headers: getAuthorization());
   }
 
   @override
-  Future<void> addMenu(List<Menu> menus, String locationId) async {
-    return _cafeOwner.addMenu(menus, locationId, headers: getAuthorization());
+  Future<void> updateMenu(List<Menu> menus, String locationId) async {
+    await _cafeOwner.updateMenu(menus, locationId, headers: getAuthorization());
   }
 
   @override
   Future<void> addFacility(List<Facility> facilities, String locationId) {
     return _cafeOwner.addFacility(facilities, locationId,
+        headers: getAuthorization());
+  }
+
+  @override
+  Future<bool> addReview(String locationId) {
+    // TODO: implement addReview
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> updateFacility(
+      List<Facility> facilities, String locationId) async {
+    await _cafeOwner.updateFacility(facilities, locationId,
         headers: getAuthorization());
   }
 
@@ -243,7 +264,8 @@ class HttpCafeApi extends ICafeApi {
   }
 
   @override
-  Future<Cafe> getCafeByLocationId(String locationId) async {
+  Future<Cafe> getCafeByLocationId(String locationId,
+      {bool cached = false}) async {
     final uri = Uri.https(
       _baseUrl,
       '/api/location/$locationId',
@@ -269,7 +291,39 @@ class HttpCafeApi extends ICafeApi {
 
     if (data.isEmpty) throw ResponseFailure();
 
-    return Cafe.fromMap(data);
+    Cafe cafe = Cafe.fromMap(data);
+
+    if (!cached || cafe.galeries == null) return cafe;
+
+    List<Galery> galeries = [];
+
+    final Directory temp = await getTemporaryDirectory();
+
+    for (Galery galery in cafe.galeries!) {
+      final File imageFile =
+          File('${temp.path}/images/${basename(galery.url)}');
+
+      if (await imageFile.exists()) {
+        galeries.add(galery.copyWith(
+          url: imageFile.path,
+        ));
+      } else {
+        await imageFile.create(recursive: true);
+
+        final response =
+            await _httpClient.get(Uri.parse(galery.url), headers: headers);
+
+        if (response.statusCode != 200) throw RequestFailure();
+
+        await imageFile.writeAsBytes(response.bodyBytes);
+
+        galeries.add(galery.copyWith(
+          url: imageFile.path,
+        ));
+      }
+    }
+
+    return cafe.copyWith(galeries: galeries);
   }
 
   @override

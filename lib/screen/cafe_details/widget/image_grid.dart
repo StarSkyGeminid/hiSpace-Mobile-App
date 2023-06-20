@@ -18,10 +18,10 @@ class ImageGrid extends StatelessWidget {
               maxScale: 4,
               child: Container(
                 // width: size.width * 0.9,
-                height:  size.width * 0.9,
+                height: size.width * 0.9,
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                  image: CachedNetworkImageProvider(url),
+                  image: NetworkImage(url),
                   fit: BoxFit.cover,
                 )),
               )),
@@ -59,7 +59,7 @@ class ImageGrid extends StatelessWidget {
                 margin: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: CachedNetworkImageProvider(galeries[index].url),
+                    image: NetworkImage(galeries[index].url),
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.circular(10),

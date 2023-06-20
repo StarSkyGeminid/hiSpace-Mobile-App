@@ -31,19 +31,23 @@ abstract class ICafeApi {
 
   Future<String> addLocation(Cafe cafe);
 
+  Future<void> updateLocation(Cafe cafe);
+
   Future<void> addMenu(List<Menu> menus, String locationId);
+  
+  Future<void> updateMenu(List<Menu> menus, String locationId);
 
   Future<void> addFacility(List<Facility> facilities, String locationId);
 
-  Future<void> remove(String locationId);
+  Future<void> updateFacility(List<Facility> facilities, String locationId);
 
-  Future<void> update(Cafe cafe);
+  Future<void> remove(String locationId);
 
   Future<void> search(String query);
 
   Future<List<Cafe>?> getCafeByOwner(String email);
 
-  Future<Cafe> getCafeByLocationId(String locationId);
+  Future<Cafe> getCafeByLocationId(String locationId, {bool cached = false});
 
   Future<void> getWishlist({int page = 0});
 

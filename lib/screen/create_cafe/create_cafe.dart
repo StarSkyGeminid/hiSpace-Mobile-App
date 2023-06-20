@@ -17,7 +17,9 @@ import 'page/open_hour.dart';
 import 'page/upload.dart';
 
 class CreateCafe extends StatelessWidget {
-  const CreateCafe({super.key});
+  const CreateCafe({super.key, this.cafe});
+
+  final Cafe? cafe;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,7 @@ class CreateCafe extends StatelessWidget {
       create: (context) => CreateCafeBloc(
         RepositoryProvider.of<GeoLocationRepository>(context),
         RepositoryProvider.of<CafeRepository>(context),
-      )..add(CreateCafeInitial()),
+      )..add(CreateCafeInitial(cafe)),
       child: const CreateCafeView(),
     );
   }
@@ -39,23 +41,24 @@ class CreateCafeView extends StatefulWidget {
 }
 
 class _CreateCafeViewState extends State<CreateCafeView> {
-  final List<Widget> _pages = [
-    const NameForm(),
-    const DescriptionForm(),
-    const LocationForm(),
-    const OpenHourForm(),
-    const ImageForm(),
-    const MenuForm(),
-    const FacilityForm(),
-    const UploadData(),
-  ];
+  late final List<Widget> _pages;
 
   late PageController _controller;
 
   @override
   void initState() {
     super.initState();
-
+    _pages = [
+      const NameForm(),
+      const DescriptionForm(),
+      const LocationForm(),
+      const OpenHourForm(),
+      const ImageForm(),
+      const MenuForm(),
+      const FacilityForm(),
+      const UploadData(),
+    ];
+    
     _controller = PageController(initialPage: 0);
   }
 
@@ -72,7 +75,7 @@ class _CreateCafeViewState extends State<CreateCafeView> {
         listenWhen: (previous, current) =>
             previous.currentPage != current.currentPage,
         listener: (context, state) {
-          if (state.currentPage != _pages.length - 1) {
+          if (state.currentPage < _pages.length) {
             _controller.animateToPage(
               state.currentPage,
               duration: const Duration(milliseconds: 300),
@@ -101,7 +104,7 @@ class _CreateCafeViewState extends State<CreateCafeView> {
             controller: _controller,
             itemBuilder: (context, index) => _pages[index],
           ),
-          bottomNavigationBar: state.currentPage == _pages.length - 2
+          bottomNavigationBar: state.currentPage == _pages.length - 1
               ? null
               : state.currentPage < _pages.length - 1
                   ? _BottomMenu(

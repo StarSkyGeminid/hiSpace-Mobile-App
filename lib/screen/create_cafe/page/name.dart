@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hispace_mobile_app/core/global/constans.dart';
+import 'package:hispace_mobile_app/formz_models/cafe_name.dart';
 import 'package:hispace_mobile_app/widget/custom_form.dart';
 
 import '../bloc/create_cafe_bloc.dart';
@@ -35,19 +36,34 @@ class NameForm extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: kDefaultSpacing * 2),
-        CustomTextFormField(
+        const _NameFormField(),
+        const SizedBox(height: kDefaultSpacing / 2),
+      ],
+    );
+  }
+}
+
+class _NameFormField extends StatelessWidget {
+  const _NameFormField();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CreateCafeBloc, CreateCafeState>(
+      buildWhen: (previous, current) => previous.status != current.status,
+      builder: (context, state) {
+        return CustomTextFormField(
+          key: UniqueKey(),
           hintText: 'Masukkan nama Cafe',
           title: 'Nama Cafe',
-          initialValue:
-              BlocProvider.of<CreateCafeBloc>(context).state.cafeName.value,
+          initialValue: state.cafeName.value,
           onChanged: (String value) {
             BlocProvider.of<CreateCafeBloc>(context).add(
               CreateCafeNameChanged(value),
             );
           },
-        ),
-        const SizedBox(height: kDefaultSpacing / 2),
-      ],
+          errorText: state.cafeName.displayError?.text(),
+        );
+      },
     );
   }
 }

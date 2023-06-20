@@ -26,7 +26,13 @@ class _ImageFormState extends State<ImageForm> {
 
     if (images.isEmpty) return;
 
-    bloc.add(CreateCafeAddPicture(images));
+    List<File> files = [];
+
+    for (var image in images) {
+      files.add(File(image.path));
+    }
+
+    bloc.add(CreateCafeAddPicture(files));
   }
 
   Future<bool?> _deleteImage() async {
@@ -156,10 +162,14 @@ class _ImageFormState extends State<ImageForm> {
                       }));
                     },
                     child: Hero(
-                      tag: 'AddImageCafe_${state.images[index].name}',
-                      child: Image.file(
-                        File(state.images[index].path),
-                        fit: BoxFit.cover,
+                      tag: 'AddImageCafe_${state.images[index].path}',
+                      child: BlocBuilder<CreateCafeBloc, CreateCafeState>(
+                        builder: (context, state) {
+                          return Image.file(
+                            File(state.images[index].path),
+                            fit: BoxFit.cover,
+                          );
+                        },
                       ),
                     ),
                   );
@@ -177,7 +187,7 @@ class _ImageFormState extends State<ImageForm> {
 class _ImageDetail extends StatefulWidget {
   const _ImageDetail({required this.image});
 
-  final XFile image;
+  final File image;
 
   @override
   _ImageDetailState createState() => _ImageDetailState();
@@ -205,7 +215,7 @@ class _ImageDetailState extends State<_ImageDetail> {
       body: GestureDetector(
         child: Center(
           child: Hero(
-            tag: 'AddImageCafe_${widget.image.name}',
+            tag: 'AddImageCafe_${widget.image.path}',
             child: Image.file(
               File(widget.image.path),
               fit: BoxFit.cover,

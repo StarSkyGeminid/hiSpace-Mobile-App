@@ -156,7 +156,7 @@ class _DescriptionFormViewState extends State<_DescriptionFormView> {
         ),
         const SizedBox(height: kDefaultSpacing / 2),
         Text(
-          'Beberapa orang mungkin ingin tahu kapan saja cafemu buka, jadi pastikan kamu mengisi dengan benar ya!',
+          'Beberapa orang ingin tahu kapan saja cafemu buka, jadi pastikan kamu mengisi dengan benar ya!',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: kDefaultSpacing * 2),
@@ -217,7 +217,8 @@ class _TimeInputState extends State<_TimeInput> {
 
   @override
   void initState() {
-    _controller.text = '-';
+    _controller.text =
+        getTime(BlocProvider.of<CreateCafeBloc>(context).state.openTime);
     super.initState();
   }
 

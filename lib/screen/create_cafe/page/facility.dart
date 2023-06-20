@@ -101,7 +101,7 @@ class _FacilitiesGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CreateCafeBloc, CreateCafeState>(
-      buildWhen: (previous, current) => previous.status != current.status,
+      buildWhen: (previous, current) => previous.status != current.status || previous.facilities != current.facilities,
       builder: (context, state) {
         return GridView.builder(
           key: const Key('GridViewFacilities'),

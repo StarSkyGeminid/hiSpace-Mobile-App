@@ -7,7 +7,14 @@ abstract class CreateCafeEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class CreateCafeInitial extends CreateCafeEvent {}
+class CreateCafeInitial extends CreateCafeEvent {
+  const CreateCafeInitial(this.cafe);
+
+  final Cafe? cafe;
+
+  @override
+  List<Object> get props => [];
+}
 
 class CreateCafeNextPage extends CreateCafeEvent {}
 
@@ -88,7 +95,7 @@ class CreateCafeOpenTimeChanged extends CreateCafeEvent {
 class CreateCafeAddPicture extends CreateCafeEvent {
   const CreateCafeAddPicture(this.images);
 
-  final List<XFile> images;
+  final List<File> images;
 
   @override
   List<Object> get props => [images];

@@ -36,26 +36,37 @@ class DescriptionForm extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: kDefaultSpacing * 2),
-        BlocBuilder<CreateCafeBloc, CreateCafeState>(
-          builder: (context, state) {
-            return CustomTextFormField(
-              hintText: 'Masukkan deskripsi',
-              title: 'Deskripsi',
-              initialValue: state.cafeDescription.value,
-              onChanged: (String value) =>
-                  BlocProvider.of<CreateCafeBloc>(context).add(
-                CreateCafeDescriptionChanged(value),
-              ),
-              errorText: state.cafeDescription.displayError?.text(),
-              maxLines: null,
-              radius: 10,
-              decoration: InputDecoration(
-                  counter: Text('${state.cafeDescription.value.length}/50')),
-            );
-          },
-        ),
+        const _DescriptionFormField(),
         const SizedBox(height: kDefaultSpacing / 2),
       ],
+    );
+  }
+}
+
+class _DescriptionFormField extends StatelessWidget {
+  const _DescriptionFormField();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<CreateCafeBloc, CreateCafeState>(
+      buildWhen: (previous, current) => previous.status != current.status,
+      builder: (context, state) {
+        return CustomTextFormField(
+          key: UniqueKey(),
+          hintText: 'Masukkan deskripsi',
+          title: 'Deskripsi',
+          initialValue: state.cafeDescription.value,
+          onChanged: (String value) =>
+              BlocProvider.of<CreateCafeBloc>(context).add(
+            CreateCafeDescriptionChanged(value),
+          ),
+          errorText: state.cafeDescription.displayError?.text(),
+          maxLines: null,
+          radius: 10,
+          decoration: InputDecoration(
+              counter: Text('${state.cafeDescription.value.length}/50')),
+        );
+      },
     );
   }
 }

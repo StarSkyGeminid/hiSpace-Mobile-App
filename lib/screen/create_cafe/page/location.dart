@@ -83,12 +83,19 @@ class _LocationFormViewState extends State<_LocationFormView> {
                     _mapController.move(state.coordinate,
                         _mapController.zoom > 15 ? _mapController.zoom : 15);
                   },
+                  buildWhen: (previous, current) =>
+                      previous.coordinate != current.coordinate,
                   builder: (context, state) {
+                    bool isDefaultCoordinate = state.coordinate ==
+                        const LatLng(-6.1769896, 106.8229453);
+
                     return FlutterMap(
                       mapController: _mapController,
                       options: MapOptions(
-                        center: const LatLng(-6.1769896, 106.8229453),
-                        zoom: 5.0,
+                        center: isDefaultCoordinate
+                            ? const LatLng(-6.1769896, 106.8229453)
+                            : state.coordinate,
+                        zoom: isDefaultCoordinate ? 5.0 : 15,
                         minZoom: 3.0,
                         maxZoom: 18.0,
                         onTap: (TapPosition position, LatLng latlng) {
@@ -217,7 +224,7 @@ class _SearchButton extends StatelessWidget {
               ? const Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: kDefaultSpacing,
-                    vertical: kDefaultSpacing / 2,
+                    vertical: kDefaultSpacing * 0.8,
                   ),
                   child: Text('Cari alamat'),
                 )

@@ -9,7 +9,12 @@ class DoneFilling extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return isSuccess ? const _SuccessUploading() : const _FailUploading();
+    return SafeArea(
+      child: Scaffold(
+        body: isSuccess ? const _SuccessUploading() : const _FailUploading(),
+        bottomNavigationBar: _DoneButton(isSuccess),
+      ),
+    );
   }
 }
 
@@ -32,7 +37,7 @@ class _FailUploading extends StatelessWidget {
         ),
         const SizedBox(height: kDefaultSpacing),
         Text(
-          'Oops',
+          'Ups',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: kDefaultSpacing / 2),
@@ -70,11 +75,40 @@ class _SuccessUploading extends StatelessWidget {
         ),
         const SizedBox(height: kDefaultSpacing / 2),
         Text(
-          'Selamat, cafe kamu sudah berhasil dibuat.',
+          'Selamat, data cafe kamu berhasil di upload.',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: kDefaultSpacing * 2),
       ],
+    );
+  }
+}
+
+class _DoneButton extends StatelessWidget {
+  const _DoneButton(this.isSuccess);
+
+  final bool isSuccess;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 80,
+      child: Padding(
+        padding: const EdgeInsets.all(kDefaultSpacing / 2),
+        child: ElevatedButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: isSuccess
+              ? const Padding(
+                  padding: EdgeInsets.all(kDefaultSpacing * 0.8),
+                  child: Text('Selesai'),
+                )
+              : const SizedBox(
+                  height: kDefaultSpacing,
+                  width: kDefaultSpacing,
+                  child: CircularProgressIndicator.adaptive(),
+                ),
+        ),
+      ),
     );
   }
 }

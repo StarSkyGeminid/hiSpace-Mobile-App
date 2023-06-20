@@ -4,6 +4,7 @@ enum CreateCafeStatus { initial, loading, success, failure }
 
 class CreateCafeState extends Equatable {
   const CreateCafeState({
+    this.isEdit = false,
     this.status = CreateCafeStatus.initial,
     this.cafeName = const CafeName.pure(),
     this.cafeDescription = const CafeDescription.pure(),
@@ -16,6 +17,8 @@ class CreateCafeState extends Equatable {
     this.images = const [],
     this.currentPage = 0,
   });
+
+  final bool isEdit;
 
   final CreateCafeStatus status;
 
@@ -35,11 +38,12 @@ class CreateCafeState extends Equatable {
 
   final OpenTime openTime;
 
-  final List<XFile> images;
+  final List<File> images;
 
   final int currentPage;
 
   CreateCafeState copyWith({
+    bool? isEdit,
     CreateCafeStatus? status,
     CafeName? cafeName,
     CafeDescription? cafeDescription,
@@ -48,11 +52,12 @@ class CreateCafeState extends Equatable {
     LatLng? latlng,
     CafeAddress? cafeAddress,
     OpenTime? openTime,
-    List<XFile>? images,
+    List<File>? images,
     int? currentPage,
     List<Facility>? facilities,
   }) {
     return CreateCafeState(
+      isEdit: isEdit ?? this.isEdit,
       status: status ?? this.status,
       cafeName: cafeName ?? this.cafeName,
       cafeDescription: cafeDescription ?? this.cafeDescription,
@@ -69,6 +74,7 @@ class CreateCafeState extends Equatable {
 
   @override
   List<Object> get props => [
+        isEdit,
         status,
         cafeName,
         cafeDescription,
