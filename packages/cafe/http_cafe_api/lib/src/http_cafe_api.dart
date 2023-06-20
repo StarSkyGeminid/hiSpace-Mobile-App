@@ -159,9 +159,34 @@ class HttpCafeApi extends ICafeApi {
   }
 
   @override
-  Future<bool> addReview(String locationId) {
-    // TODO: implement addReview
-    throw UnimplementedError();
+  Future<bool> addReview(Review review) async {
+    final uri = Uri.https(
+      _baseUrl,
+      '/api/location/${review.locationId}/review',
+    );
+
+    var headers = getAuthorization();
+
+    headers.addAll({
+      'Content-Type': 'application/json',
+    });
+
+    final response = await _httpClient.post(uri,
+        headers: headers, body: jsonEncode(review.toJson()));
+
+    if (response.statusCode == 400) return false;
+
+    if (response.statusCode != 201) throw RequestFailure;
+
+    if (response.body.isEmpty) throw ResponseFailure();
+
+    final resultJson = jsonDecode(response.body) as Map;
+
+    if (resultJson.containsKey('status') && resultJson['status'] != 'success') {
+      throw RequestFailure();
+    }
+
+    return true;
   }
 
   @override

@@ -1,5 +1,4 @@
 import 'package:geolocation_api/geolocation_api.dart';
-import 'package:geolocation_api/src/model/location.dart';
 
 abstract class GeolocationApi {
   Future<Location?> getLocationFromCoordinates(

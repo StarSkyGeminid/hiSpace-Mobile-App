@@ -87,8 +87,7 @@ class _AppViewState extends State<AppView> {
     return MaterialApp(
       navigatorKey: _navigatorKey,
       title: 'hiSpace',
-      localizationsDelegates: <LocalizationsDelegate<Object>>[
-        // ... app-specific localization delegate(s) here
+      localizationsDelegates: const <LocalizationsDelegate<Object>>[
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],

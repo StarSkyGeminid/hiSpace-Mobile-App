@@ -34,7 +34,7 @@ abstract class ICafeApi {
   Future<void> updateLocation(Cafe cafe);
 
   Future<void> addMenu(List<Menu> menus, String locationId);
-  
+
   Future<void> updateMenu(List<Menu> menus, String locationId);
 
   Future<void> addFacility(List<Facility> facilities, String locationId);
@@ -54,7 +54,7 @@ abstract class ICafeApi {
   @protected
   Future<bool> addToFavorite(String locationId);
 
-  Future<bool> addReview(String locationId);
+  Future<bool> addReview(Review review);
 
   @protected
   Future<bool> removeFromFavorite(String locationId);

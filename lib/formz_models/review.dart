@@ -1,27 +1,27 @@
 import 'package:formz/formz.dart';
 
-enum ReviewValidationError { empty, tooShort }
+enum CafeReviewValidationError { empty, tooShort }
 
-class Review extends FormzInput<String, ReviewValidationError> {
-  const Review.pure() : super.pure('');
-  const Review.dirty([super.value = '']) : super.dirty();
+class CafeReview extends FormzInput<String, CafeReviewValidationError> {
+  const CafeReview.pure() : super.pure('');
+  const CafeReview.dirty([super.value = '']) : super.dirty();
 
   @override
-  ReviewValidationError? validator(String value) {
-    if (value.isEmpty) return ReviewValidationError.empty;
+  CafeReviewValidationError? validator(String value) {
+    if (value.isEmpty) return CafeReviewValidationError.empty;
 
-    if (value.length < 10) return ReviewValidationError.tooShort;
+    if (value.length < 10) return CafeReviewValidationError.tooShort;
 
     return null;
   }
 }
 
-extension ReviewValidationErrorToText on ReviewValidationError {
+extension ReviewValidationErrorToText on CafeReviewValidationError {
   String text() {
     switch (this) {
-      case ReviewValidationError.empty:
+      case CafeReviewValidationError.empty:
         return '''Review tidak boleh kosong''';
-      case ReviewValidationError.tooShort:
+      case CafeReviewValidationError.tooShort:
         return '''Review minimum 10 karakter''';
     }
   }

@@ -12,6 +12,7 @@ import 'package:hispace_mobile_app/screen/cafe_details/widget/title.dart';
 
 import 'bloc/cafe_details_bloc.dart';
 import 'widget/maps.dart';
+import 'widget/review.dart';
 
 enum CafeDetailsType { owner, visitor }
 
@@ -248,6 +249,59 @@ class _View extends StatelessWidget {
                 ),
               ),
             ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  kDefaultSpacing,
+                  0,
+                  kDefaultSpacing,
+                  kDefaultSpacing / 2,
+                ),
+                child: Text(state.cafe.address),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
+                child: Divider(color: ColorPallete.light.grey3),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
+                child: ReviewView(reviews: state.cafe.reviews ?? []),
+              ),
+            ),
+            if (state.cafe.reviews != null &&
+                state.cafe.reviews!.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(kDefaultSpacing),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      backgroundColor: Theme.of(context).colorScheme.background,
+                      foregroundColor: Theme.of(context).colorScheme.primary,
+                      elevation: 0,
+                      side: const BorderSide(
+                        width: 1,
+                        color: Colors.black,
+                      ),
+                    ),
+                    onPressed: () {},
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: kDefaultSpacing,
+                          vertical: kDefaultSpacing * 0.8),
+                      child: Text('Lihat Semua Ulasan'),
+                    ),
+                  ),
+                ),
+              ),
             SliverToBoxAdapter(
               child: Padding(
                 padding:

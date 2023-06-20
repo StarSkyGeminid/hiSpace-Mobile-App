@@ -4,9 +4,6 @@ import 'package:cafe_api/src/models/models.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
-import 'gallery_model.dart';
-import 'menu_model.dart';
-
 class Cafe extends Equatable {
   final String locationId;
   final String userUserId;
@@ -22,7 +19,7 @@ class Cafe extends Equatable {
   final double rating;
   final bool isFavorite;
   final String user;
-  final List<dynamic>? reviews;
+  final List<Review>? reviews;
   final List<Menu>? menus;
   final List<Galery>? galeries;
   final List<Facility>? facilities;
@@ -81,7 +78,7 @@ class Cafe extends Equatable {
     double? rating,
     bool? isFavorite,
     String? user,
-    List<dynamic>? reviews,
+    List<Review>? reviews,
     List<Menu>? menus,
     List<Galery>? galeries,
     List<Facility>? facilities,
@@ -152,12 +149,13 @@ class Cafe extends Equatable {
               ? true
               : false
           : false,
-      reviews: map.containsKey('reviews')
-          ? List<dynamic>.from(map['reviews'] as List<dynamic>)
+      reviews: map['reviews'] != null && map['reviews'].isNotEmpty
+          ? List<Review>.from(
+              map['reviews'].map((e) => Review.fromMap(e)).toList())
           : null,
       user: map.containsKey('user') ? map['user'] as String : '',
       menus: map['menus'] != null && map['menus'].isNotEmpty
-          ? List<Menu>.from(map['menus'].map((e) => Menu.fromJson(e)).toList())
+          ? List<Menu>.from(map['menus'].map((e) => Menu.fromMap(e)).toList())
           : null,
       galeries: map['galeries'] != null && map['galeries'].isNotEmpty
           ? List<Galery>.from(

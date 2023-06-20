@@ -1,47 +1,75 @@
-class Review{
+import 'package:equatable/equatable.dart';
+
+class Review extends Equatable {
   final String id;
-  final String cafeId;
+  final String locationId;
   final String userId;
   final String userName;
   final String userPhotoUrl;
   final String review;
   final double rating;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
 
-  Review({
-    required this.id,
-    required this.cafeId,
+  const Review({
+    this.id = '',
+    this.locationId = '',
     required this.userId,
-    required this.userName,
-    required this.userPhotoUrl,
+    this.userName = '',
+    this.userPhotoUrl = '',
     required this.review,
     required this.rating,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
   });
 
-  factory Review.fromJson(Map<String, dynamic> json) => Review(
-    id: json['id'],
-    cafeId: json['cafeId'],
-    userId: json['userId'],
-    userName: json['userName'],
-    userPhotoUrl: json['userPhotoUrl'],
-    review: json['review'],
-    rating: json['rating'],
-    createdAt: DateTime.parse(json['createdAt']),
-    updatedAt: DateTime.parse(json['updatedAt']),
-  );
+  factory Review.fromMap(Map<String, dynamic> json) => Review(
+        id: json['reviewId'],
+        locationId: json.containsKey('locationId') ? json['locationId'] : '',
+        userId: json['userId'],
+        userPhotoUrl:
+            json.containsKey('userPhotoUrl') ? json['userPhotoUrl'] : '',
+        review: json['comment'],
+        rating: json['rating'].toDouble(),
+        createdAt: json.containsKey('createdAt')
+            ? DateTime.parse(json['createdAt'])
+            : null,
+      );
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'cafeId': cafeId,
-    'userId': userId,
-    'userName': userName,
-    'userPhotoUrl': userPhotoUrl,
-    'review': review,
-    'rating': rating,
-    'createdAt': createdAt.toIso8601String(),
-    'updatedAt': updatedAt.toIso8601String(),
-  };
+        'userId': userId,
+        'comment': review,
+        'rating': rating.toStringAsFixed(0),
+      };
+
+  Review copyWith({
+    String? id,
+    String? locationId,
+    String? userId,
+    String? userName,
+    String? userPhotoUrl,
+    String? review,
+    double? rating,
+    DateTime? createdAt,
+  }) =>
+      Review(
+        id: id ?? this.id,
+        locationId: locationId ?? this.locationId,
+        userId: userId ?? this.userId,
+        userName: userName ?? this.userName,
+        userPhotoUrl: userPhotoUrl ?? this.userPhotoUrl,
+        review: review ?? this.review,
+        rating: rating ?? this.rating,
+        createdAt: createdAt ?? this.createdAt,
+      );
+
+  @override
+  List<Object?> get props => [
+        id,
+        locationId,
+        userId,
+        userName,
+        userPhotoUrl,
+        review,
+        rating,
+        createdAt,
+      ];
 }
