@@ -27,12 +27,15 @@ class Menu extends StatelessWidget {
           itemCount: math.min(cafe.menus!.length, 5),
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(cafe.menus![index].name.toTitleCase()),
-                Text('Rp${cafe.menus![index].price.toStringAsFixed(0)}'),
-              ],
+            return Padding(
+              padding: const EdgeInsets.only(bottom: kDefaultSpacing / 2),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(cafe.menus![index].name.toTitleCase()),
+                  Text('Rp${cafe.menus![index].price.toStringAsFixed(0)}'),
+                ],
+              ),
             );
           },
         ),

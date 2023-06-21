@@ -28,15 +28,18 @@ class Facility extends StatelessWidget {
           itemCount: math.min(cafe.facilities!.length, 5),
           physics: const NeverScrollableScrollPhysics(),
           itemBuilder: (context, index) {
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(Icons.local_parking),
-                Padding(
-                  padding: const EdgeInsets.only(left: kDefaultSpacing / 2),
-                  child: Text(cafe.facilities![index].name.toTitleCase()),
-                ),
-              ],
+            return Padding(
+              padding: const EdgeInsets.only(bottom: kDefaultSpacing / 2),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(cafe.facilities![index].iconData),
+                  Padding(
+                    padding: const EdgeInsets.only(left: kDefaultSpacing / 2),
+                    child: Text(cafe.facilities![index].name.toTitleCase()),
+                  ),
+                ],
+              ),
             );
           },
         ),

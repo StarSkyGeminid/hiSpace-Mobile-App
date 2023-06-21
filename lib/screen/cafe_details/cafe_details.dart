@@ -1,6 +1,7 @@
 import 'package:cafe_repository/cafe_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hispace_mobile_app/bloc/authentication/authentication_bloc.dart';
 import 'package:hispace_mobile_app/config/theme/color_pallete.dart';
 import 'package:hispace_mobile_app/core/global/constans.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/widget/cafe_details_header.dart';
@@ -27,8 +28,9 @@ class CafeDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => CafeDetailsBloc(
-        RepositoryProvider.of<CafeRepository>(context),
-      )..add(CafeDetailsInitial(locationId)),
+          RepositoryProvider.of<CafeRepository>(context),
+          BlocProvider.of<AuthenticationBloc>(context).state.user.id)
+        ..add(CafeDetailsInitial(locationId)),
       child: _CafeDetailsView(type, locationId),
     );
   }
@@ -62,25 +64,32 @@ class _CafeDetailsViewState extends State<_CafeDetailsView> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        body: _View(scrollController: scrollController, type: widget.type),
-        bottomNavigationBar: widget.type != CafeDetailsType.owner
-            ? Container(
-                padding: const EdgeInsets.all(kDefaultSpacing),
-                color: Theme.of(context).colorScheme.background,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pushNamed(
-                      context, '/user/write-review',
-                      arguments: widget.locationId),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(
-                        horizontal: kDefaultSpacing,
-                        vertical: kDefaultSpacing * 0.8),
-                    child: Text('Tulis Ulasan'),
-                  ),
-                ),
-              )
-            : null,
+      child: BlocBuilder<CafeDetailsBloc, CafeDetailsState>(
+        builder: (context, state) {
+          return Scaffold(
+            body: _View(scrollController: scrollController, type: widget.type),
+            bottomNavigationBar:
+                widget.type != CafeDetailsType.owner && !state.isOwned
+                    ? Container(
+                        padding: const EdgeInsets.all(kDefaultSpacing),
+                        color: Theme.of(context).colorScheme.background,
+                        child: ElevatedButton(
+                          onPressed: state.isReviewed
+                              ? null
+                              : () => Navigator.pushNamed(
+                                  context, '/user/write-review',
+                                  arguments: widget.locationId),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: kDefaultSpacing,
+                                vertical: kDefaultSpacing * 0.8),
+                            child: Text('Tulis Ulasan'),
+                          ),
+                        ),
+                      )
+                    : null,
+          );
+        },
       ),
     );
   }
@@ -268,14 +277,9 @@ class _View extends StatelessWidget {
               ),
             ),
             SliverToBoxAdapter(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
-                child: ReviewView(reviews: state.cafe.reviews ?? []),
-              ),
+              child: ReviewView(reviews: state.cafe.reviews ?? []),
             ),
-            if (state.cafe.reviews != null &&
-                state.cafe.reviews!.isNotEmpty)
+            if (state.cafe.reviews != null && state.cafe.reviews!.isNotEmpty)
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(kDefaultSpacing),

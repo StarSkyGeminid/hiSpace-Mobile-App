@@ -13,6 +13,6 @@ const List<Facility> listFacilities = [
   Facility(name: 'Hewan Peliharaan', iconData: Icons.pets_rounded),
   Facility(name: 'Scurity', iconData: Icons.security_rounded),
   Facility(name: 'Permainan Meja', iconData: Icons.gamepad_rounded),
-  Facility(name: 'Dalam Ruangan', iconData: Icons.house_rounded),
-  Facility(name: 'Luar Ruangan', iconData: Icons.outdoor_grill_rounded),
+  Facility(name: 'Dalam Ruangan', iconData: Icons.living_outlined),
+  Facility(name: 'Luar Ruangan', iconData: Icons.deck_rounded),
 ];

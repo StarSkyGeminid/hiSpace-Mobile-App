@@ -35,37 +35,52 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
   Future<void> _onInitial(HomeOnInitial event, Emitter<HomeState> emit) async {
     emit(state.copyWith(status: HomeStatus.loading));
 
-    final coordinates = await _geoLocationRepository.getCurrentPosition();
+    try {
+      final coordinates = await _geoLocationRepository.getCurrentPosition();
 
-    await _cafeRepository.fetchCafes(
-      page: currentPageIndex++,
-      type: FetchType.values[state.currentTabIndex],
-      latitude: coordinates?.latitude,
-      longitude: coordinates?.longitude,
-    );
+      if (coordinates != null) {
+        emit(state.copyWith(
+          currentLocation: LatLng(coordinates.latitude, coordinates.longitude),
+        ));
+      }
 
-    await emit.forEach<List<Cafe>>(
-      _cafeRepository.getCafes(),
-      onData: (cafes) => state.copyWith(
-        status: cafes.isNotEmpty ? HomeStatus.success : HomeStatus.failure,
-        currentLocation: coordinates != null
-            ? LatLng(
-                coordinates.latitude,
-                coordinates.longitude,
-              )
-            : null,
-        cafes: cafes,
-      ),
-      onError: (_, __) => state.copyWith(
-        status: HomeStatus.failure,
-      ),
-    );
+      await _cafeRepository.fetchCafes(
+        page: currentPageIndex++,
+        type: FetchType.values[state.currentTabIndex],
+        latitude: coordinates?.latitude,
+        longitude: coordinates?.longitude,
+      );
+
+      await emit.forEach<List<Cafe>>(
+        _cafeRepository.getCafes(),
+        onData: (cafes) => state.copyWith(
+          status: cafes.isNotEmpty ? HomeStatus.success : HomeStatus.failure,
+          cafes: cafes,
+        ),
+        onError: (_, __) => state.copyWith(
+          status: HomeStatus.failure,
+        ),
+      );
+    } catch (e) {
+      emit(state.copyWith(status: HomeStatus.failure));
+      isFetching = false;
+    }
   }
 
   Future<void> _onRefresh(HomeOnRefresh event, Emitter<HomeState> emit) async {
     currentPageIndex = 0;
-    _cafeRepository.fetchCafes(
-        page: currentPageIndex, type: FetchType.values[state.currentTabIndex]);
+
+    try {
+      _cafeRepository.fetchCafes(
+        page: currentPageIndex,
+        type: FetchType.values[state.currentTabIndex],
+        latitude: state.currentLocation?.latitude,
+        longitude: state.currentLocation?.longitude,
+      );
+    } catch (e) {
+      emit(state.copyWith(status: HomeStatus.failure));
+      isFetching = false;
+    }
   }
 
   Future<void> _onFetchedMore(
@@ -102,6 +117,7 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
       );
     } catch (e) {
       emit(state.copyWith(status: HomeStatus.failure));
+      isFetching = false;
     }
   }
 
@@ -113,6 +129,7 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
       _cafeRepository.toggleFavorite(event.index);
     } catch (e) {
       emit(state.copyWith(status: HomeStatus.failure));
+      isFetching = false;
     }
   }
 

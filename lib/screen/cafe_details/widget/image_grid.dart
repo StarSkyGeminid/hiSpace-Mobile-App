@@ -10,20 +10,21 @@ class ImageGrid extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) {
-        return Dialog(
+        return Container(
+          color: Colors.black,
           child: InteractiveViewer(
-              boundaryMargin: const EdgeInsets.all(0),
-              minScale: 0.1,
-              maxScale: 4,
-              child: Container(
-                // width: size.width * 0.9,
-                height: size.width * 0.9,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
+            boundaryMargin: const EdgeInsets.all(0),
+            minScale: 0.1,
+            maxScale: 4,
+            child: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
                   image: NetworkImage(url),
-                  fit: BoxFit.cover,
-                )),
-              )),
+                  fit: BoxFit.fitWidth,
+                ),
+              ),
+            ),
+          ),
         );
       },
     );

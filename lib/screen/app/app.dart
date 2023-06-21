@@ -11,6 +11,7 @@ import 'package:user_repository/user_repository.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../../config/theme/light_theme_data.dart';
+import '../home/bloc/home_bloc.dart';
 
 class App extends StatefulWidget {
   const App({
@@ -57,6 +58,12 @@ class _AppState extends State<App> {
               authenticationRepository: widget.authenticationRepository,
               userRepository: widget.userRepository,
             ),
+          ),
+          BlocProvider(
+            create: (context) => HomeBloc(
+              cafeRepository: widget.cafeRepository,
+              geoLocationRepository: widget.geoLocationRepository,
+            )..add(const HomeOnInitial()),
           ),
         ],
         child: const AppView(),

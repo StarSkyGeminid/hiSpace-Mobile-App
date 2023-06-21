@@ -5,7 +5,7 @@ import 'models/models.dart';
 enum FetchType { recomendation, favorite, rating }
 
 extension FetchTypeExtension on FetchType {
-  String get text => ['recomendation', 'favorite', 'rating'][index];
+  String get text => ['recommended', 'favorite', 'rating'][index];
 
   bool get isRecomendation => this == FetchType.recomendation;
 
@@ -36,6 +36,8 @@ abstract class ICafeApi {
   Future<void> addMenu(List<Menu> menus, String locationId);
 
   Future<void> updateMenu(List<Menu> menus, String locationId);
+
+  Future<List<Menu>?> getAllMenu(String locationId);
 
   Future<void> addFacility(List<Facility> facilities, String locationId);
 

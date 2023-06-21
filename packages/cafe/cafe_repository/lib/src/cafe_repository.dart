@@ -42,6 +42,9 @@ class CafeRepository {
   Future<void> updateMenus(List<Menu> menus, String locationId) =>
       _cafeApi.updateMenu(menus, locationId);
 
+  Future<List<Menu>?> getAllMenus(String locationId) =>
+      _cafeApi.getAllMenu(locationId);
+
   Future<void> addFacility(List<Facility> facilities, String locationId) =>
       _cafeApi.addFacility(facilities, locationId);
 
@@ -51,6 +54,6 @@ class CafeRepository {
   Future<void> search(String query) => _cafeApi.search(query);
 
   Future<void> toggleFavorite(int index) => _cafeApi.toggleFavorite(index);
-  
+
   Future<bool> addReview(Review review) => _cafeApi.addReview(review);
 }

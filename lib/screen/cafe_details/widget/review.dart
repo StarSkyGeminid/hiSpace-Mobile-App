@@ -5,6 +5,9 @@ import 'package:hispace_mobile_app/core/global/constans.dart';
 
 import 'dart:math' as math;
 
+import 'package:hispace_mobile_app/widget/circular_profile_picture.dart';
+import 'package:intl/intl.dart';
+
 class ReviewView extends StatelessWidget {
   const ReviewView({
     super.key,
@@ -19,15 +22,21 @@ class ReviewView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: kDefaultSpacing / 2),
+          padding: const EdgeInsets.symmetric(
+              horizontal: kDefaultSpacing, vertical: kDefaultSpacing / 2),
           child: Text('Ulasan', style: Theme.of(context).textTheme.titleMedium),
         ),
         SizedBox(
-          height: 150,
+          height: 190,
           child: ListView.builder(
             shrinkWrap: true,
             itemCount: math.min(reviews.length, 5),
             scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.only(
+              left: kDefaultSpacing,
+              bottom: kDefaultSpacing,
+              top: kDefaultSpacing / 2,
+            ),
             itemBuilder: (context, index) {
               return Container(
                 width: 300,
@@ -48,13 +57,47 @@ class ReviewView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        reviews[index].userId,
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          CircularProfilePicture(
+                            maxSize: 50,
+                            isCached: false,
+                            url: reviews[index].userPhotoUrl,
+                          ),
+                          const SizedBox(width: kDefaultSpacing / 2),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                reviews[index].userId,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              _RatingStar(review: reviews[index]),
+                              if (reviews[index].createdAt != null)
+                                Text(
+                                  DateFormat('dd-MM-yyyy').format(
+                                    reviews[index].createdAt!,
+                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onBackground
+                                            .withOpacity(0.5),
+                                      ),
+                                ),
+                            ],
+                          ),
+                        ],
                       ),
-                      _RatingStar(review: reviews[index]),
                       const SizedBox(height: kDefaultSpacing / 2),
                       Flexible(
                         child: Text(
@@ -85,7 +128,7 @@ class _RatingStar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 25,
+      height: 20,
       child: ListView.builder(
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
@@ -95,7 +138,7 @@ class _RatingStar extends StatelessWidget {
           child: Icon(
             review.rating >= ratingIndex ? Icons.star : Icons.star_border,
             color: ColorPallete.light.yellow,
-            size: 25,
+            size: 20,
           ),
         ),
       ),

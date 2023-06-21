@@ -12,6 +12,7 @@ class Cafe extends Equatable {
   final double longitude;
   final double latitude;
   final String owner;
+  final String ownerEmail;
   final String galeryId;
   final String description;
   final String rawTime;
@@ -32,6 +33,7 @@ class Cafe extends Equatable {
     required this.longitude,
     required this.latitude,
     required this.owner,
+    this.ownerEmail = '',
     required this.galeryId,
     required this.description,
     required this.rawTime,
@@ -71,6 +73,7 @@ class Cafe extends Equatable {
     double? longitude,
     double? latitude,
     String? owner,
+    String? ownerEmail,
     String? galeryId,
     String? description,
     String? rawTime,
@@ -91,6 +94,7 @@ class Cafe extends Equatable {
       longitude: longitude ?? this.longitude,
       latitude: latitude ?? this.latitude,
       owner: owner ?? this.owner,
+      ownerEmail: ownerEmail ?? this.ownerEmail,
       galeryId: galeryId ?? this.galeryId,
       description: description ?? this.description,
       rawTime: rawTime ?? this.rawTime,
@@ -114,6 +118,7 @@ class Cafe extends Equatable {
       'longitude': longitude,
       'latitude': latitude,
       'owner': owner,
+      'ownerEmail': ownerEmail,
       'galeryId': galeryId,
       'description': description,
       'time': rawTime,
@@ -138,6 +143,8 @@ class Cafe extends Equatable {
           map.containsKey('longitude') ? map['longitude'] as double : 0.0,
       latitude: map.containsKey('latitude') ? map['latitude'] as double : 0.0,
       owner: map.containsKey('owner') ? map['owner'] as String : '',
+      ownerEmail:
+          map.containsKey('ownerEmail') ? map['ownerEmail'] as String : '',
       galeryId: map.containsKey('galeryId') ? map['galeryId'] as String : '',
       description:
           map.containsKey('description') ? map['description'] as String : '',
@@ -174,11 +181,6 @@ class Cafe extends Equatable {
       Cafe.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() {
-    return 'Cafe(locationId: $locationId, userUserId: $userUserId, name: $name, address: $address, longitude: $longitude, latitude: $latitude, owner: $owner, galeryId: $galeryId, description: $description, time: $rawTime, rating: $rating, isFavorite: $isFavorite, reviews: $reviews, user: $user, menus: $menus, galeries: $galeries, facilities: $facilities)';
-  }
-
-  @override
   bool operator ==(covariant Cafe other) {
     if (identical(this, other)) return true;
 
@@ -189,6 +191,7 @@ class Cafe extends Equatable {
         other.longitude == longitude &&
         other.latitude == latitude &&
         other.owner == owner &&
+        other.ownerEmail == ownerEmail &&
         other.galeryId == galeryId &&
         other.description == description &&
         other.rawTime == rawTime &&
@@ -210,6 +213,7 @@ class Cafe extends Equatable {
         longitude.hashCode ^
         latitude.hashCode ^
         owner.hashCode ^
+        ownerEmail.hashCode ^
         galeryId.hashCode ^
         description.hashCode ^
         rawTime.hashCode ^
@@ -232,6 +236,7 @@ class Cafe extends Equatable {
       longitude,
       latitude,
       owner,
+      ownerEmail,
       galeryId,
       description,
       rawTime,

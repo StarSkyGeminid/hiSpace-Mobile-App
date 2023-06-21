@@ -53,7 +53,7 @@ class HttpCafeApi extends ICafeApi {
       '/api/location',
       {
         'page': '$page',
-        if (!type.isRecomendation) 'sortBy': type.text,
+        'sortBy': type.text,
         if (latitude != null && longitude != null) 'latitude': '$latitude',
         if (latitude != null && longitude != null) 'longitude': '$longitude',
       },
@@ -391,5 +391,35 @@ class HttpCafeApi extends ICafeApi {
         data.map((e) => Cafe.fromMap(e).copyWith(isFavorite: true)).toList()));
 
     _cafeStreamController.add(listCafes);
+  }
+
+  @override
+  Future<List<Menu>?> getAllMenu(String locationId) async {
+    final uri = Uri.https(
+      _baseUrl,
+      '/api/user/wishlist/$locationId/menu',
+    );
+
+    var headers = getAuthorization();
+
+    final response = await _httpClient.get(uri, headers: headers);
+
+    if (response.statusCode != 200) throw RequestFailure();
+
+    if (response.body.isEmpty) throw ResponseFailure();
+
+    final resultJson = jsonDecode(response.body) as Map;
+
+    if (resultJson.containsKey('status')) {
+      if (resultJson['status'] != 'success') throw RequestFailure();
+    }
+
+    if (!resultJson.containsKey('data')) throw ResponseFailure();
+
+    final data = resultJson['data'];
+
+    if (data.isEmpty) return null;
+
+    return data.map((e) => Menu.fromMap(e));
   }
 }

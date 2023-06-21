@@ -1,7 +1,6 @@
 import 'package:cafe_repository/cafe_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocation_repository/geolocation_repository.dart';
 import 'package:hispace_mobile_app/core/global/constans.dart';
 import 'package:hispace_mobile_app/screen/home/widget/cafe_tab_bar.dart';
 import 'package:hispace_mobile_app/screen/home/widget/home_app_bar.dart';
@@ -12,29 +11,14 @@ import 'model/home_tab_model.dart';
 import '../../widget/cafe_card.dart';
 import 'widget/infinite_list_builder.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => HomeBloc(
-        cafeRepository: context.read<CafeRepository>(),
-        geoLocationRepository: context.read<GeoLocationRepository>(),
-      )..add(const HomeOnInitial()),
-      child: const _HomeScreenView(),
-    );
-  }
+  State<HomeScreen> createState() => _HomeScreenViewState();
 }
 
-class _HomeScreenView extends StatefulWidget {
-  const _HomeScreenView();
-
-  @override
-  State<_HomeScreenView> createState() => _HomeScreenViewState();
-}
-
-class _HomeScreenViewState extends State<_HomeScreenView> {
+class _HomeScreenViewState extends State<HomeScreen> {
   void _goToSearchScreen() {
     // Navigator.pushNamed(context, '/search');
   }
@@ -44,7 +28,7 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
   }
 
   void _goToProfileScreen() {
-    // Navigator.pushNamed(context, '/profile');
+    Navigator.pushNamed(context, '/profile');
   }
 
   @override
@@ -61,7 +45,13 @@ class _HomeScreenViewState extends State<_HomeScreenView> {
             toolbarHeight: 45,
           ),
         ),
-        body: const _TabView(),
+        body: RefreshIndicator(
+            onRefresh: () {
+              return Future.delayed(const Duration(seconds: 1), () {
+                context.read<HomeBloc>().add(const HomeOnRefresh());
+              });
+            },
+            child: const _TabView()),
       ),
     );
   }
@@ -115,24 +105,16 @@ class _TabViewState extends State<_TabView> {
                         const HomeOnFetchedMore(),
                       ),
                   itemBuilder: (context, index) {
-                    double? km;
-                    if (state.currentLocation != null) {
-                      km = distance.as(
-                          LengthUnit.Kilometer,
-                          state.currentLocation!,
-                          LatLng(state.cafes[index].latitude,
-                              state.cafes[index].longitude));
-                    }
-
-                    String? distanceString =
-                        km != null ? '${km.toStringAsFixed(1)} km' : null;
-
                     return BlocBuilder<HomeBloc, HomeState>(
                       buildWhen: (previous, current) =>
                           previous.cafes[index] != current.cafes[index] ||
                           previous.cafes[index].isFavorite !=
-                              current.cafes[index].isFavorite,
+                              current.cafes[index].isFavorite ||
+                          previous.currentLocation != current.currentLocation,
                       builder: (context, state) {
+                        String? distanceString = getDistance(
+                            state.currentLocation, state.cafes[index]);
+
                         return CafeCard(
                           cafe: state.cafes[index],
                           onToggleFavorite: () => context
@@ -152,6 +134,17 @@ class _TabViewState extends State<_TabView> {
         },
       ).toList(),
     );
+  }
+
+  String? getDistance(LatLng? currentLocation, Cafe cafe) {
+    double? km;
+    if (currentLocation != null) {
+      km = distance.as(LengthUnit.Kilometer, currentLocation,
+          LatLng(cafe.latitude, cafe.longitude));
+    }
+
+    String? distanceString = km != null ? '${km.toStringAsFixed(1)} km' : null;
+    return distanceString;
   }
 }
 

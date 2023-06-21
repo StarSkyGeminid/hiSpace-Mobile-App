@@ -45,10 +45,11 @@ class HomeState extends Equatable {
   Map<String, dynamic> toJson() => _$HomeStateToJson(this);
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         status,
         message,
         cafes,
         currentTabIndex,
+        currentLocation,
       ];
 }
