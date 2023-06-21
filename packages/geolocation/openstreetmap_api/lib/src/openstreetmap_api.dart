@@ -20,26 +20,26 @@ class OpenStreetMapApi implements GeolocationApi {
 
   @override
   Future<Position?> getCurrentPosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-    Position? position;
+    LocationPermission permission = await Geolocator.checkPermission();
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-
-    permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.denied) {
+    if (permission != LocationPermission.always ||
+        permission != LocationPermission.whileInUse) {
       permission = await Geolocator.requestPermission();
     }
 
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
     if (serviceEnabled) {
-      position = await Geolocator.getCurrentPosition(
+      return await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
     } else {
-      position = await Geolocator.getLastKnownPosition(
-          forceAndroidLocationManager: true);
+      Position? position = await Geolocator.getLastKnownPosition();
+
+      if (position != null) return position;
+
+      return await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
     }
-    return position;
   }
 
   @override
