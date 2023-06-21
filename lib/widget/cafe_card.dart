@@ -39,7 +39,9 @@ class CafeCard extends StatelessWidget {
           children: [
             _CarousselImageCard(
               cafe: cafe.copyWith(
-                  galeries: List<Galery>.from(cafe.galeries!.take(5))),
+                  galeries: cafe.galeries != null
+                      ? List<Galery>.from(cafe.galeries!.take(5))
+                      : null),
               distance: distance,
               onToggleFavorite: onToggleFavorite,
             ),

@@ -160,6 +160,11 @@ class HttpCafeApi extends ICafeApi {
 
     final response = await _httpClient.get(uri, headers: headers);
 
+    if (response.statusCode == 404 &&
+        (_cafeStreamController.valueOrNull?.isNotEmpty ?? false)) {
+      return;
+    }
+
     if (response.statusCode != 200) throw RequestFailure();
 
     if (response.body.isEmpty) throw ResponseFailure();

@@ -72,7 +72,8 @@ class _SearchResultViewState extends State<_SearchResultView> {
               itemBuilder: (context, index) {
                 return CafeCard(
                     cafe: state.cafes[index],
-                    onTap: () => Navigator.pushNamed(context, '/cafe-details'));
+                    onTap: () => Navigator.pushNamed(context, '/cafe-details',
+                        arguments: state.cafes[index].locationId));
               },
             );
           },

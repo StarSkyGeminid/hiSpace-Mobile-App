@@ -108,7 +108,8 @@ class _View extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CafeDetailsBloc, CafeDetailsState>(
-      buildWhen: (previous, current) => previous.cafe != current.cafe,
+      buildWhen: (previous, current) =>
+          previous.cafe != current.cafe || previous.status != current.status,
       builder: (context, state) {
         return CustomScrollView(
           controller: scrollController,
@@ -127,203 +128,201 @@ class _View extends StatelessWidget {
                 ),
               ),
             ),
-            SliverToBoxAdapter(
-              child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: kDefaultSpacing,
-                  ),
-                  child: Divider(color: ColorPallete.light.grey3)),
-            ),
-            SliverToBoxAdapter(
-              child: Owner(cafe: state.cafe),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: kDefaultSpacing,
-                  ),
-                  child: Divider(color: ColorPallete.light.grey3)),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  kDefaultSpacing,
-                  0,
-                  kDefaultSpacing,
-                  kDefaultSpacing,
-                ),
-                child: Description(cafe: state.cafe),
+            if (state.status != CafeDetailsStatus.loading) ...[
+              SliverToBoxAdapter(
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: kDefaultSpacing,
+                    ),
+                    child: Divider(color: ColorPallete.light.grey3)),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: kDefaultSpacing,
+              SliverToBoxAdapter(
+                child: Owner(cafe: state.cafe),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: kDefaultSpacing,
+                    ),
+                    child: Divider(color: ColorPallete.light.grey3)),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    kDefaultSpacing,
+                    0,
+                    kDefaultSpacing,
+                    kDefaultSpacing,
                   ),
-                  child: Divider(color: ColorPallete.light.grey3)),
-            ),
-            if (state.cafe.menus != null)
+                  child: Description(cafe: state.cafe),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: kDefaultSpacing,
+                    ),
+                    child: Divider(color: ColorPallete.light.grey3)),
+              ),
+              if (state.cafe.menus != null)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
+                    child: Menu(cafe: state.cafe),
+                  ),
+                ),
+              if (state.cafe.menus != null && state.cafe.menus!.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(kDefaultSpacing),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        backgroundColor:
+                            Theme.of(context).colorScheme.background,
+                        foregroundColor: Theme.of(context).colorScheme.primary,
+                        elevation: 0,
+                        side: const BorderSide(
+                          width: 1,
+                          color: Colors.black,
+                        ),
+                      ),
+                      onPressed: () => Navigator.pushNamed(
+                          context, '/cafe/all-menu',
+                          arguments: state.cafe.menus),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: kDefaultSpacing,
+                            vertical: kDefaultSpacing * 0.8),
+                        child: Text('Lihat Semua Menu'),
+                      ),
+                    ),
+                  ),
+                ),
+              SliverToBoxAdapter(
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: kDefaultSpacing,
+                    ),
+                    child: Divider(color: ColorPallete.light.grey3)),
+              ),
+              if (state.cafe.facilities != null)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
+                    child: Facility(
+                      cafe: state.cafe,
+                    ),
+                  ),
+                ),
+              if (state.cafe.facilities != null &&
+                  state.cafe.facilities!.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(kDefaultSpacing),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        backgroundColor:
+                            Theme.of(context).colorScheme.background,
+                        foregroundColor: Theme.of(context).colorScheme.primary,
+                        elevation: 0,
+                        side: const BorderSide(
+                          width: 1,
+                          color: Colors.black,
+                        ),
+                      ),
+                      onPressed: () => Navigator.pushNamed(
+                          context, '/cafe/all-facilities',
+                          arguments: state.cafe.facilities),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: kDefaultSpacing,
+                            vertical: kDefaultSpacing * 0.8),
+                        child: Text('Lihat Semua Fasilitas'),
+                      ),
+                    ),
+                  ),
+                ),
+              SliverToBoxAdapter(
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: kDefaultSpacing,
+                    ),
+                    child: Divider(color: ColorPallete.light.grey3)),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(kDefaultSpacing),
+                  child: Maps(
+                    latitude: state.cafe.latitude,
+                    longitude: state.cafe.longitude,
+                  ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    kDefaultSpacing,
+                    0,
+                    kDefaultSpacing,
+                    kDefaultSpacing / 2,
+                  ),
+                  child: Text(state.cafe.address),
+                ),
+              ),
               SliverToBoxAdapter(
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
-                  child: Menu(cafe: state.cafe),
+                  child: Divider(color: ColorPallete.light.grey3),
                 ),
               ),
-            if (state.cafe.menus != null && state.cafe.menus!.isNotEmpty)
               SliverToBoxAdapter(
+                child: ReviewView(reviews: state.cafe.reviews ?? []),
+              ),
+              if (state.cafe.reviews != null && state.cafe.reviews!.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(kDefaultSpacing),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        backgroundColor:
+                            Theme.of(context).colorScheme.background,
+                        foregroundColor: Theme.of(context).colorScheme.primary,
+                        elevation: 0,
+                        side: const BorderSide(
+                          width: 1,
+                          color: Colors.black,
+                        ),
+                      ),
+                      onPressed: () => Navigator.pushNamed(
+                          context, '/cafe/all-review',
+                          arguments: state.cafe.reviews),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: kDefaultSpacing,
+                            vertical: kDefaultSpacing * 0.8),
+                        child: Text('Lihat Semua Ulasan'),
+                      ),
+                    ),
+                  ),
+                ),
+              const SliverToBoxAdapter(
                 child: Padding(
-                  padding: const EdgeInsets.all(kDefaultSpacing),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      backgroundColor: Theme.of(context).colorScheme.background,
-                      foregroundColor: Theme.of(context).colorScheme.primary,
-                      elevation: 0,
-                      side: const BorderSide(
-                        width: 1,
-                        color: Colors.black,
-                      ),
-                    ),
-                    onPressed: () => Navigator.pushNamed(
-                        context, '/cafe/all-menu',
-                        arguments: state.cafe.menus),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: kDefaultSpacing,
-                          vertical: kDefaultSpacing * 0.8),
-                      child: Text('Lihat Semua Menu'),
-                    ),
-                  ),
+                  padding: EdgeInsets.all(kDefaultSpacing),
                 ),
               ),
-            SliverToBoxAdapter(
-              child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: kDefaultSpacing,
-                  ),
-                  child: Divider(color: ColorPallete.light.grey3)),
-            ),
-            if (state.cafe.facilities != null)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
-                  child: Facility(
-                    cafe: state.cafe,
-                  ),
-                ),
-              ),
-            if (state.cafe.facilities != null &&
-                state.cafe.facilities!.isNotEmpty)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(kDefaultSpacing),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      backgroundColor: Theme.of(context).colorScheme.background,
-                      foregroundColor: Theme.of(context).colorScheme.primary,
-                      elevation: 0,
-                      side: const BorderSide(
-                        width: 1,
-                        color: Colors.black,
-                      ),
-                    ),
-                    onPressed: () => Navigator.pushNamed(
-                        context, '/cafe/all-facilities',
-                        arguments: state.cafe.facilities),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: kDefaultSpacing,
-                          vertical: kDefaultSpacing * 0.8),
-                      child: Text('Lihat Semua Fasilitas'),
-                    ),
-                  ),
-                ),
-              ),
-            SliverToBoxAdapter(
-              child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: kDefaultSpacing,
-                  ),
-                  child: Divider(color: ColorPallete.light.grey3)),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(kDefaultSpacing),
-                child: Maps(
-                  latitude: state.cafe.latitude,
-                  longitude: state.cafe.longitude,
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  kDefaultSpacing,
-                  0,
-                  kDefaultSpacing,
-                  kDefaultSpacing / 2,
-                ),
-                child: Text(state.cafe.address),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
-                child: Divider(color: ColorPallete.light.grey3),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: ReviewView(reviews: state.cafe.reviews ?? []),
-            ),
-            if (state.cafe.reviews != null && state.cafe.reviews!.isNotEmpty)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(kDefaultSpacing),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      backgroundColor: Theme.of(context).colorScheme.background,
-                      foregroundColor: Theme.of(context).colorScheme.primary,
-                      elevation: 0,
-                      side: const BorderSide(
-                        width: 1,
-                        color: Colors.black,
-                      ),
-                    ),
-                    onPressed: () => Navigator.pushNamed(
-                        context, '/cafe/all-review',
-                        arguments: state.cafe.reviews),
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: kDefaultSpacing,
-                          vertical: kDefaultSpacing * 0.8),
-                      child: Text('Lihat Semua Ulasan'),
-                    ),
-                  ),
-                ),
-              ),
-            const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.all(kDefaultSpacing),
-              ),
-            ),
-            // SliverToBoxAdapter(
-            //   child: Padding(
-            //     padding:
-            //         const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
-            //     child: Divider(color: ColorPallete.light.grey3),
-            //   ),
-            // ),
+            ],
           ],
         );
       },
