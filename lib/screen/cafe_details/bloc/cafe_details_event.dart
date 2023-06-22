@@ -19,3 +19,8 @@ class CafeDetailsInitial extends CafeDetailsEvent {
 class CafeDetailsRemove extends CafeDetailsEvent {
   const CafeDetailsRemove();
 }
+
+class CafeDetailsOnOpenMaps extends CafeDetailsEvent {
+  const CafeDetailsOnOpenMaps();
+}
+

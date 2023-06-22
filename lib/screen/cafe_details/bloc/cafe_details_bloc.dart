@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:cafe_repository/cafe_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hispace_mobile_app/screen/create_cafe/model/facility_model.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 part 'cafe_details_event.dart';
 part 'cafe_details_state.dart';
@@ -13,6 +16,7 @@ class CafeDetailsBloc extends Bloc<CafeDetailsEvent, CafeDetailsState> {
         super(const CafeDetailsState()) {
     on<CafeDetailsInitial>(_onInitial);
     on<CafeDetailsRemove>(_onRemove);
+    on<CafeDetailsOnOpenMaps>(_onOpenMaps);
     on<CafeDetailsEvent>((event, emit) {});
   }
 
@@ -57,6 +61,44 @@ class CafeDetailsBloc extends Bloc<CafeDetailsEvent, CafeDetailsState> {
 
     try {
       await _cafeRepository.remove(state.cafe.locationId);
+      emit(state.copyWith(status: CafeDetailsStatus.success));
+    } catch (e) {
+      emit(state.copyWith(status: CafeDetailsStatus.failure));
+    }
+  }
+
+  Future<void> _onOpenMaps(
+      CafeDetailsOnOpenMaps event, Emitter<CafeDetailsState> emit) async {
+    emit(state.copyWith(status: CafeDetailsStatus.loading));
+
+    try {
+      double lat = state.cafe.latitude;
+      double lon = state.cafe.longitude;
+
+      String appleUrl =
+          'https://maps.apple.com/?saddr=&daddr=$lat,$lon&directionsmode=driving';
+      String googleUrl =
+          'https://www.google.com/maps/search/?api=1&query=$lat,$lon';
+
+      if (Platform.isIOS) {
+        if (await canLaunchUrlString(appleUrl)) {
+          await launchUrlString(appleUrl);
+        } else {
+          if (await canLaunchUrlString(googleUrl)) {
+            await launchUrlString(googleUrl,
+                mode: LaunchMode.externalNonBrowserApplication);
+          } else {
+            throw 'Could not open the map.';
+          }
+        }
+      } else {
+        if (await canLaunchUrlString(googleUrl)) {
+          await launchUrlString(googleUrl,
+              mode: LaunchMode.externalNonBrowserApplication);
+        } else {
+          throw 'Could not open the map.';
+        }
+      }
       emit(state.copyWith(status: CafeDetailsStatus.success));
     } catch (e) {
       emit(state.copyWith(status: CafeDetailsStatus.failure));

@@ -279,6 +279,33 @@ class _View extends StatelessWidget {
               ),
               SliverToBoxAdapter(
                 child: Padding(
+                  padding: const EdgeInsets.all(kDefaultSpacing),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      backgroundColor: Theme.of(context).colorScheme.background,
+                      foregroundColor: Theme.of(context).colorScheme.primary,
+                      elevation: 0,
+                      side: const BorderSide(
+                        width: 1,
+                        color: Colors.black,
+                      ),
+                    ),
+                    onPressed: () => BlocProvider.of<CafeDetailsBloc>(context)
+                        .add(const CafeDetailsOnOpenMaps()),
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: kDefaultSpacing,
+                          vertical: kDefaultSpacing * 0.8),
+                      child: Text('Lihat di Maps'),
+                    ),
+                  ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
                   child: Divider(color: ColorPallete.light.grey3),
