@@ -19,6 +19,8 @@ class Cafe extends Equatable {
   final OpenTime time;
   final double rating;
   final bool isFavorite;
+  final int? priceEnd;
+  final int? priceStart;
   final String user;
   final List<Review>? reviews;
   final List<Menu>? menus;
@@ -39,6 +41,8 @@ class Cafe extends Equatable {
     required this.rawTime,
     this.time = OpenTime.empty,
     required this.rating,
+    this.priceEnd,
+    this.priceStart,
     required this.isFavorite,
     required this.user,
     this.reviews,
@@ -79,6 +83,8 @@ class Cafe extends Equatable {
     String? rawTime,
     OpenTime? time,
     double? rating,
+    int? startFrom,
+    int? endTo,
     bool? isFavorite,
     String? user,
     List<Review>? reviews,
@@ -100,6 +106,8 @@ class Cafe extends Equatable {
       rawTime: rawTime ?? this.rawTime,
       time: time ?? this.time,
       rating: rating ?? this.rating,
+      priceEnd: startFrom ?? this.priceEnd,
+      priceStart: endTo ?? this.priceStart,
       isFavorite: isFavorite ?? this.isFavorite,
       user: user ?? this.user,
       reviews: reviews ?? this.reviews,
@@ -151,11 +159,13 @@ class Cafe extends Equatable {
       rawTime: map['time'] as String,
       time: OpenTime.fromMap(jsonDecode(map['time'])),
       rating: map['rating'] != null ? map['rating'].toDouble() : 0.0,
-      isFavorite: map.containsKey('favorite')
-          ? map['favorite'] as int == 1
-              ? true
-              : false
-          : false,
+      priceEnd: map.containsKey('startFrom')
+          ? int.parse((map['startFrom'] as String).split(' - ')[0])
+          : null,
+      priceStart: map.containsKey('startFrom')
+          ? int.parse((map['startFrom'] as String).split(' - ')[1])
+          : null,
+      isFavorite: map.containsKey('isWish') ? map['isWish'] as bool : false,
       reviews: map['reviews'] != null && map['reviews'].isNotEmpty
           ? List<Review>.from(
               map['reviews'].map((e) => Review.fromMap(e)).toList())
@@ -196,6 +206,8 @@ class Cafe extends Equatable {
         other.description == description &&
         other.rawTime == rawTime &&
         other.rating == rating &&
+        other.priceStart == priceStart &&
+        other.priceEnd == priceEnd &&
         other.isFavorite == isFavorite &&
         listEquals(other.reviews, reviews) &&
         other.user == user &&
@@ -218,6 +230,8 @@ class Cafe extends Equatable {
         description.hashCode ^
         rawTime.hashCode ^
         rating.hashCode ^
+        priceStart.hashCode ^
+        priceEnd.hashCode ^
         isFavorite.hashCode ^
         reviews.hashCode ^
         user.hashCode ^
@@ -227,7 +241,7 @@ class Cafe extends Equatable {
   }
 
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       locationId,
       userUserId,
@@ -241,6 +255,8 @@ class Cafe extends Equatable {
       description,
       rawTime,
       rating,
+      priceStart,
+      priceEnd,
       isFavorite,
       user,
     ];

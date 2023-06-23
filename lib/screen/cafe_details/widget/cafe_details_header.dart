@@ -155,7 +155,7 @@ class _CafeDetailsHeaderState extends State<CafeDetailsHeader> {
               Container(
                   margin: const EdgeInsets.all(kDefaultSpacing / 2),
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
+                      shape: BoxShape.circle,
                       color: Theme.of(context).colorScheme.background,
                       boxShadow: [
                         BoxShadow(
@@ -172,6 +172,7 @@ class _CafeDetailsHeaderState extends State<CafeDetailsHeader> {
           : null,
       flexibleSpace: FlexibleSpaceBar(
         background: BlocBuilder<CafeDetailsBloc, CafeDetailsState>(
+          buildWhen: (previous, current) => previous.cafe != current.cafe,
           builder: (context, state) {
             return CarousselImage(
               cafePictureModel: state.cafe.galeries ?? [],

@@ -1,5 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cafe_api/cafe_api.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:hispace_mobile_app/core/global/constans.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -86,9 +88,18 @@ class _CarousselImageState extends State<CarousselImage> {
   }
 
   builder(int index) {
-    return Image.network(
-      widget.cafePictureModel[index].url,
+    return CachedNetworkImage(
+      imageUrl: widget.cafePictureModel[index].url,
       fit: BoxFit.cover,
+      placeholder: (context, url) =>
+          const Center(child: CircularProgressIndicator.adaptive()),
+      cacheManager: CacheManager(
+        Config(
+          "CarousselImageCacheConfig",
+          stalePeriod: const Duration(days: 1),
+          maxNrOfCacheObjects: 50,
+        ),
+      ),
     );
   }
 }

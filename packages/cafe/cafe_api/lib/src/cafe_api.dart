@@ -45,7 +45,7 @@ abstract class ICafeApi {
 
   Future<void> remove(String locationId);
 
-  Future<void> search(String query);
+  Future<void> search(SearchModel searchModel, {int page = 0});
 
   Future<List<Cafe>?> getCafeByOwner(String email);
 

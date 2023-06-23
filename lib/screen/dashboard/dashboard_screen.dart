@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hispace_mobile_app/screen/home/bloc/home_bloc.dart';
 
 import '../home/home_screen.dart';
 import '../profile/profile_screen.dart';
@@ -25,6 +27,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() {
       _currentIndex = index;
     });
+
+    if (_currentIndex == 0) {
+      BlocProvider.of<HomeBloc>(context).add(const HomeOnRefresh());
+    }
   }
 
   @override

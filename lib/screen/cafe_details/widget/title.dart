@@ -1,5 +1,7 @@
 import 'package:cafe_api/cafe_api.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hispace_mobile_app/bloc/authentication/authentication_bloc.dart';
 import 'package:hispace_mobile_app/core/extension/string_extension.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/cafe_details.dart';
 import 'package:hispace_mobile_app/widget/rating_star.dart';
@@ -33,7 +35,9 @@ class DetailsTitle extends StatelessWidget {
                 maxLines: 2,
               ),
             ),
-            if (type != CafeDetailsType.owner)
+            if (type != CafeDetailsType.owner &&
+                cafe.userUserId !=
+                    BlocProvider.of<AuthenticationBloc>(context).state.user.id)
               Icon(
                 cafe.isFavorite
                     ? Icons.favorite_border_rounded
@@ -45,7 +49,7 @@ class DetailsTitle extends StatelessWidget {
           children: [
             RatingStar(rating: cafe.rating),
             Text(
-              ' (${(cafe.reviews?.length ?? 0.0).toStringAsFixed(1)})',
+              ' (${(cafe.reviews?.length ?? 0.0).toStringAsFixed(0)})',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ],

@@ -187,7 +187,9 @@ class _View extends StatelessWidget {
                         color: Colors.black,
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () => Navigator.pushNamed(
+                        context, '/cafe/all-menu',
+                        arguments: state.cafe.menus),
                     child: const Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: kDefaultSpacing,
@@ -232,7 +234,9 @@ class _View extends StatelessWidget {
                         color: Colors.black,
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () => Navigator.pushNamed(
+                        context, '/cafe/all-facilities',
+                        arguments: state.cafe.facilities),
                     child: const Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: kDefaultSpacing,
@@ -296,7 +300,9 @@ class _View extends StatelessWidget {
                         color: Colors.black,
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () => Navigator.pushNamed(
+                        context, '/cafe/all-review',
+                        arguments: state.cafe.reviews),
                     child: const Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: kDefaultSpacing,
@@ -306,13 +312,18 @@ class _View extends StatelessWidget {
                   ),
                 ),
               ),
-            SliverToBoxAdapter(
+            const SliverToBoxAdapter(
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
-                child: Divider(color: ColorPallete.light.grey3),
+                padding: EdgeInsets.all(kDefaultSpacing),
               ),
             ),
+            // SliverToBoxAdapter(
+            //   child: Padding(
+            //     padding:
+            //         const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
+            //     child: Divider(color: ColorPallete.light.grey3),
+            //   ),
+            // ),
           ],
         );
       },

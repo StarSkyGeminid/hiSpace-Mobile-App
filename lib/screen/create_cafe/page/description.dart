@@ -49,10 +49,12 @@ class _DescriptionFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CreateCafeBloc, CreateCafeState>(
-      buildWhen: (previous, current) => previous.status != current.status,
+      buildWhen: (previous, current) =>
+          previous.status != current.status ||
+          previous.cafeDescription != current.cafeDescription,
       builder: (context, state) {
         return CustomTextFormField(
-          key: UniqueKey(),
+          key: const Key('DescriptionForm_TextFormField'),
           hintText: 'Masukkan deskripsi',
           title: 'Deskripsi',
           initialValue: state.cafeDescription.value,

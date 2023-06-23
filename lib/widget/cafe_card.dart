@@ -75,24 +75,27 @@ class CafeCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: kDefaultSpacing / 4),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(
-                    'Rp12k - Rp35k',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: kDefaultSpacing / 2),
-                    child: Text(
-                      '•',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                  if (cafe.priceEnd != null && cafe.priceStart != null) ...[
+                    Text(
+                      'Rp${(cafe.priceEnd! / 1000).round()}k - Rp${(cafe.priceStart! / 1000).round()}k',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
-                  ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: kDefaultSpacing / 2),
+                      child: Text(
+                        '•',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
                   const Icon(Icons.schedule_rounded),
                   Padding(
                     padding: const EdgeInsets.only(left: kDefaultSpacing / 2),

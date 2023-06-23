@@ -313,8 +313,12 @@ void main() {
             'https://hispace-production.up.railway.app/api/reset-password');
       });
 
+      final headers = {
+        'Content-Type': 'application/json',
+      };
+
       test('throws RequestFailure on non-200 response', () async {
-        when(httpClient.post(baseUri, body: json))
+        when(httpClient.post(baseUri, body: jsonEncode(json), headers: headers))
             .thenAnswer((_) async => http.Response('', 401));
 
         await expectLater(apiClient.resetPassword(email: email),
@@ -322,7 +326,7 @@ void main() {
       });
 
       test('throws ResponseFailure on empty response', () async {
-        when(httpClient.post(baseUri, body: json))
+        when(httpClient.post(baseUri, body: jsonEncode(json), headers: headers))
             .thenAnswer((_) async => http.Response('', 200));
 
         await expectLater(apiClient.resetPassword(email: email),
@@ -336,7 +340,7 @@ void main() {
     "message": "Email is not associated with any account"
 }''';
 
-        when(httpClient.post(baseUri, body: json))
+        when(httpClient.post(baseUri, body: jsonEncode(json), headers: headers))
             .thenAnswer((_) async => http.Response(response, 404));
 
         await expectLater(apiClient.resetPassword(email: email),
@@ -350,7 +354,7 @@ void main() {
     "message": "Reset password success, please check your email"
 }''';
 
-        when(httpClient.post(baseUri, body: json))
+        when(httpClient.post(baseUri, body: jsonEncode(json), headers: headers))
             .thenAnswer((_) async => http.Response(response, 200));
 
         final result = await apiClient.resetPassword(email: email);
@@ -366,7 +370,7 @@ void main() {
     "message": "Email is not associated with any account"
 }''';
 
-        when(httpClient.post(baseUri, body: json))
+        when(httpClient.post(baseUri, body: jsonEncode(json), headers: headers))
             .thenAnswer((_) async => http.Response(response, 200));
 
         final result = await apiClient.resetPassword(email: email);

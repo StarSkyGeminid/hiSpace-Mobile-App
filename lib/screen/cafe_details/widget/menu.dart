@@ -5,6 +5,8 @@ import 'package:hispace_mobile_app/core/global/constans.dart';
 
 import 'dart:math' as math;
 
+import 'package:intl/intl.dart';
+
 class Menu extends StatelessWidget {
   const Menu({
     super.key,
@@ -33,7 +35,8 @@ class Menu extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(cafe.menus![index].name.toTitleCase()),
-                  Text('Rp${cafe.menus![index].price.toStringAsFixed(0)}'),
+                  Text(NumberFormat.simpleCurrency(name: 'IDR')
+                      .format(cafe.menus![index].price)),
                 ],
               ),
             );

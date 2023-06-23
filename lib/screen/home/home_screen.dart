@@ -20,7 +20,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenViewState extends State<HomeScreen> {
   void _goToSearchScreen() {
-    // Navigator.pushNamed(context, '/search');
+    Navigator.pushNamed(context, '/search');
   }
 
   void _goToFilterScreen() {
@@ -114,7 +114,7 @@ class _TabViewState extends State<_TabView> {
                       builder: (context, state) {
                         String? distanceString = getDistance(
                             state.currentLocation, state.cafes[index]);
-
+                            
                         return CafeCard(
                           cafe: state.cafes[index],
                           onToggleFavorite: () => context

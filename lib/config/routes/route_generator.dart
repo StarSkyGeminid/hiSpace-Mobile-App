@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:hispace_mobile_app/screen/accout_settings/account_settings.dart';
 import 'package:hispace_mobile_app/screen/boarding/boarding_screen.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/cafe_details.dart';
+import 'package:hispace_mobile_app/screen/cafe_details/widget/all-menu.dart';
+import 'package:hispace_mobile_app/screen/cafe_details/widget/all_facility.dart';
+import 'package:hispace_mobile_app/screen/cafe_details/widget/all_review.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/widget/image_grid.dart';
 import 'package:hispace_mobile_app/screen/cafe_owned/cafe_owned_screen.dart';
 import 'package:hispace_mobile_app/screen/create_cafe/create_cafe.dart';
@@ -15,6 +18,7 @@ import 'package:hispace_mobile_app/screen/profile/profile_screen.dart';
 import 'package:hispace_mobile_app/screen/register/register_screen.dart';
 import 'package:hispace_mobile_app/screen/register/widget/first_register_screen.dart';
 import 'package:hispace_mobile_app/screen/register/widget/second_register_screen.dart';
+import 'package:hispace_mobile_app/screen/search/cafe_search.dart';
 import 'package:hispace_mobile_app/screen/splash/splash_screen.dart';
 import 'package:hispace_mobile_app/screen/write_review/write_review.dart';
 import 'package:page_transition/page_transition.dart';
@@ -93,6 +97,12 @@ class RoutesGenerator {
           type: PageTransitionType.bottomToTop,
           duration: const Duration(milliseconds: 300),
         );
+      case '/search':
+        return PageTransition(
+          child: const CafeSearch(),
+          type: PageTransitionType.bottomToTop,
+          duration: const Duration(milliseconds: 300),
+        );
       case '/licenses':
         return PageTransition(
           child: const LicensePage(
@@ -157,7 +167,7 @@ class RoutesGenerator {
           ),
           type: PageTransitionType.bottomToTop,
           duration: const Duration(milliseconds: 500),
-          reverseDuration: const Duration(milliseconds: 500),
+          reverseDuration: const Duration(milliseconds: 300),
         );
       case '/cafe/image-grid':
         return PageTransition(
@@ -166,7 +176,34 @@ class RoutesGenerator {
           ),
           type: PageTransitionType.bottomToTop,
           duration: const Duration(milliseconds: 500),
-          reverseDuration: const Duration(milliseconds: 500),
+          reverseDuration: const Duration(milliseconds: 300),
+        );
+      case '/cafe/all-facilities':
+        return PageTransition(
+          child: AllFacility(
+            facilities: args as List<Facility>,
+          ),
+          type: PageTransitionType.bottomToTop,
+          duration: const Duration(milliseconds: 500),
+          reverseDuration: const Duration(milliseconds: 300),
+        );
+      case '/cafe/all-menu':
+        return PageTransition(
+          child: AllMenu(
+            menus: args as List<Menu>,
+          ),
+          type: PageTransitionType.bottomToTop,
+          duration: const Duration(milliseconds: 500),
+          reverseDuration: const Duration(milliseconds: 300),
+        );
+      case '/cafe/all-review':
+        return PageTransition(
+          child: AllReviews(
+            reviews: args as List<Review>,
+          ),
+          type: PageTransitionType.bottomToTop,
+          duration: const Duration(milliseconds: 500),
+          reverseDuration: const Duration(milliseconds: 300),
         );
       default:
         return MaterialPageRoute(

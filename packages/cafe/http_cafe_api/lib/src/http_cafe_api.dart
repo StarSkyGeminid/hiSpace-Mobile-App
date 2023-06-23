@@ -137,7 +137,7 @@ class HttpCafeApi extends ICafeApi {
   }
 
   @override
-  Future<List<Cafe>> search(String query) {
+  Future<void> search(SearchModel searchModel, {int page = 0}) {
     // TODO: implement search
     throw UnimplementedError();
   }

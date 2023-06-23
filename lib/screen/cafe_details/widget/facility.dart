@@ -31,7 +31,7 @@ class Facility extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.only(bottom: kDefaultSpacing / 2),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Icon(cafe.facilities![index].iconData),
                   Padding(
