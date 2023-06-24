@@ -95,7 +95,7 @@ class _CafeDetailsViewState extends State<_CafeDetailsView> {
   }
 }
 
-class _View extends StatelessWidget {
+class _View extends StatefulWidget {
   const _View({
     required this.scrollController,
     required this.type,
@@ -106,24 +106,29 @@ class _View extends StatelessWidget {
   final CafeDetailsType type;
 
   @override
+  State<_View> createState() => _ViewState();
+}
+
+class _ViewState extends State<_View> {
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<CafeDetailsBloc, CafeDetailsState>(
       buildWhen: (previous, current) => previous.cafe != current.cafe,
       builder: (context, state) {
         return CustomScrollView(
-          controller: scrollController,
+          controller: widget.scrollController,
           slivers: [
             CafeDetailsHeader(
-              controller: scrollController,
+              controller: widget.scrollController,
               onBack: () => Navigator.of(context).pop(),
-              type: type,
+              type: widget.type,
             ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(kDefaultSpacing),
                 child: DetailsTitle(
                   cafe: state.cafe,
-                  type: type,
+                  type: widget.type,
                 ),
               ),
             ),
@@ -275,6 +280,33 @@ class _View extends StatelessWidget {
             ),
             SliverToBoxAdapter(
               child: Padding(
+                padding: const EdgeInsets.all(kDefaultSpacing),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    backgroundColor: Theme.of(context).colorScheme.background,
+                    foregroundColor: Theme.of(context).colorScheme.primary,
+                    elevation: 0,
+                    side: const BorderSide(
+                      width: 1,
+                      color: Colors.black,
+                    ),
+                  ),
+                  onPressed: () => BlocProvider.of<CafeDetailsBloc>(context)
+                      .add(const CafeDetailsRequestOpenMaps()),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: kDefaultSpacing,
+                        vertical: kDefaultSpacing * 0.8),
+                    child: Text('Buka di maps'),
+                  ),
+                ),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
                 child: Divider(color: ColorPallete.light.grey3),
@@ -317,13 +349,6 @@ class _View extends StatelessWidget {
                 padding: EdgeInsets.all(kDefaultSpacing),
               ),
             ),
-            // SliverToBoxAdapter(
-            //   child: Padding(
-            //     padding:
-            //         const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
-            //     child: Divider(color: ColorPallete.light.grey3),
-            //   ),
-            // ),
           ],
         );
       },

@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:cafe_repository/cafe_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hispace_mobile_app/screen/create_cafe/model/facility_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 part 'cafe_details_event.dart';
 part 'cafe_details_state.dart';
@@ -13,6 +16,7 @@ class CafeDetailsBloc extends Bloc<CafeDetailsEvent, CafeDetailsState> {
         super(const CafeDetailsState()) {
     on<CafeDetailsInitial>(_onInitial);
     on<CafeDetailsRemove>(_onRemove);
+    on<CafeDetailsRequestOpenMaps>(_onOpenMaps);
     on<CafeDetailsEvent>((event, emit) {});
   }
 
@@ -58,6 +62,41 @@ class CafeDetailsBloc extends Bloc<CafeDetailsEvent, CafeDetailsState> {
     try {
       await _cafeRepository.remove(state.cafe.locationId);
       emit(state.copyWith(status: CafeDetailsStatus.success));
+    } catch (e) {
+      emit(state.copyWith(status: CafeDetailsStatus.failure));
+    }
+  }
+
+  Future<void> _onOpenMaps(
+      CafeDetailsRequestOpenMaps event, Emitter<CafeDetailsState> emit) async {
+    try {
+      Uri appleUrl = Uri.https('maps.apple.com', '/', {
+        'saddr': '',
+        'daddr': '${state.cafe.latitude},${state.cafe.longitude}',
+        'directionsmode': 'driving'
+      });
+
+      Uri googleUrl = Uri.https('www.google.com', '/maps/search/', {
+        'api': '1',
+        'query': '${state.cafe.latitude},${state.cafe.longitude}',
+      });
+
+      if (Platform.isIOS) {
+        if (await canLaunchUrl(appleUrl)) {
+          await launchUrl(appleUrl,
+              mode: LaunchMode.externalNonBrowserApplication);
+        } else {
+          if (await canLaunchUrl(googleUrl)) {
+            await launchUrl(googleUrl,
+                mode: LaunchMode.externalNonBrowserApplication);
+          }
+        }
+      } else {
+        if (await canLaunchUrl(googleUrl)) {
+          await launchUrl(googleUrl,
+              mode: LaunchMode.externalNonBrowserApplication);
+        }
+      }
     } catch (e) {
       emit(state.copyWith(status: CafeDetailsStatus.failure));
     }
