@@ -28,7 +28,7 @@ class _HomeScreenViewState extends State<HomeScreen> {
   }
 
   void _goToProfileScreen() {
-    Navigator.pushNamed(context, '/profile');
+    Navigator.pushNamed(context, '/user/settings');
   }
 
   @override

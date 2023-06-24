@@ -2,7 +2,6 @@ part of 'home_bloc.dart';
 
 enum HomeStatus { initial, loading, success, failure }
 
-@JsonSerializable()
 class HomeState extends Equatable {
   const HomeState({
     this.status = HomeStatus.initial,
@@ -38,11 +37,6 @@ class HomeState extends Equatable {
       currentLocation: currentLocation ?? this.currentLocation,
     );
   }
-
-  factory HomeState.fromJson(Map<String, dynamic> json) =>
-      _$HomeStateFromJson(json);
-
-  Map<String, dynamic> toJson() => _$HomeStateToJson(this);
 
   @override
   List<Object?> get props => [

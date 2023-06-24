@@ -350,7 +350,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
           .map((e) => Galery(id: basename(e.path), url: e.path))
           .toList();
 
-      Cafe cafe = Cafe(
+      Cafe cafe = Cafe.empty.copyWith(
         name: state.cafeName.value,
         description: state.cafeDescription.value,
         address: state.cafeAddress.value,
@@ -358,13 +358,8 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
         longitude: state.coordinate.longitude,
         rawTime: state.openTime.toJson(),
         galeries: galeries,
-        galeryId: '',
         locationId: locationId,
         isFavorite: false,
-        owner: '',
-        rating: 0.0,
-        user: '',
-        userUserId: '',
       );
 
       var facilities = state.facilities

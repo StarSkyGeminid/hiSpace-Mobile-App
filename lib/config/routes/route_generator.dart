@@ -19,6 +19,7 @@ import 'package:hispace_mobile_app/screen/register/register_screen.dart';
 import 'package:hispace_mobile_app/screen/register/widget/first_register_screen.dart';
 import 'package:hispace_mobile_app/screen/register/widget/second_register_screen.dart';
 import 'package:hispace_mobile_app/screen/search/cafe_search.dart';
+import 'package:hispace_mobile_app/screen/search/widget/search_view/search_result_view.dart';
 import 'package:hispace_mobile_app/screen/splash/splash_screen.dart';
 import 'package:hispace_mobile_app/screen/write_review/write_review.dart';
 import 'package:page_transition/page_transition.dart';
@@ -200,6 +201,15 @@ class RoutesGenerator {
         return PageTransition(
           child: AllReviews(
             reviews: args as List<Review>,
+          ),
+          type: PageTransitionType.bottomToTop,
+          duration: const Duration(milliseconds: 500),
+          reverseDuration: const Duration(milliseconds: 300),
+        );
+      case '/cafe/search_result':
+        return PageTransition(
+          child: SearchResultView(
+            searchModel: args as SearchModel,
           ),
           type: PageTransitionType.bottomToTop,
           duration: const Duration(milliseconds: 500),

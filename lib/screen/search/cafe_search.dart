@@ -1,11 +1,11 @@
-import 'package:cafe_repository/cafe_repository.dart';
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocation_repository/geolocation_repository.dart';
 import 'package:hispace_mobile_app/config/theme/color_pallete.dart';
 import 'package:hispace_mobile_app/core/global/constans.dart';
 import 'package:hispace_mobile_app/widget/custom_form.dart';
-import 'package:latlong2/latlong.dart';
 
 import 'bloc/cafe_search_bloc.dart';
 
@@ -16,7 +16,7 @@ class CafeSearch extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => CafeSearchBloc(
-        RepositoryProvider.of<CafeRepository>(context),
+        RepositoryProvider.of<GeoLocationRepository>(context),
       ),
       child: const _CafeSearchView(),
     );
@@ -38,6 +38,7 @@ class _CafeSearchView extends StatelessWidget {
           title: Text('Cari', style: Theme.of(context).textTheme.titleMedium),
         ),
         body: ListView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           padding: const EdgeInsets.fromLTRB(
               kDefaultSpacing, kDefaultSpacing, kDefaultSpacing, 0),
           children: [
@@ -60,9 +61,19 @@ class _CafeSearchView extends StatelessWidget {
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.all(kDefaultSpacing),
           child: BlocBuilder<CafeSearchBloc, CafeSearchState>(
+            buildWhen: (previous, current) =>
+                previous.status != current.status ||
+                previous.searchModel.isValid() != current.searchModel.isValid(),
             builder: (context, state) {
               return ElevatedButton(
-                onPressed: state.searchModel.isValid() ? () {} : null,
+                onPressed: state.searchModel.isValid()
+                    ? () {
+                        Navigator.pushNamed(context, '/cafe/search_result',
+                            arguments: BlocProvider.of<CafeSearchBloc>(context)
+                                .state
+                                .searchModel);
+                      }
+                    : null,
                 child: const Padding(
                   padding: EdgeInsets.all(kDefaultSpacing * 0.8),
                   child: Text('Cari'),
@@ -76,8 +87,27 @@ class _CafeSearchView extends StatelessWidget {
   }
 }
 
-class _PriceFilter extends StatelessWidget {
+class _PriceFilter extends StatefulWidget {
   const _PriceFilter();
+
+  @override
+  State<_PriceFilter> createState() => _PriceFilterState();
+}
+
+class _PriceFilterState extends State<_PriceFilter> {
+  final CurrencyTextInputFormatter _formatterPriceStart =
+      CurrencyTextInputFormatter(
+    locale: 'id',
+    symbol: 'Rp',
+    decimalDigits: 0,
+  );
+
+  final CurrencyTextInputFormatter _formatterPriceEnd =
+      CurrencyTextInputFormatter(
+    locale: 'id',
+    symbol: 'Rp',
+    decimalDigits: 0,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +115,7 @@ class _PriceFilter extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Harga',
+          'Rentang Harga',
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: kDefaultSpacing / 2),
@@ -95,23 +125,56 @@ class _PriceFilter extends StatelessWidget {
               builder: (context, state) {
                 return Flexible(
                   child: CustomTextFormField(
+                    key: const Key('CafeSearch_TextFormField_PriceStart'),
+                    inputFormatters: [_formatterPriceStart],
+                    initialValue: state.searchModel.priceFrom != null
+                        ? _formatterPriceStart
+                            .format(state.searchModel.priceFrom!.toString())
+                        : null,
+                    textInputType: TextInputType.number,
                     hintText: 'Harga Minimum',
-                    onChanged: (value) => context
-                        .read<CafeSearchBloc>()
-                        .add(CafeSearchOnPriceStartChanged(value)),
+                    onChanged: (value) => context.read<CafeSearchBloc>().add(
+                        CafeSearchOnPriceStartChanged(
+                            (_formatterPriceStart.getUnformattedValue() as int)
+                                .toDouble())),
+                    errorText: state.searchModel.priceFrom != null &&
+                            state.searchModel.priceTo != null &&
+                            state.searchModel.priceFrom! >
+                                state.searchModel.priceTo!
+                        ? 'Harga minimum harus lebih kecil dari harga maksimum'
+                        : null,
                   ),
                 );
               },
             ),
-            const SizedBox(width: kDefaultSpacing),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: kDefaultSpacing / 2),
+              child: Icon(Icons.arrow_forward_rounded,
+                  color: ColorPallete.light.grey),
+            ),
             BlocBuilder<CafeSearchBloc, CafeSearchState>(
               builder: (context, state) {
                 return Flexible(
                   child: CustomTextFormField(
+                    key: const Key("CafeSearch_TextFormField_PriceEnd"),
+                    inputFormatters: [_formatterPriceEnd],
+                    initialValue: state.searchModel.priceTo != null
+                        ? _formatterPriceEnd
+                            .format(state.searchModel.priceTo!.toString())
+                        : null,
+                    textInputType: TextInputType.number,
                     hintText: 'Harga Maksimum',
-                    onChanged: (value) => context
-                        .read<CafeSearchBloc>()
-                        .add(CafeSearchOnPriceEndChanged(value)),
+                    onChanged: (value) => context.read<CafeSearchBloc>().add(
+                        CafeSearchOnPriceEndChanged(
+                            (_formatterPriceEnd.getUnformattedValue() as int)
+                                .toDouble())),
+                    errorText: state.searchModel.priceTo != null &&
+                            state.searchModel.priceFrom != null &&
+                            state.searchModel.priceTo! <
+                                state.searchModel.priceFrom!
+                        ? 'Harga maksimum harus lebih besar dari harga minimum'
+                        : null,
                   ),
                 );
               },
@@ -151,7 +214,7 @@ class __LocationState extends State<_Location> {
       shrinkWrap: true,
       children: [
         Text(
-          'Lokasi',
+          'Cafe terdekat dari titik lokasi',
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: kDefaultSpacing / 2),

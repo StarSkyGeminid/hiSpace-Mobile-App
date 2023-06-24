@@ -134,9 +134,7 @@ class CafeOwner {
       }
     }
 
-    var streamedResponse = await request.send().then((value) {
-      return value;
-    });
+    var streamedResponse = await request.send();
 
     if (streamedResponse.statusCode != 201) throw RequestFailure();
 

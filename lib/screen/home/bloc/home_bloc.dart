@@ -1,15 +1,14 @@
+import 'package:bloc/bloc.dart';
 import 'package:cafe_api/cafe_api.dart';
 import 'package:cafe_repository/cafe_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocation_repository/geolocation_repository.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'home_bloc.g.dart';
 part 'home_event.dart';
 part 'home_state.dart';
 
-class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
+class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc(
       {required CafeRepository cafeRepository,
       required GeoLocationRepository geoLocationRepository})
@@ -132,10 +131,4 @@ class HomeBloc extends HydratedBloc<HomeEvent, HomeState> {
       isFetching = false;
     }
   }
-
-  @override
-  HomeState? fromJson(Map<String, dynamic> json) => HomeState.fromJson(json);
-
-  @override
-  Map<String, dynamic>? toJson(HomeState state) => state.toJson();
 }

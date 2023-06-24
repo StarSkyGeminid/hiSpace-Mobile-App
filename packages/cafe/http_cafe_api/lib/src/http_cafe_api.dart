@@ -137,9 +137,50 @@ class HttpCafeApi extends ICafeApi {
   }
 
   @override
-  Future<void> search(SearchModel searchModel, {int page = 0}) {
-    // TODO: implement search
-    throw UnimplementedError();
+  Future<void> search(SearchModel searchModel, {int page = 0}) async {
+    if (page == 0 && _cafeStreamController.valueOrNull != null) {
+      _cafeStreamController.add([]);
+    }
+
+    var query = searchModel.toMapString();
+
+    query.addEntries({'page': '$page'}.entries);
+
+    final uri = Uri.https(
+      _baseUrl,
+      '/api/location/search',
+      query,
+    );
+
+    var headers = getAuthorization();
+
+    headers.addAll({
+      'Content-Type': 'application/json',
+    });
+
+    final response = await _httpClient.get(uri, headers: headers);
+
+    if (response.statusCode != 200) throw RequestFailure();
+
+    if (response.body.isEmpty) throw ResponseFailure();
+
+    final resultJson = jsonDecode(response.body) as Map;
+
+    if (resultJson.containsKey('status')) {
+      if (resultJson['status'] != 'success') throw RequestFailure();
+    }
+
+    if (!resultJson.containsKey('data')) throw ResponseFailure();
+
+    final data = resultJson['data'];
+
+    if (data.isEmpty) return;
+
+    List<Cafe> listCafes =
+        List<Cafe>.from(data.map((e) => Cafe.fromMap(e)).toList());
+
+    _cafeStreamController
+        .add([..._cafeStreamController.valueOrNull ?? [], ...listCafes]);
   }
 
   @override

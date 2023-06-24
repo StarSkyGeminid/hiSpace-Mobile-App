@@ -19,7 +19,7 @@ class CafeSearchOnFormChanged extends CafeSearchEvent {
 class CafeSearchOnPriceStartChanged extends CafeSearchEvent {
   const CafeSearchOnPriceStartChanged(this.value);
 
-  final String value;
+  final double value;
 
   @override
   List<Object> get props => [];
@@ -28,7 +28,7 @@ class CafeSearchOnPriceStartChanged extends CafeSearchEvent {
 class CafeSearchOnPriceEndChanged extends CafeSearchEvent {
   const CafeSearchOnPriceEndChanged(this.value);
 
-  final String value;
+  final double value;
 
   @override
   List<Object> get props => [];
@@ -45,8 +45,4 @@ class CafeSearchOnLocationChanged extends CafeSearchEvent {
 
 class CafeSearchOnGPSTapped extends CafeSearchEvent {
   const CafeSearchOnGPSTapped();
-}
-
-class CafeSearchOnSubmitted extends CafeSearchEvent {
-  const CafeSearchOnSubmitted();
 }
