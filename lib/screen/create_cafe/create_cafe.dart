@@ -92,8 +92,7 @@ class _CreateCafeViewState extends State<CreateCafeView> {
           }
         },
         buildWhen: (previous, current) =>
-            previous.currentPage != current.currentPage ||
-            previous.status != current.status,
+            previous.currentPage != current.currentPage,
         builder: (context, state) => Scaffold(
           appBar: AppBar(
             title: const Text('Buat cafe'),
