@@ -114,7 +114,7 @@ class _TabViewState extends State<_TabView> {
                       builder: (context, state) {
                         String? distanceString = getDistance(
                             state.currentLocation, state.cafes[index]);
-                            
+
                         return CafeCard(
                           cafe: state.cafes[index],
                           onToggleFavorite: () => context
@@ -172,7 +172,7 @@ class _LoadingBackground extends StatelessWidget {
           ),
           const SizedBox(height: kDefaultSpacing),
           Text(
-            status == HomeStatus.loading
+            status != HomeStatus.failure
                 ? 'Memuat rekomendasi...'
                 : 'Gagal memuat rekomendasi!',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(

@@ -41,6 +41,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         emit(state.copyWith(
           currentLocation: LatLng(coordinates.latitude, coordinates.longitude),
         ));
+      } else {
+        emit(state.copyWith(
+          status: HomeStatus.failure,
+        ));
       }
 
       await _cafeRepository.fetchCafes(
