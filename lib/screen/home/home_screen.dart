@@ -5,6 +5,8 @@ import 'package:hispace_mobile_app/core/global/constans.dart';
 import 'package:hispace_mobile_app/screen/home/widget/cafe_tab_bar.dart';
 import 'package:hispace_mobile_app/screen/home/widget/home_app_bar.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart'
+    show SmartRefresher, RefreshController;
 
 import 'bloc/home_bloc.dart';
 import 'model/home_tab_model.dart';
@@ -45,13 +47,7 @@ class _HomeScreenViewState extends State<HomeScreen> {
             toolbarHeight: 45,
           ),
         ),
-        body: RefreshIndicator(
-            onRefresh: () {
-              return Future.delayed(const Duration(seconds: 1), () {
-                context.read<HomeBloc>().add(const HomeOnRefresh());
-              });
-            },
-            child: const _TabView()),
+        body: const _TabView(),
       ),
     );
   }
@@ -66,6 +62,9 @@ class _TabView extends StatefulWidget {
 
 class _TabViewState extends State<_TabView> {
   final Distance distance = const Distance();
+
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   void _goToDetailsScreen(Cafe cafe) {
     Navigator.pushNamed(context, '/cafe-details', arguments: cafe.locationId);
@@ -84,11 +83,19 @@ class _TabViewState extends State<_TabView> {
                 previous.cafes != current.cafes ||
                 previous.status != current.status,
             builder: (context, state) {
-              if ((state.status != HomeStatus.success || state.cafes.isEmpty) &&
+              if ((state.status != HomeStatus.success ||
+                      state.cafes.isEmpty) &&
                   state.status != HomeStatus.initial) {
-                return _LoadingBackground(
-                  size: size,
-                  status: state.status,
+                return SmartRefresher(
+                   controller: _refreshController,
+                  onRefresh: () =>
+                      context.read<HomeBloc>().add(const HomeOnRefresh()),
+                  enablePullDown: true,
+                  enablePullUp: false,
+                  child: _LoadingBackground(
+                    size: size,
+                    status: state.status,
+                  ),
                 );
               }
 
