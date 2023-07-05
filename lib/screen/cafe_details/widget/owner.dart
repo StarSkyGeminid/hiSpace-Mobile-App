@@ -28,7 +28,7 @@ class Owner extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: kDefaultSpacing, vertical: kDefaultSpacing / 2),
           child: CircularProfilePicture(
-            maxSize: 80,
+            maxSize: 70,
             isCached: false,
             url: cafe.user.profilePic,
           ),
