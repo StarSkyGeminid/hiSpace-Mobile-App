@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:cafe_api/src/models/models.dart';
-import 'package:cafe_api/src/models/owner_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
@@ -22,7 +21,7 @@ class Cafe extends Equatable {
   final bool isFavorite;
   final int? priceEnd;
   final int? priceStart;
-  final OwnerModel user;
+  final UserModel user;
   final List<Review>? reviews;
   final List<Menu>? menus;
   final List<Galery>? galeries;
@@ -67,7 +66,7 @@ class Cafe extends Equatable {
     rawTime: '',
     rating: 0,
     isFavorite: false,
-    user: OwnerModel.empty,
+    user: UserModel.empty,
   );
 
   Cafe copyWith({
@@ -87,7 +86,7 @@ class Cafe extends Equatable {
     int? priceStart,
     int? priceEnd,
     bool? isFavorite,
-    OwnerModel? user,
+    UserModel? user,
     List<Review>? reviews,
     List<Menu>? menus,
     List<Galery>? galeries,
@@ -171,7 +170,9 @@ class Cafe extends Equatable {
           ? List<Review>.from(
               map['reviews'].map((e) => Review.fromMap(e)).toList())
           : null,
-      user: map.containsKey('user') ? OwnerModel.fromMap(map['user']) : OwnerModel.empty,
+      user: map.containsKey('user')
+          ? UserModel.fromMap(map['user'])
+          : UserModel.empty,
       menus: map['menus'] != null && map['menus'].isNotEmpty
           ? List<Menu>.from(map['menus'].map((e) => Menu.fromMap(e)).toList())
           : null,

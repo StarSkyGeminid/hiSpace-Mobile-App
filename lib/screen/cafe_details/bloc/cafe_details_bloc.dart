@@ -47,7 +47,7 @@ class CafeDetailsBloc extends Bloc<CafeDetailsEvent, CafeDetailsState> {
         status: CafeDetailsStatus.success,
         isOwned: cafe.userUserId == _currentUserId,
         isReviewed: cafe.reviews
-            ?.map((element) => element.userId)
+            ?.map((element) => element.user.userId)
             .contains(_currentUserId),
       ));
     } catch (e) {
