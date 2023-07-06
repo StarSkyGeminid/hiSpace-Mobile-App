@@ -338,7 +338,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
 
   Future<void> _onDone(
       CreateCafeOnDone event, Emitter<CreateCafeState> emit) async {
-    if (state.currentPage < totalPage - 2) return;
+    if (state.currentPage < totalPage - 1) return;
 
     emit(state.copyWith(
       status: CreateCafeStatus.loading,
