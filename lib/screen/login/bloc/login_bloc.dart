@@ -54,7 +54,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     } on EmailDoesNotExist {
       emit(state.copyWith(
           status: FormzSubmissionStatus.failure,
-          message: 'Email tidak terdaftar'));
+          message: 'Email atau password salah'));
     } catch (e) {
       emit(state.copyWith(
           status: FormzSubmissionStatus.failure,

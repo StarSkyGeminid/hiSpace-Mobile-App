@@ -77,6 +77,8 @@ class AuthenticationRepository {
 
     if (response.statusCode == 401) throw WrongPassword();
 
+    if (response.statusCode == 404) throw EmailDoesNotExist();
+
     if (response.statusCode != 200) throw RequestFailure();
 
     if (response.body.isEmpty) throw ResponseFailure();
