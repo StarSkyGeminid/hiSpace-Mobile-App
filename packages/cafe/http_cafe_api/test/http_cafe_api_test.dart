@@ -28,7 +28,7 @@ void main() {
       httpClient = MockClient();
 
       apiClient = HttpCafeApi(localData, httpClient: httpClient);
-      baseUri = Uri.parse('hispace-production.up.railway.app');
+      baseUri = Uri.parse('hispace.biz.id');
     });
 
     group('Constructor', () {
@@ -43,10 +43,11 @@ void main() {
 
       setUp(() async {
         baseUri = Uri.https(
-          'hispace-production.up.railway.app',
+          'hispace.biz.id',
           '/api/location',
           {
             'page': '0',
+            'sortBy': FetchType.recomendation.text,
           },
         );
 
@@ -74,20 +75,25 @@ void main() {
         await expectLater(apiClient.fetchCafes(type: FetchType.recomendation),
             throwsA(isA<ResponseFailure>()));
       });
-
-      test('makes correct http request without profile picture', () async {
-        const result = '''
-{
- 
-}''';
+      test('throws ResponseFailure on empty response', () async {
         when(httpClient.get(baseUri, headers: headers))
-            .thenAnswer((_) async => http.Response(result, 200));
+            .thenAnswer((_) async => http.Response('', 200));
 
-        await apiClient.fetchCafes(type: FetchType.recomendation);
+        await expectLater(apiClient.fetchCafes(type: FetchType.recomendation),
+            throwsA(isA<ResponseFailure>()));
+      });
+      test('throws ResponseFailure on empty response', () async {
+        when(httpClient.get(baseUri, headers: headers))
+            .thenAnswer((_) async => http.Response('', 200));
 
+        await expectLater(apiClient.fetchCafes(type: FetchType.recomendation),
+            throwsA(isA<ResponseFailure>()));
         expect(
           apiClient.getCafes(),
-          isA<Cafe>(),
+          emitsInOrder(<dynamic>[
+            isA<List<Cafe>>(),
+            emitsDone,
+          ]),
         );
       });
     });

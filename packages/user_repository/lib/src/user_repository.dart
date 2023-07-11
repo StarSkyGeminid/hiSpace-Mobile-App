@@ -17,7 +17,7 @@ class UserRepository {
 
   late final http.Client _httpClient;
 
-  static const _baseUrl = 'hispace-production.up.railway.app';
+  static const _baseUrl = 'hispace.biz.id';
 
   UserRepository(LocalData localData, {http.Client? httpClient})
       : _localData = localData,

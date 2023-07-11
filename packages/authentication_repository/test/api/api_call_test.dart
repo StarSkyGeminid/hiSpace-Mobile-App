@@ -27,7 +27,7 @@ void main() {
       httpClient = MockClient();
 
       apiClient = AuthenticationRepository(localData, httpClient: httpClient);
-      baseUri = Uri.parse('hispace-production.up.railway.app');
+      baseUri = Uri.parse('hispace.biz.id');
     });
 
     group('constructor', () {
@@ -70,7 +70,7 @@ void main() {
 
     group('Register', () {
       const fullname = 'John Doe';
-      const email = 'johndoelorem@hispace-production.up.railway.app';
+      const email = 'johndoelorem@hispace.biz.id';
       const password = 'password';
 
       const RegisterModel registerModel = RegisterModel(
@@ -84,7 +84,7 @@ void main() {
       };
 
       setUp(() async {
-        baseUri = Uri.https('hispace-production.up.railway.app', '/api/signup');
+        baseUri = Uri.https('hispace.biz.id', '/api/signup');
 
         SharedPreferences.setMockInitialValues({});
         pref = await SharedPreferences.getInstance();
@@ -128,8 +128,8 @@ void main() {
         "userId": "8e856259-09e1-45c5-a12b-f3573d05ec6e",
         "userName": "John",
         "fullName": "John Doe",
-        "email": "johndoelorem@hispace-production.up.railway.app",
-        "profilePic": "https://hispace-production.up.railway.app/api/profile/8e856259-09e1-45c5-a12b-f3573d05ec6e.png",
+        "email": "johndoelorem@hispace.biz.id",
+        "profilePic": "https://hispace.biz.id/api/profile/8e856259-09e1-45c5-a12b-f3573d05ec6e.png",
         "createdAt": "2023-05-08T10:44:14.000Z",
         "updatedAt": "2023-05-08T10:44:14.000Z",
         "accessToken": "AccessTokenValue"
@@ -161,7 +161,7 @@ void main() {
         "userId": "8e856259-09e1-45c5-a12b-f3573d05ec6e",
         "userName": "John",
         "fullName": "John Doe",
-        "email": "johndoelorem@hispace-production.up.railway.app",
+        "email": "johndoelorem@hispace.biz.id",
         "profilePic": null,
         "createdAt": "2023-05-08T10:44:14.000Z",
         "updatedAt": "2023-05-08T10:44:14.000Z",
@@ -188,7 +188,7 @@ void main() {
     });
 
     group('Login', () {
-      const email = 'johndoelorem@hispace-production.up.railway.app';
+      const email = 'johndoelorem@hispace.biz.id';
       const password = 'password';
 
       final json = {
@@ -201,7 +201,7 @@ void main() {
       };
 
       setUp(() async {
-        baseUri = Uri.https('hispace-production.up.railway.app', '/api/login');
+        baseUri = Uri.https('hispace.biz.id', '/api/login');
 
         SharedPreferences.setMockInitialValues({});
         pref = await SharedPreferences.getInstance();
@@ -210,12 +210,20 @@ void main() {
         apiClient = AuthenticationRepository(localData, httpClient: httpClient);
       });
 
-      test('throws RequestFailure on non-200 response', () async {
+      test('throws EmailDoesNotExist on 404 response', () async {
         when(httpClient.post(baseUri, body: jsonEncode(json), headers: headers))
             .thenAnswer((_) async => http.Response('', 404));
 
         await expectLater(apiClient.logIn(email: email, password: password),
-            throwsA(isA<RequestFailure>()));
+            throwsA(isA<EmailDoesNotExist>()));
+      });
+
+      test('throws WrongPassword on 401 response', () async {
+        when(httpClient.post(baseUri, body: jsonEncode(json), headers: headers))
+            .thenAnswer((_) async => http.Response('', 401));
+
+        await expectLater(apiClient.logIn(email: email, password: password),
+            throwsA(isA<WrongPassword>()));
       });
 
       test('throws ResponseFailure on empty response', () async {
@@ -247,7 +255,7 @@ void main() {
         "userId": "8e856259-09e1-45c5-a12b-f3573d05ec6e",
         "userName": "John",
         "fullName": "John Doe",
-        "email": "johndoelorem@hispace-production.up.railway.app",
+        "email": "johndoelorem@hispace.biz.id",
         "profilePic": null,
         "createdAt": "2023-05-08T10:44:14.000Z",
         "updatedAt": "2023-05-08T10:44:14.000Z",
@@ -278,8 +286,8 @@ void main() {
         "userId": "8e856259-09e1-45c5-a12b-f3573d05ec6e",
         "userName": "John",
         "fullName": "John Doe",
-        "email": "johndoelorem@hispace-production.up.railway.app",
-        "profilePic": "https://hispace-production.up.railway.app/profile.png",
+        "email": "johndoelorem@hispace.biz.id",
+        "profilePic": "https://hispace.biz.id/profile.png",
         "createdAt": "2023-05-08T10:44:14.000Z",
         "updatedAt": "2023-05-08T10:44:14.000Z",
         "accessToken": "AccessTokenValue"
@@ -304,13 +312,12 @@ void main() {
     });
 
     group('Reset Password', () {
-      const email = 'johndoelorem@hispace-production.up.railway.app';
+      const email = 'johndoelorem@hispace.biz.id';
 
       final json = {'email': email};
 
       setUp(() {
-        baseUri = Uri.parse(
-            'https://hispace-production.up.railway.app/api/reset-password');
+        baseUri = Uri.parse('https://hispace.biz.id/api/reset-password');
       });
 
       final headers = {

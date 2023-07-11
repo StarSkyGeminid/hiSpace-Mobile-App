@@ -66,7 +66,7 @@ class OpenStreetMapApi implements GeolocationApi {
       final json = _localData.location.getLastLocation();
 
       if (json.isEmpty) return null;
-      
+
       return Position.fromMap(jsonDecode(json));
     }
   }

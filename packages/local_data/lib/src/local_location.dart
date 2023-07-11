@@ -9,10 +9,10 @@ class LocalLocation {
       : _preferences = sharedPreferences;
 
   Future<bool> setLastLocation(String json) async {
-    return _preferences.setString('$_prefix.InitialScreenStatus', json);
+    return _preferences.setString('$_prefix.LastLocation', json);
   }
 
   String getLastLocation() {
-    return _preferences.getString('$_prefix.InitialScreenStatus') ?? '';
+    return _preferences.getString('$_prefix.LastLocation') ?? '';
   }
 }

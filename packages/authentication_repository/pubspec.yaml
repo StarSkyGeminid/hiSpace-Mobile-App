@@ -15,9 +15,9 @@ dependencies:
   http: ^1.0.0
   local_data:
     path: ../local_data
-  mockito: ^5.4.0
 
 dev_dependencies:
+  mockito: ^5.4.0
   build_runner: ^2.3.3
   flutter_lints: ^2.0.0
   flutter_test:

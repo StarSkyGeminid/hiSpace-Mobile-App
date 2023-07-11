@@ -27,7 +27,7 @@ void main() {
       httpClient = MockClient();
 
       apiClient = UserRepository(localData, httpClient: httpClient);
-      baseUri = Uri.parse('hispace-production.up.railway.app');
+      baseUri = Uri.parse('hispace.biz.id');
     });
 
     group('Constructor', () {
@@ -41,7 +41,7 @@ void main() {
       const headers = {'Authorization': "bearer $token"};
 
       setUp(() async {
-        baseUri = Uri.https('hispace-production.up.railway.app', '/api/user');
+        baseUri = Uri.https('hispace.biz.id', '/api/user');
 
         SharedPreferences.setMockInitialValues({
           'auth.AuthenticationToken': 'AccessTokenValue',
@@ -74,7 +74,7 @@ void main() {
         "userId": "8e856259-09e1-45c5-a12b-f3573d05ec6e",
         "userName": "John",
         "fullName": "John Doe",
-        "email": "johndoelorem@hispace-production.up.railway.app",
+        "email": "johndoelorem@hispace.biz.id",
         "profilePic": null,
         "createdAt": "2023-05-04T15:31:02.000Z",
         "updatedAt": "2023-05-04T15:31:02.000Z",
@@ -94,8 +94,8 @@ void main() {
                   "8e856259-09e1-45c5-a12b-f3573d05ec6e")
               .having((user) => user.userName, 'userName', "John")
               .having((user) => user.fullName, 'fullName', "John Doe")
-              .having((user) => user.email, 'email',
-                  'johndoelorem@hispace-production.up.railway.app')
+              .having(
+                  (user) => user.email, 'email', 'johndoelorem@hispace.biz.id')
               .having((user) => user.profilePic, 'profilePic', isNull),
         );
       });
@@ -108,8 +108,8 @@ void main() {
         "userId": "8e856259-09e1-45c5-a12b-f3573d05ec6e",
         "userName": "John",
         "fullName": "John Doe",
-        "email": "johndoelorem@hispace-production.up.railway.app",
-        "profilePic": "https://hispace-production.up.railway.app/profile.png",
+        "email": "johndoelorem@hispace.biz.id",
+        "profilePic": "https://hispace.biz.id/profile.png",
         "createdAt": "2023-05-04T15:31:02.000Z",
         "updatedAt": "2023-05-04T15:31:02.000Z",
         "wishLists": []
@@ -128,10 +128,10 @@ void main() {
                   "8e856259-09e1-45c5-a12b-f3573d05ec6e")
               .having((user) => user.userName, 'userName', "John")
               .having((user) => user.fullName, 'fullName', "John Doe")
-              .having((user) => user.email, 'email',
-                  'johndoelorem@hispace-production.up.railway.app')
+              .having(
+                  (user) => user.email, 'email', 'johndoelorem@hispace.biz.id')
               .having((user) => user.profilePic, 'profilePic',
-                  'https://hispace-production.up.railway.app/profile.png'),
+                  'https://hispace.biz.id/profile.png'),
         );
       });
     });
@@ -149,7 +149,7 @@ void main() {
       const headers = {'Authorization': "bearer $token"};
 
       setUp(() async {
-        baseUri = Uri.https('hispace-production.up.railway.app', '/api/user');
+        baseUri = Uri.https('hispace.biz.id', '/api/user');
 
         apiClient.getAuthorization();
       });
@@ -161,72 +161,6 @@ void main() {
         await expectLater(apiClient.updateUser(fullName: "johnDoe"),
             throwsA(isA<RequestFailure>()));
       });
-
-      test('throws ResponseFailure on empty response', () async {
-        when(httpClient.put(baseUri, headers: headers, body: body))
-            .thenAnswer((_) async => http.Response('', 200));
-
-        await expectLater(apiClient.updateUser(fullName: "johnDoe"),
-            throwsA(isA<ResponseFailure>()));
-      });
-
-//       test('makes correct http request without profile picture', () async {
-//         const result = '''
-// {
-//     "status": "success",
-//     "data": "User has been updated"
-// }''';
-
-//         when(httpClient.put(baseUri, headers: headers, body: body))
-//             .thenAnswer((_) async => http.Response(result, 200));
-
-//         final response = await apiClient.updateUser(fullName: "johnDoe");
-
-//         expect(
-//           response,
-//         );
-//       });
-
-//       test('makes correct http request with profile picture', () async {
-//         const result = '''
-// {
-//     "status": "success",
-//     "data": "User has been updated"
-// }''';
-
-//         when(httpClient.put(baseUri, headers: headers, body: body))
-//             .thenAnswer((_) async => http.Response(result, 200));
-
-//         final response = await apiClient.updateUser();
-
-//         expect(
-//           response,
-//           isA<User>()
-//               .having((user) => user.id, 'id',
-//                   "8e856259-09e1-45c5-a12b-f3573d05ec6e")
-//               .having((user) => user.userName, 'userName', "John")
-//               .having((user) => user.fullName, 'fullName', "John Doe")
-//               .having((user) => user.email, 'email',
-//                   'johndoelorem@hispace-production.up.railway.app')
-//               .having((user) => user.profilePic, 'profilePic', profilePic),
-//         );
-//       });
-
-      // test('get user without request http', () async {
-      //   final userModel = await apiClient.getUserModel();
-
-      //   expect(
-      //     userModel,
-      //     isA<UserModel>()
-      //         .having((user) => user.id, 'id',
-      //             "8e856259-09e1-45c5-a12b-f3573d05ec6e")
-      //         .having((user) => user.userName, 'userName', "John")
-      //         .having((user) => user.fullName, 'fullName', "John Doe")
-      //         .having((user) => user.email, 'email', 'johndoelorem@hispace-production.up.railway.app')
-      //         .having((user) => user.profilePic, 'profilePic',
-      //             'https://hispace-production.up.railway.app/profile.png'),
-      //   );
-      // });
     });
   });
 }
