@@ -27,18 +27,45 @@ jobs:
             - run: flutter test packages/authentication_repository
             - run: flutter test packages/user_repository
             
-    build_appbundle:
+    android_relase:
         name: Build Flutter (Android)
         needs: [flutter_test]
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
             - uses: actions/setup-java@v1
               with:
-                java-version: "12.x"
+                java-version: '12.x'
+
+            - name: Run read-yaml action
+              id: yaml-data
+              uses: KJ002/read-yaml@main
+              with:
+                file: './pubspec.yaml'
+                key-path: '["version"]' # Access the runs key then the using key and retuns the value.
+
+            - name: Split version number
+              id: split
+              uses: jungwinter/split@v2
+              with:
+                msg: ${{ steps.yaml-data.outputs.data }}
+                separator: "+"
+
+            - uses: subosito/flutter-action@v2
+              with:
+                channel: 'stable'
+
+            - uses: actions/checkout@v2
             - uses: subosito/flutter-action@v1
               with:
                 channel: "stable"
             - run: flutter pub get
+            - run: flutter packages pub run build_runner build --delete-conflicting-outputs
             - run: flutter clean
             - run: flutter build appbundle
+
+            - name: Create Github Release
+              uses: ncipollo/release-action@v1
+              with:
+                artifacts: "build/app/outputs/flutter-apk/*.apk"
+                bodyFile: "RELEASE.md"
+                token: ${{ secrets.RELEASE_TOKEN }}
