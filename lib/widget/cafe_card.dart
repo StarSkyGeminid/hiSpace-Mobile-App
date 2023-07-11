@@ -1,5 +1,4 @@
 import 'package:cafe_api/cafe_api.dart';
-import 'package:cafe_repository/cafe_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:hispace_mobile_app/config/theme/color_pallete.dart';
 import 'package:hispace_mobile_app/core/extension/string_extension.dart';
