@@ -95,6 +95,14 @@ class _LoadingBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String text = 'Mencari cafe...';
+
+    if (status == SearchResultViewStatus.success) {
+      text = 'Tidak dapat menemukan cafe yang dicari!';
+    } else if (status == SearchResultViewStatus.failure) {
+      text = 'Gagal memuat pencarian!';
+    }
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -107,10 +115,7 @@ class _LoadingBackground extends StatelessWidget {
           ),
           const SizedBox(height: kDefaultSpacing),
           Text(
-            status == SearchResultViewStatus.loading ||
-                    status == SearchResultViewStatus.initial
-                ? 'Mencari cafe...'
-                : 'Gagal memuat pencarian!',
+            text,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context)
                       .colorScheme

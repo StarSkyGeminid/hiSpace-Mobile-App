@@ -57,8 +57,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       await emit.forEach<List<Cafe>>(
         _cafeRepository.getCafes(),
         onData: (cafes) => state.copyWith(
-          status: cafes.isNotEmpty ? HomeStatus.success : HomeStatus.failure,
-          cafes: cafes,
+          status: HomeStatus.success,
+          cafes: List.of(cafes),
         ),
         onError: (_, __) => state.copyWith(
           status: HomeStatus.failure,

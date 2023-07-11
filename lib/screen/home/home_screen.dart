@@ -87,8 +87,7 @@ class _TabViewState extends State<_TabView> {
                 previous.cafes != current.cafes ||
                 previous.status != current.status,
             builder: (context, state) {
-              if ((state.status != HomeStatus.success || state.cafes.isEmpty) &&
-                  state.status != HomeStatus.initial) {
+              if (state.cafes.isEmpty || state.status != HomeStatus.initial) {
                 return SmartRefresher(
                   controller: _refreshController[index],
                   onRefresh: () =>
@@ -170,6 +169,14 @@ class _LoadingBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String text = 'Memuat rekomendasi...';
+
+    if (status == HomeStatus.failure) {
+      text = 'Gagal memuat rekomendasi!';
+    } else if (status == HomeStatus.success) {
+      text = 'Tidak dapat memuat data';
+    }
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -182,9 +189,7 @@ class _LoadingBackground extends StatelessWidget {
           ),
           const SizedBox(height: kDefaultSpacing),
           Text(
-            status != HomeStatus.failure
-                ? 'Memuat rekomendasi...'
-                : 'Gagal memuat rekomendasi!',
+            text,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context)
                       .colorScheme
