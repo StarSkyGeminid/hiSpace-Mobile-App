@@ -23,4 +23,3 @@ class CafeDetailsRemove extends CafeDetailsEvent {
 class CafeDetailsOnOpenMaps extends CafeDetailsEvent {
   const CafeDetailsOnOpenMaps();
 }
-
