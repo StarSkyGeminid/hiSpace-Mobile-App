@@ -40,7 +40,7 @@ jobs:
               id: yaml-data
               uses: KJ002/read-yaml@main
               with:
-                file: './pubspec.yaml'
+                file: pubspec.yaml
                 key-path: '["version"]' # Access the runs key then the using key and retuns the value.
 
             - name: Split version number
