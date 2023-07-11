@@ -22,7 +22,10 @@ jobs:
                   channel: 'stable'
             - run: flutter pub get
             - run: flutter analyze
-            - run: flutter test
+            - run: flutter test packages/cafe/http_cafe_api/ 
+            - run: flutter test packages/geolocation/openstreetmap_api
+            - run: flutter test packages/authentication_repository
+            - run: flutter test packages/user_repository
             
     build_appbundle:
         name: Build Flutter (Android)

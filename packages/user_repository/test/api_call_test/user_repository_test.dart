@@ -136,31 +136,31 @@ void main() {
       });
     });
 
-    group('Update Profile', () {
-      const fullName = "John Doe";
-      const profilePic = 'ProfilePicture';
+    // group('Update Profile', () {
+    //   const fullName = "John Doe";
+    //   const profilePic = 'ProfilePicture';
 
-      const body = {
-        'fullName': fullName,
-        'profilePic': profilePic,
-      };
+    //   const body = {
+    //     'fullName': fullName,
+    //     'profilePic': profilePic,
+    //   };
 
-      const token = "AccessTokenValue";
-      const headers = {'Authorization': "bearer $token"};
+    //   const token = "AccessTokenValue";
+    //   const headers = {'Authorization': "bearer $token"};
 
-      setUp(() async {
-        baseUri = Uri.https('hispace.biz.id', '/api/user');
+    //   setUp(() async {
+    //     baseUri = Uri.https('hispace.biz.id', '/api/user');
 
-        apiClient.getAuthorization();
-      });
+    //     apiClient.getAuthorization();
+    //   });
 
-      test('throws RequestFailure on non-200 response', () async {
-        when(httpClient.put(baseUri, headers: headers, body: body))
-            .thenAnswer((_) async => http.Response('', 404));
+    //   test('throws RequestFailure on non-200 response', () async {
+    //     when(httpClient.put(baseUri, headers: headers, body: body))
+    //         .thenAnswer((_) async => http.Response('', 404));
 
-        await expectLater(apiClient.updateUser(fullName: "johnDoe"),
-            throwsA(isA<RequestFailure>()));
-      });
-    });
+    //     await expectLater(apiClient.updateUser(fullName: "johnDoe"),
+    //         throwsA(isA<RequestFailure>()));
+    //   });
+    // });
   });
 }

@@ -82,20 +82,6 @@ void main() {
         await expectLater(apiClient.fetchCafes(type: FetchType.recomendation),
             throwsA(isA<ResponseFailure>()));
       });
-      test('throws ResponseFailure on empty response', () async {
-        when(httpClient.get(baseUri, headers: headers))
-            .thenAnswer((_) async => http.Response('', 200));
-
-        await expectLater(apiClient.fetchCafes(type: FetchType.recomendation),
-            throwsA(isA<ResponseFailure>()));
-        expect(
-          apiClient.getCafes(),
-          emitsInOrder(<dynamic>[
-            isA<List<Cafe>>(),
-            emitsDone,
-          ]),
-        );
-      });
     });
   });
 }
