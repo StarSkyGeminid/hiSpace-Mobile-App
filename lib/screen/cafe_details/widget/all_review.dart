@@ -57,14 +57,14 @@ class AllReviews extends StatelessWidget {
                         CircularProfilePicture(
                           maxSize: 50,
                           isCached: false,
-                          url: reviews[index].userPhotoUrl,
+                          url: reviews[index].user.profilePic,
                         ),
                         const SizedBox(width: kDefaultSpacing / 2),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              reviews[index].userId,
+                              reviews[index].user.fullname,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium

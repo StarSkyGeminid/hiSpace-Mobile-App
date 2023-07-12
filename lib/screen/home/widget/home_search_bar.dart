@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hispace_mobile_app/core/global/constans.dart';
 
 class HomeSearchBar extends StatelessWidget {
@@ -51,28 +50,28 @@ class HomeSearchBar extends StatelessWidget {
   }
 }
 
-class _FilterButton extends StatelessWidget {
-  const _FilterButton();
+// class _FilterButton extends StatelessWidget {
+//   const _FilterButton();
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Theme.of(context).colorScheme.background,
-        border: Border.all(
-          color: Theme.of(context).colorScheme.onSurface,
-          width: 1,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(kDefaultSpacing / 4),
-        child: SvgPicture.asset(
-          'assets/icons/settings_icon.svg',
-          colorFilter: ColorFilter.mode(
-              Theme.of(context).colorScheme.primary, BlendMode.srcIn),
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       decoration: BoxDecoration(
+//         shape: BoxShape.circle,
+//         color: Theme.of(context).colorScheme.background,
+//         border: Border.all(
+//           color: Theme.of(context).colorScheme.onSurface,
+//           width: 1,
+//         ),
+//       ),
+//       child: Padding(
+//         padding: const EdgeInsets.all(kDefaultSpacing / 4),
+//         child: SvgPicture.asset(
+//           'assets/icons/settings_icon.svg',
+//           colorFilter: ColorFilter.mode(
+//               Theme.of(context).colorScheme.primary, BlendMode.srcIn),
+//         ),
+//       ),
+//     );
+//   }
+// }

@@ -4,7 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:cafe_repository/cafe_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hispace_mobile_app/screen/create_cafe/model/facility_model.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 part 'cafe_details_event.dart';
 part 'cafe_details_state.dart';
@@ -16,7 +16,7 @@ class CafeDetailsBloc extends Bloc<CafeDetailsEvent, CafeDetailsState> {
         super(const CafeDetailsState()) {
     on<CafeDetailsInitial>(_onInitial);
     on<CafeDetailsRemove>(_onRemove);
-    on<CafeDetailsRequestOpenMaps>(_onOpenMaps);
+    on<CafeDetailsOnOpenMaps>(_onOpenMaps);
     on<CafeDetailsEvent>((event, emit) {});
   }
 
@@ -47,7 +47,7 @@ class CafeDetailsBloc extends Bloc<CafeDetailsEvent, CafeDetailsState> {
         status: CafeDetailsStatus.success,
         isOwned: cafe.userUserId == _currentUserId,
         isReviewed: cafe.reviews
-            ?.map((element) => element.userId)
+            ?.map((element) => element.user.userId)
             .contains(_currentUserId),
       ));
     } catch (e) {
@@ -68,35 +68,38 @@ class CafeDetailsBloc extends Bloc<CafeDetailsEvent, CafeDetailsState> {
   }
 
   Future<void> _onOpenMaps(
-      CafeDetailsRequestOpenMaps event, Emitter<CafeDetailsState> emit) async {
-    try {
-      Uri appleUrl = Uri.https('maps.apple.com', '/', {
-        'saddr': '',
-        'daddr': '${state.cafe.latitude},${state.cafe.longitude}',
-        'directionsmode': 'driving'
-      });
+      CafeDetailsOnOpenMaps event, Emitter<CafeDetailsState> emit) async {
+    emit(state.copyWith(status: CafeDetailsStatus.loading));
 
-      Uri googleUrl = Uri.https('www.google.com', '/maps/search/', {
-        'api': '1',
-        'query': '${state.cafe.latitude},${state.cafe.longitude}',
-      });
+    try {
+      double lat = state.cafe.latitude;
+      double lon = state.cafe.longitude;
+
+      String appleUrl =
+          'https://maps.apple.com/?saddr=&daddr=$lat,$lon&directionsmode=driving';
+      String googleUrl =
+          'https://www.google.com/maps/search/?api=1&query=$lat,$lon';
 
       if (Platform.isIOS) {
-        if (await canLaunchUrl(appleUrl)) {
-          await launchUrl(appleUrl,
-              mode: LaunchMode.externalNonBrowserApplication);
+        if (await canLaunchUrlString(appleUrl)) {
+          await launchUrlString(appleUrl);
         } else {
-          if (await canLaunchUrl(googleUrl)) {
-            await launchUrl(googleUrl,
+          if (await canLaunchUrlString(googleUrl)) {
+            await launchUrlString(googleUrl,
                 mode: LaunchMode.externalNonBrowserApplication);
+          } else {
+            throw 'Could not open the map.';
           }
         }
       } else {
-        if (await canLaunchUrl(googleUrl)) {
-          await launchUrl(googleUrl,
+        if (await canLaunchUrlString(googleUrl)) {
+          await launchUrlString(googleUrl,
               mode: LaunchMode.externalNonBrowserApplication);
+        } else {
+          throw 'Could not open the map.';
         }
       }
+      emit(state.copyWith(status: CafeDetailsStatus.success));
     } catch (e) {
       emit(state.copyWith(status: CafeDetailsStatus.failure));
     }

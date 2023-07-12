@@ -5,3 +5,4 @@ export 'open_time.dart';
 export 'menu_model.dart';
 export 'facilities_model.dart';
 export 'search_model.dart';
+export 'user_model.dart';

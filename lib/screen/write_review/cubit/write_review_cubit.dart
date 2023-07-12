@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
+import 'package:cafe_api/cafe_api.dart';
 import 'package:cafe_repository/cafe_repository.dart';
-// import 'package:cafe_repository/cafe_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 import 'package:hispace_mobile_app/formz_models/review.dart';
@@ -39,7 +39,7 @@ class WriteReviewCubit extends Cubit<WriteReviewState> {
         rating: state.rating.toDouble(),
         review: state.review.value,
         locationId: _locationId,
-        userId: _user.id,
+        user: UserModel.empty.copyWith(userId: _user.id),
       );
 
       bool status = await _cafeRepository.addReview(review);

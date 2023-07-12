@@ -32,7 +32,7 @@ class SearchResultViewBloc
 
     try {
       isFetching = true;
-      await _cafeRepository.search(state.searchModel);
+      await _cafeRepository.search(state.searchModel, page: currentPage++);
       isFetching = false;
 
       await emit.forEach<List<Cafe>>(
@@ -62,7 +62,7 @@ class SearchResultViewBloc
 
     try {
       isFetching = true;
-      await _cafeRepository.search(state.searchModel);
+      await _cafeRepository.search(state.searchModel, page: currentPage++);
       isFetching = false;
     } catch (e) {
       emit(state.copyWith(

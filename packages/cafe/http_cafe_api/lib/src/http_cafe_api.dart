@@ -16,7 +16,7 @@ class HttpCafeApi extends ICafeApi {
 
   late final http.Client _httpClient;
 
-  static const _baseUrl = 'hispace-production.up.railway.app';
+  static const _baseUrl = 'hispace.biz.id';
 
   final _cafeStreamController = BehaviorSubject<List<Cafe>>();
 
@@ -77,7 +77,7 @@ class HttpCafeApi extends ICafeApi {
 
     final data = resultJson['data'];
 
-    if (data.isEmpty) return;
+    if (data.isEmpty) _cafeStreamController.add([]);
 
     List<Cafe> listCafes =
         List<Cafe>.from(data.map((e) => Cafe.fromMap(e)).toList());
@@ -159,6 +159,11 @@ class HttpCafeApi extends ICafeApi {
     });
 
     final response = await _httpClient.get(uri, headers: headers);
+
+    if (response.statusCode == 404 &&
+        (_cafeStreamController.valueOrNull?.isNotEmpty ?? false)) {
+      return;
+    }
 
     if (response.statusCode != 200) throw RequestFailure();
 

@@ -6,6 +6,7 @@ import 'package:hispace_mobile_app/core/global/constans.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/cafe_details.dart';
 import 'package:hispace_mobile_app/screen/cafe_owned/cubit/cafe_owned_cubit.dart';
 import 'package:hispace_mobile_app/widget/cafe_card.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class CafeOwned extends StatelessWidget {
   const CafeOwned({super.key});
@@ -29,6 +30,9 @@ class CafeOwnedView extends StatefulWidget {
 }
 
 class _CafeOwnedViewState extends State<CafeOwnedView> {
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
   @override
   void initState() {
     BlocProvider.of<CafeOwnedCubit>(context).initial(
@@ -61,10 +65,11 @@ class _CafeOwnedViewState extends State<CafeOwnedView> {
             },
           ),
         ),
-        body: RefreshIndicator(
-          onRefresh: () async {
-            BlocProvider.of<CafeOwnedCubit>(context).refresh();
-          },
+        body: SmartRefresher(
+          controller: _refreshController,
+          onRefresh: () => BlocProvider.of<CafeOwnedCubit>(context).refresh(),
+          enablePullDown: true,
+          enablePullUp: false,
           child: BlocBuilder<CafeOwnedCubit, CafeOwnedState>(
             builder: (context, state) {
               if (state.cafes.isEmpty) {
