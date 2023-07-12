@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:geolocation_api/geolocation_api.dart';
 import 'package:http/http.dart' as http;
+import 'package:local_data/local_data.dart';
 
 class RequestFailure implements Exception {}
 
@@ -15,8 +16,11 @@ class OpenStreetMapApi implements GeolocationApi {
   static const String _searchPath = '/search';
   static const String _format = 'jsonv2';
 
-  OpenStreetMapApi({http.Client? httpClient})
-      : _httpClient = httpClient ?? http.Client();
+  final LocalData _localData;
+
+  OpenStreetMapApi({http.Client? httpClient, required LocalData localData})
+      : _httpClient = httpClient ?? http.Client(),
+        _localData = localData;
 
   @override
   Future<Position?> getCurrentPosition() async {
@@ -30,15 +34,40 @@ class OpenStreetMapApi implements GeolocationApi {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
     if (serviceEnabled) {
-      return await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-    } else {
+      return await _getCurrentLocation();
+    }
+    return await _getLastLocation();
+  }
+
+  Future<Position> _getCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    _localData.location.setLastLocation(jsonEncode(position.toJson()));
+
+    return position;
+  }
+
+  Future<Position?> _getLastLocation() async {
+    try {
       Position? position = await Geolocator.getLastKnownPosition();
 
-      if (position != null) return position;
+      if (position != null) {
+        _localData.location.setLastLocation(jsonEncode(position.toJson()));
+        return position;
+      }
 
-      return await Geolocator.getCurrentPosition(
+      position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
+
+      _localData.location.setLastLocation(jsonEncode(position.toJson()));
+      return position;
+    } catch (e) {
+      final json = _localData.location.getLastLocation();
+
+      if (json.isEmpty) return null;
+
+      return Position.fromMap(jsonDecode(json));
     }
   }
 

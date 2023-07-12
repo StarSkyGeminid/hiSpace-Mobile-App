@@ -20,6 +20,6 @@ class CafeDetailsRemove extends CafeDetailsEvent {
   const CafeDetailsRemove();
 }
 
-class CafeDetailsRequestOpenMaps extends CafeDetailsEvent {
-  const CafeDetailsRequestOpenMaps();
+class CafeDetailsOnOpenMaps extends CafeDetailsEvent {
+  const CafeDetailsOnOpenMaps();
 }

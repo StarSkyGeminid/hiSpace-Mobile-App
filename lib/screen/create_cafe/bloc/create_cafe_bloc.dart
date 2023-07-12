@@ -57,7 +57,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
 
     if (!isEdit) {
       emit(state.copyWith(
-        status: CreateCafeStatus.success,
+        status: CreateCafeStatus.initial,
         menus: [Menu.empty],
         isEdit: isEdit,
       ));
@@ -103,7 +103,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
         isValidated: true,
         images: images,
         isEdit: isEdit,
-        status: CreateCafeStatus.success,
+        status: CreateCafeStatus.initial,
       ));
     } catch (e) {
       emit(state.copyWith(
@@ -148,7 +148,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
 
     emit(state.copyWith(
       isValidated: true,
-      status: CreateCafeStatus.success,
+      status: CreateCafeStatus.initial,
       latlng: LatLng(position.latitude, position.longitude),
       cafeAddress:
           location != null ? CafeAddress.dirty(location.address) : null,
@@ -184,7 +184,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
         isValidated: true,
         latlng: event.latlng,
         cafeAddress: CafeAddress.dirty(location.address),
-        status: CreateCafeStatus.success));
+        status: CreateCafeStatus.initial));
   }
 
   Future<void> _onSearchLocationTapped(
@@ -203,7 +203,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
           isValidated: true,
           latlng: LatLng(location.latitude, location.longitude),
           cafeAddress: CafeAddress.dirty(location.address),
-          status: CreateCafeStatus.success));
+          status: CreateCafeStatus.initial));
     } catch (e) {
       emit(state.copyWith(isValidated: false));
     }
@@ -224,7 +224,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
     final newImages = [...state.images, ...event.images];
 
     emit(state.copyWith(
-      status: CreateCafeStatus.success,
+      status: CreateCafeStatus.initial,
       isValidated: newImages.isNotEmpty,
       images: newImages,
     ));
@@ -237,7 +237,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
     final newImages = state.images..removeAt(event.index);
 
     emit(state.copyWith(
-      status: CreateCafeStatus.success,
+      status: CreateCafeStatus.initial,
       isValidated: newImages.isNotEmpty,
       images: newImages,
     ));
@@ -279,7 +279,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
         break;
     }
 
-    if (state.currentPage < totalPage - 1) {
+    if (state.currentPage < totalPage - 2) {
       emit(state.copyWith(isValidated: isValidated, currentPage: newPage));
     }
 
@@ -298,7 +298,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
     final newMenus = [...state.menus, Menu.empty];
 
     emit(state.copyWith(
-      status: CreateCafeStatus.success,
+      status: CreateCafeStatus.initial,
       isValidated:
           !newMenus.map((e) => e.isNotEmpty || e.isEmpty).contains(false),
       menus: newMenus,
@@ -312,7 +312,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
     newMenus[event.index] = event.menu;
 
     emit(state.copyWith(
-      status: CreateCafeStatus.success,
+      status: CreateCafeStatus.initial,
       isValidated:
           !newMenus.map((e) => e.isNotEmpty || e.isEmpty).contains(false),
       menus: newMenus,
@@ -330,7 +330,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
     );
 
     emit(state.copyWith(
-      status: CreateCafeStatus.success,
+      status: CreateCafeStatus.initial,
       isValidated: true,
       facilities: newFacilities,
     ));

@@ -51,7 +51,8 @@ class CafeRepository {
   Future<void> updateFacility(List<Facility> facilities, String locationId) =>
       _cafeApi.updateFacility(facilities, locationId);
 
-  Future<void> search(SearchModel searchModel) => _cafeApi.search(searchModel);
+  Future<void> search(SearchModel searchModel, {int page = 0}) =>
+      _cafeApi.search(searchModel, page: page);
 
   Future<void> toggleFavorite(int index) => _cafeApi.toggleFavorite(index);
 

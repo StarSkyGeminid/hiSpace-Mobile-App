@@ -26,7 +26,7 @@ class UploadData extends StatelessWidget {
         ),
         const SizedBox(height: kDefaultSpacing / 2),
         Text(
-          'Harap tunggu ya, sedang menguploPad data kamu.',
+          'Harap tunggu ya, sedang mengupload data kamu.',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: kDefaultSpacing * 2),

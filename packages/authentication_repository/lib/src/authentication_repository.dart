@@ -25,7 +25,7 @@ class AuthenticationRepository {
 
   late final http.Client _httpClient;
 
-  static const _baseUrl = 'hispace-production.up.railway.app';
+  static const _baseUrl = 'hispace.biz.id';
 
   final _controller = StreamController<AuthenticationStatus>();
 
@@ -76,6 +76,8 @@ class AuthenticationRepository {
         await _httpClient.post(uri, body: jsonEncode(body), headers: headers);
 
     if (response.statusCode == 401) throw WrongPassword();
+
+    if (response.statusCode == 404) throw EmailDoesNotExist();
 
     if (response.statusCode != 200) throw RequestFailure();
 
@@ -148,8 +150,8 @@ class AuthenticationRepository {
       'Content-Type': 'application/json',
     };
 
-    final response =
-        await _httpClient.post(locationRequest, body: jsonEncode(body), headers: headers);
+    final response = await _httpClient.post(locationRequest,
+        body: jsonEncode(body), headers: headers);
 
     if (response.statusCode == 404) throw EmailDoesNotExist();
 

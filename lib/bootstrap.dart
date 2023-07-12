@@ -29,7 +29,7 @@ void bootstrap({required LocalData localData}) {
 
   final UserRepository userRepository = UserRepository(localData);
 
-  final geolocationApi = OpenStreetMapApi();
+  final geolocationApi = OpenStreetMapApi(localData: localData);
 
   final GeoLocationRepository geoLocationRepository =
       GeoLocationRepository(geolocationApi: geolocationApi);

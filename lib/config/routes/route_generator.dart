@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hispace_mobile_app/screen/accout_settings/account_settings.dart';
 import 'package:hispace_mobile_app/screen/boarding/boarding_screen.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/cafe_details.dart';
-import 'package:hispace_mobile_app/screen/cafe_details/widget/all-menu.dart';
+import 'package:hispace_mobile_app/screen/cafe_details/widget/all_menu.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/widget/all_facility.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/widget/all_review.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/widget/image_grid.dart';

@@ -5,6 +5,9 @@ import 'package:hispace_mobile_app/core/global/constans.dart';
 import 'package:hispace_mobile_app/screen/home/widget/cafe_tab_bar.dart';
 import 'package:hispace_mobile_app/screen/home/widget/home_app_bar.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:collection/collection.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart'
+    show SmartRefresher, RefreshController;
 
 import 'bloc/home_bloc.dart';
 import 'model/home_tab_model.dart';
@@ -45,13 +48,7 @@ class _HomeScreenViewState extends State<HomeScreen> {
             toolbarHeight: 45,
           ),
         ),
-        body: RefreshIndicator(
-            onRefresh: () {
-              return Future.delayed(const Duration(seconds: 1), () {
-                context.read<HomeBloc>().add(const HomeOnRefresh());
-              });
-            },
-            child: const _TabView()),
+        body: const _TabView(),
       ),
     );
   }
@@ -67,6 +64,12 @@ class _TabView extends StatefulWidget {
 class _TabViewState extends State<_TabView> {
   final Distance distance = const Distance();
 
+  final List<RefreshController> _refreshController = [
+    RefreshController(initialRefresh: false),
+    RefreshController(initialRefresh: false),
+    RefreshController(initialRefresh: false),
+  ];
+
   void _goToDetailsScreen(Cafe cafe) {
     Navigator.pushNamed(context, '/cafe-details', arguments: cafe.locationId);
   }
@@ -77,18 +80,24 @@ class _TabViewState extends State<_TabView> {
 
     return TabBarView(
       physics: const NeverScrollableScrollPhysics(),
-      children: listHomeTabModel.map(
-        (tabModel) {
+      children: listHomeTabModel.mapIndexed(
+        (index, tabModel) {
           return BlocBuilder<HomeBloc, HomeState>(
             buildWhen: (previous, current) =>
                 previous.cafes != current.cafes ||
                 previous.status != current.status,
             builder: (context, state) {
-              if ((state.status != HomeStatus.success || state.cafes.isEmpty) &&
-                  state.status != HomeStatus.initial) {
-                return _LoadingBackground(
-                  size: size,
-                  status: state.status,
+              if (state.cafes.isEmpty || state.status != HomeStatus.initial) {
+                return SmartRefresher(
+                  controller: _refreshController[index],
+                  onRefresh: () =>
+                      context.read<HomeBloc>().add(const HomeOnRefresh()),
+                  enablePullDown: true,
+                  enablePullUp: false,
+                  child: _LoadingBackground(
+                    size: size,
+                    status: state.status,
+                  ),
                 );
               }
 
@@ -114,7 +123,7 @@ class _TabViewState extends State<_TabView> {
                       builder: (context, state) {
                         String? distanceString = getDistance(
                             state.currentLocation, state.cafes[index]);
-                            
+
                         return CafeCard(
                           cafe: state.cafes[index],
                           onToggleFavorite: () => context
@@ -160,6 +169,14 @@ class _LoadingBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String text = 'Memuat rekomendasi...';
+
+    if (status == HomeStatus.failure) {
+      text = 'Gagal memuat rekomendasi!';
+    } else if (status == HomeStatus.success) {
+      text = 'Tidak dapat memuat data';
+    }
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -172,9 +189,7 @@ class _LoadingBackground extends StatelessWidget {
           ),
           const SizedBox(height: kDefaultSpacing),
           Text(
-            status == HomeStatus.loading
-                ? 'Memuat rekomendasi...'
-                : 'Gagal memuat rekomendasi!',
+            text,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context)
                       .colorScheme
