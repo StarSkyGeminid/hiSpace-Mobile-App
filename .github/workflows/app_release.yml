@@ -13,7 +13,7 @@ jobs:
         name: Run flutter test
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
+            - uses: actions/checkout@v3
             - uses: actions/setup-java@v1
               with:
                   java-version: '12.x'
@@ -32,40 +32,19 @@ jobs:
         needs: [flutter_test]
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/setup-java@v1
-              with:
-                java-version: '12.x'
-
-            - name: Run read-yaml action
-              id: yaml-data
-              uses: KJ002/read-yaml@main
-              with:
-                file: './pubspec.yaml'
-                key-path: '["version"]' # Access the runs key then the using key and retuns the value.
-
-            - name: Split version number
-              id: split
-              uses: jungwinter/split@v2
-              with:
-                msg: ${{ steps.yaml-data.outputs.data }}
-                separator: "+"
-
+            - uses: actions/checkout@v3
             - uses: subosito/flutter-action@v2
               with:
-                channel: 'stable'
-
-            - uses: actions/checkout@v2
-            - uses: subosito/flutter-action@v1
-              with:
-                channel: "stable"
+                channel: 'stable' # or: 'beta', 'dev' or 'master'
+            - run: flutter --version
             - run: flutter pub get
-            - run: flutter packages pub run build_runner build --delete-conflicting-outputs
-            - run: flutter clean
+            - run: flutter test
+            - run: flutter build apk --release --split-per-abi
             - run: flutter build appbundle
-
-            - name: Create Github Release
+            - name: Create a Release in GitHub
               uses: ncipollo/release-action@v1
               with:
-                artifacts: "build/app/outputs/flutter-apk/*.apk"
-                bodyFile: "RELEASE.md"
+                artifacts: "build/app/outputs/apk/release/*.apk,build/app/outputs/bundle/release/app-release.aab"
                 token: ${{ secrets.RELEASE_TOKEN }}
+                tag: v0.0.${{ github.run_number }}
+                commit: ${{ github.sha }}
