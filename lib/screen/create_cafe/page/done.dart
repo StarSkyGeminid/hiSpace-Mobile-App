@@ -102,10 +102,9 @@ class _DoneButton extends StatelessWidget {
                   padding: EdgeInsets.all(kDefaultSpacing * 0.8),
                   child: Text('Selesai'),
                 )
-              : const SizedBox(
-                  height: kDefaultSpacing,
-                  width: kDefaultSpacing,
-                  child: CircularProgressIndicator.adaptive(),
+              : const Padding(
+                  padding: EdgeInsets.all(kDefaultSpacing * 0.8),
+                  child: Text('Ok'),
                 ),
         ),
       ),
