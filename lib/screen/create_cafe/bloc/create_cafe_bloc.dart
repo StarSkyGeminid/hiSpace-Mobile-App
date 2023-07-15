@@ -281,9 +281,9 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
 
     if (state.currentPage < totalPage - 2) {
       emit(state.copyWith(isValidated: isValidated, currentPage: newPage));
+    } else {
+      add(CreateCafeOnDone());
     }
-
-    add(CreateCafeOnDone());
   }
 
   void _onPreviousPage(
@@ -338,7 +338,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
 
   Future<void> _onDone(
       CreateCafeOnDone event, Emitter<CreateCafeState> emit) async {
-    if (state.currentPage < totalPage - 1) return;
+    if (state.currentPage < totalPage - 2) return;
 
     emit(state.copyWith(
       status: CreateCafeStatus.loading,
