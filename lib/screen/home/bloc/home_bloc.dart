@@ -47,7 +47,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         ));
       }
 
-      await _cafeRepository.fetchCafes(
+      await _cafeRepository.user.fetchCafes(
         page: currentPageIndex++,
         type: FetchType.values[state.currentTabIndex],
         latitude: coordinates?.latitude,
@@ -55,7 +55,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       );
 
       await emit.forEach<List<Cafe>>(
-        _cafeRepository.getCafes(),
+        _cafeRepository.user.getCafes(),
         onData: (cafes) => state.copyWith(
           status: HomeStatus.success,
           cafes: List.of(cafes),
@@ -73,17 +73,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future<void> _onRefresh(HomeOnRefresh event, Emitter<HomeState> emit) async {
     currentPageIndex = 0;
 
+    emit(state.copyWith(status: HomeStatus.loading));
+
     try {
-      _cafeRepository.fetchCafes(
-        page: currentPageIndex,
+      isFetching = true;
+      _cafeRepository.user.fetchCafes(
+        page: currentPageIndex++,
         type: FetchType.values[state.currentTabIndex],
         latitude: state.currentLocation?.latitude,
         longitude: state.currentLocation?.longitude,
       );
     } catch (e) {
       emit(state.copyWith(status: HomeStatus.failure));
-      isFetching = false;
     }
+    isFetching = false;
   }
 
   Future<void> _onFetchedMore(
@@ -92,17 +95,16 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     try {
       isFetching = true;
-      await _cafeRepository.fetchCafes(
+      await _cafeRepository.user.fetchCafes(
         page: currentPageIndex++,
         type: FetchType.values[state.currentTabIndex],
         latitude: state.currentLocation?.latitude,
         longitude: state.currentLocation?.longitude,
       );
-      isFetching = false;
     } catch (e) {
       emit(state.copyWith(status: HomeStatus.failure));
-      isFetching = false;
     }
+    isFetching = false;
   }
 
   Future<void> _onTabChanged(
@@ -112,16 +114,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     currentPageIndex = 0;
 
     try {
-      _cafeRepository.fetchCafes(
-        page: currentPageIndex,
+      isFetching = true;
+      _cafeRepository.user.fetchCafes(
+        page: currentPageIndex++,
         type: FetchType.values[state.currentTabIndex],
         latitude: state.currentLocation?.latitude,
         longitude: state.currentLocation?.longitude,
       );
     } catch (e) {
       emit(state.copyWith(status: HomeStatus.failure));
-      isFetching = false;
     }
+    isFetching = false;
   }
 
   Future<void> _onToggleFavorite(
@@ -129,7 +132,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     emit(state.copyWith(status: HomeStatus.initial));
 
     try {
-      _cafeRepository.toggleFavorite(event.index);
+      _cafeRepository.user.toggleFavorite(event.index);
     } catch (e) {
       emit(state.copyWith(status: HomeStatus.failure));
       isFetching = false;

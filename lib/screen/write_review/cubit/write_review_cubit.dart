@@ -42,7 +42,7 @@ class WriteReviewCubit extends Cubit<WriteReviewState> {
         user: UserModel.empty.copyWith(userId: _user.id),
       );
 
-      bool status = await _cafeRepository.addReview(review);
+      bool status = await _cafeRepository.user.addReview(review);
 
       String message =
           status ? 'Ulasan berhasil ditambahkan' : 'Kamu sudah memberi ulasan!';
