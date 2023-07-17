@@ -20,9 +20,12 @@ void bootstrap({required LocalData localData}) {
 
   Bloc.observer = const AppBlocObserver();
 
-  final cafeApi = HttpCafeApi(localData);
+  final cafeUserApi = HttpCafeUserApi(localData);
 
-  final cafeRepository = CafeRepository(cafeApi: cafeApi);
+  final cafeOwnerApi = HttpCafeOwnerApi(localData);
+
+  final cafeRepository =
+      CafeRepository(cafeUserApi: cafeUserApi, cafeOwnerApi: cafeOwnerApi);
 
   final AuthenticationRepository authenticationRepository =
       AuthenticationRepository(localData);

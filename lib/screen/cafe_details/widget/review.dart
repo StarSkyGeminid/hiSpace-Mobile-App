@@ -26,92 +26,100 @@ class ReviewView extends StatelessWidget {
               horizontal: kDefaultSpacing, vertical: kDefaultSpacing / 2),
           child: Text('Ulasan', style: Theme.of(context).textTheme.titleMedium),
         ),
-        SizedBox(
-          height: 190,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: math.min(reviews.length, 5),
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.only(
-              left: kDefaultSpacing,
-              bottom: kDefaultSpacing,
-              top: kDefaultSpacing / 2,
-            ),
-            itemBuilder: (context, index) {
-              return Container(
-                width: 300,
-                margin: const EdgeInsets.only(right: kDefaultSpacing),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.background,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      blurRadius: 5,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(kDefaultSpacing),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          CircularProfilePicture(
-                            maxSize: 50,
-                            isCached: false,
-                            url: reviews[index].user.profilePic,
-                          ),
-                          const SizedBox(width: kDefaultSpacing / 2),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                reviews[index].user.fullname,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                              _RatingStar(review: reviews[index]),
-                              if (reviews[index].createdAt != null)
+        if (reviews.isNotEmpty)
+          SizedBox(
+            height: 180,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: math.min(reviews.length, 5),
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.only(
+                left: kDefaultSpacing,
+                bottom: kDefaultSpacing,
+                top: kDefaultSpacing / 2,
+              ),
+              itemBuilder: (context, index) {
+                return Container(
+                  width: 300,
+                  margin: const EdgeInsets.only(right: kDefaultSpacing),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.background,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(kDefaultSpacing),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            CircularProfilePicture(
+                              maxSize: 50,
+                              isCached: false,
+                              url: reviews[index].user.profilePic,
+                            ),
+                            const SizedBox(width: kDefaultSpacing / 2),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
                                 Text(
-                                  DateFormat('dd-MM-yyyy').format(
-                                    reviews[index].createdAt!,
-                                  ),
+                                  reviews[index].user.fullname,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium
                                       ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onBackground
-                                            .withOpacity(0.5),
+                                        fontWeight: FontWeight.bold,
                                       ),
                                 ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: kDefaultSpacing / 2),
-                      Flexible(
-                        child: Text(
-                          reviews[index].review,
-                          maxLines: 3,
+                                _RatingStar(review: reviews[index]),
+                                if (reviews[index].createdAt != null)
+                                  Text(
+                                    DateFormat('dd-MM-yyyy').format(
+                                      reviews[index].createdAt!,
+                                    ),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onBackground
+                                              .withOpacity(0.5),
+                                        ),
+                                  ),
+                              ],
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: kDefaultSpacing / 2),
+                        Flexible(
+                          child: Text(
+                            reviews[index].review,
+                            maxLines: 3,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
+        if (reviews.isEmpty)
+          const SizedBox(
+            height: 50,
+            child: Center(
+              child: Text('Cafe belum memiliki ulasan'),
+            ),
+          )
       ],
     );
   }

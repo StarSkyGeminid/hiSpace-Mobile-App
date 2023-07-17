@@ -27,10 +27,10 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
       WishlistInitial event, Emitter<WishlistState> emit) async {
     emit(const WishlistState(status: WishlistStatus.loading));
 
-    await _cafeRepository.getWishlist(page: _currentPage++);
+    await _cafeRepository.user.getWishlist(page: _currentPage++);
 
     await emit.forEach(
-      _cafeRepository.getCafes(),
+      _cafeRepository.user.getCafes(),
       onData: (cafes) => state.copyWith(
         status: WishlistStatus.success,
         cafes: cafes,
@@ -48,7 +48,7 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
     emit(state.copyWith(status: WishlistStatus.loading));
 
     _currentPage = 0;
-    _cafeRepository.getWishlist(page: _currentPage++);
+    _cafeRepository.user.getWishlist(page: _currentPage++);
   }
 
   Future<void> _onLoadMore(
@@ -57,7 +57,7 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
 
     try {
       isFetching = true;
-      _cafeRepository.getWishlist(page: _currentPage++);
+      _cafeRepository.user.getWishlist(page: _currentPage++);
       isFetching = false;
     } catch (e) {
       emit(state.copyWith(status: WishlistStatus.failure));
@@ -70,7 +70,7 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
     try {
       emit(state.copyWith(status: WishlistStatus.initial));
 
-      _cafeRepository.toggleFavorite(event.index);
+      _cafeRepository.user.toggleFavorite(event.index);
     } catch (e) {
       emit(state.copyWith(status: WishlistStatus.failure));
     }
