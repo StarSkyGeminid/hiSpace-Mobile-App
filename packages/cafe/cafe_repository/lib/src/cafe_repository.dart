@@ -1,60 +1,20 @@
 import 'package:cafe_api/cafe_api.dart';
 
+import 'cafe_owner_repository.dart';
+import 'cafe_user_repository.dart';
+
 class CafeRepository {
-  const CafeRepository({
-    required ICafeApi cafeApi,
-  }) : _cafeApi = cafeApi;
+  CafeRepository({
+    required CafeUserApi cafeUserApi,
+    required CafeOwnerApi cafeOwnerApi,
+  })  : _cafeUserRepository = CafeUserRepository(cafeApi: cafeUserApi),
+        _cafeOwnerRepository = CafeOwnerRepository(cafeApi: cafeOwnerApi);
 
-  final ICafeApi _cafeApi;
+  final CafeUserRepository _cafeUserRepository;
 
-  Stream<List<Cafe>> getCafes() => _cafeApi.getCafes();
+  final CafeOwnerRepository _cafeOwnerRepository;
 
-  Future<void> fetchCafes({
-    int page = 0,
-    required FetchType type,
-    double? latitude,
-    double? longitude,
-  }) =>
-      _cafeApi.fetchCafes(
-        page: page,
-        type: type,
-        latitude: latitude,
-        longitude: longitude,
-      );
+  CafeUserRepository get user => _cafeUserRepository;
 
-  Future<List<Cafe>?> getCafeByOwner(String email) =>
-      _cafeApi.getCafeByOwner(email);
-
-  Future<Cafe> getCafeByLocationId(String locationId, {bool cached = false}) =>
-      _cafeApi.getCafeByLocationId(locationId, cached: cached);
-
-  Future<void> getWishlist({int page = 0}) => _cafeApi.getWishlist(page: page);
-
-  Future<String> addLocation(Cafe cafe) => _cafeApi.addLocation(cafe);
-
-  Future<void> updateLocation(Cafe cafe) => _cafeApi.updateLocation(cafe);
-
-  Future<void> remove(String locationId) => _cafeApi.remove(locationId);
-
-  Future<void> addMenus(List<Menu> menus, String locationId) =>
-      _cafeApi.addMenu(menus, locationId);
-
-  Future<void> updateMenus(List<Menu> menus, String locationId) =>
-      _cafeApi.updateMenu(menus, locationId);
-
-  Future<List<Menu>?> getAllMenus(String locationId) =>
-      _cafeApi.getAllMenu(locationId);
-
-  Future<void> addFacility(List<Facility> facilities, String locationId) =>
-      _cafeApi.addFacility(facilities, locationId);
-
-  Future<void> updateFacility(List<Facility> facilities, String locationId) =>
-      _cafeApi.updateFacility(facilities, locationId);
-
-  Future<void> search(SearchModel searchModel, {int page = 0}) =>
-      _cafeApi.search(searchModel, page: page);
-
-  Future<void> toggleFavorite(int index) => _cafeApi.toggleFavorite(index);
-
-  Future<bool> addReview(Review review) => _cafeApi.addReview(review);
+  CafeOwnerRepository get owner => _cafeOwnerRepository;
 }

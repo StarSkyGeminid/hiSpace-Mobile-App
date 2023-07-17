@@ -82,32 +82,37 @@ class _TabViewState extends State<_TabView> {
       physics: const NeverScrollableScrollPhysics(),
       children: listHomeTabModel.mapIndexed(
         (index, tabModel) {
-          return BlocBuilder<HomeBloc, HomeState>(
-            buildWhen: (previous, current) =>
-                previous.cafes != current.cafes ||
-                previous.status != current.status,
-            builder: (context, state) {
-              if (state.cafes.isEmpty || state.status != HomeStatus.initial) {
-                return SmartRefresher(
-                  controller: _refreshController[index],
-                  onRefresh: () =>
-                      context.read<HomeBloc>().add(const HomeOnRefresh()),
-                  enablePullDown: true,
-                  enablePullUp: false,
-                  child: _LoadingBackground(
+          return SmartRefresher(
+            controller: _refreshController[index],
+            onRefresh: () =>
+                context.read<HomeBloc>().add(const HomeOnRefresh()),
+            enablePullDown: true,
+            enablePullUp: false,
+            child: BlocBuilder<HomeBloc, HomeState>(
+              buildWhen: (previous, current) =>
+                  previous.cafes != current.cafes ||
+                  previous.status != current.status,
+              builder: (context, state) {
+                if (state.cafes.isEmpty || state.status != HomeStatus.success) {
+                  // return SmartRefresher(
+                  //   controller: _refreshController[index],
+                  //   onRefresh: () =>
+                  //       context.read<HomeBloc>().add(const HomeOnRefresh()),
+                  //   enablePullDown: true,
+                  //   enablePullUp: false,
+                  //   child: _LoadingBackground(
+                  //     size: size,
+                  //     status: state.status,
+                  //   ),
+                  // );
+
+                  return _LoadingBackground(
                     size: size,
                     status: state.status,
-                  ),
-                );
-              }
+                  );
+                }
 
-              return RefreshIndicator(
-                onRefresh: () {
-                  return Future.delayed(const Duration(seconds: 1), () {
-                    context.read<HomeBloc>().add(const HomeOnRefresh());
-                  });
-                },
-                child: InfiniteListBuilder(
+                return InfiniteListBuilder(
                   key: PageStorageKey('HomeScreen_ListView_${tabModel.name}'),
                   primary: false,
                   onFetchedMore: () => context.read<HomeBloc>().add(
@@ -136,9 +141,9 @@ class _TabViewState extends State<_TabView> {
                     );
                   },
                   itemCount: state.cafes.length,
-                ),
-              );
-            },
+                );
+              },
+            ),
           );
         },
       ).toList(),
@@ -174,7 +179,7 @@ class _LoadingBackground extends StatelessWidget {
     if (status == HomeStatus.failure) {
       text = 'Gagal memuat rekomendasi!';
     } else if (status == HomeStatus.success) {
-      text = 'Tidak dapat memuat data';
+      text = 'Tidak dapat memuat cafe';
     }
 
     return Center(

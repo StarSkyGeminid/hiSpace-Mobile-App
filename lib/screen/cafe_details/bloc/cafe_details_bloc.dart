@@ -29,7 +29,7 @@ class CafeDetailsBloc extends Bloc<CafeDetailsEvent, CafeDetailsState> {
     emit(state.copyWith(status: CafeDetailsStatus.loading));
 
     try {
-      var cafe = await _cafeRepository.getCafeByLocationId(event.locationId);
+      var cafe = await _cafeRepository.user.getCafeByLocationId(event.locationId);
 
       if (cafe.facilities != null) {
         var facilities = cafe.facilities!.map(
@@ -60,7 +60,7 @@ class CafeDetailsBloc extends Bloc<CafeDetailsEvent, CafeDetailsState> {
     emit(state.copyWith(status: CafeDetailsStatus.loading));
 
     try {
-      await _cafeRepository.remove(state.cafe.locationId);
+      await _cafeRepository.owner.remove(state.cafe.locationId);
       emit(state.copyWith(status: CafeDetailsStatus.success));
     } catch (e) {
       emit(state.copyWith(status: CafeDetailsStatus.failure));

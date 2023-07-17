@@ -67,7 +67,9 @@ class CafeOwner {
         ? json.encode(menus.map((e) => e.toMap()).toList())
         : menus[0].toJson();
 
-    final response = await _httpClient.post(uri, headers: headers, body: body);
+    final response = isAdd
+        ? await _httpClient.post(uri, headers: headers, body: body)
+        : await _httpClient.put(uri, headers: headers, body: body);
 
     if (response.statusCode != 201) throw RequestFailure();
   }

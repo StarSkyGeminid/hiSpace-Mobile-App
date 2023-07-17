@@ -2,13 +2,13 @@
 import 'dart:convert';
 
 class UserModel {
-  final String userId;
+  final String? userId;
   final String fullname;
   final String email;
   final String? profilePic;
 
   const UserModel({
-    required this.userId,
+    this.userId,
     required this.fullname,
     required this.email,
     this.profilePic,
@@ -39,7 +39,7 @@ class UserModel {
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      userId: map['userId'] as String,
+      userId: map.containsKey('userId') ? map['userId'] as String : null,
       fullname: map['fullName'] as String,
       email: map['email'] as String,
       profilePic:

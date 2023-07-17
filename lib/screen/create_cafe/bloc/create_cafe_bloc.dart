@@ -70,7 +70,7 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
     try {
       locationId = event.cafe!.locationId;
 
-      Cafe cafe = await _cafeRepository
+      Cafe cafe = await _cafeRepository.user
           .getCafeByLocationId(event.cafe!.locationId, cached: true);
 
       List<File> images = [];
@@ -368,16 +368,16 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
           .toList();
 
       if (state.isEdit) {
-        await _cafeRepository.updateLocation(cafe);
+        await _cafeRepository.owner.updateLocation(cafe);
 
-        await _cafeRepository.updateMenus(state.menus, cafe.locationId);
+        await _cafeRepository.owner.updateMenus(state.menus, cafe.locationId);
 
-        await _cafeRepository.updateFacility(facilities, cafe.locationId);
+        await _cafeRepository.owner.updateFacility(facilities, cafe.locationId);
       } else {
-        locationId = await _cafeRepository.addLocation(cafe);
-        await _cafeRepository.addMenus(state.menus, locationId);
+        locationId = await _cafeRepository.owner.addLocation(cafe);
+        await _cafeRepository.owner.addMenus(state.menus, locationId);
 
-        await _cafeRepository.addFacility(facilities, locationId);
+        await _cafeRepository.owner.addFacility(facilities, locationId);
       }
 
       emit(state.copyWith(

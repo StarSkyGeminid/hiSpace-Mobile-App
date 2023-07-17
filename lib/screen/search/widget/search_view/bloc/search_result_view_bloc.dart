@@ -32,11 +32,11 @@ class SearchResultViewBloc
 
     try {
       isFetching = true;
-      await _cafeRepository.search(state.searchModel, page: currentPage++);
+      await _cafeRepository.user.search(state.searchModel, page: currentPage++);
       isFetching = false;
 
       await emit.forEach<List<Cafe>>(
-        _cafeRepository.getCafes(),
+        _cafeRepository.user.getCafes(),
         onData: (cafes) => state.copyWith(
           status: cafes.isNotEmpty
               ? SearchResultViewStatus.success
@@ -62,7 +62,7 @@ class SearchResultViewBloc
 
     try {
       isFetching = true;
-      await _cafeRepository.search(state.searchModel, page: currentPage++);
+      await _cafeRepository.user.search(state.searchModel, page: currentPage++);
       isFetching = false;
     } catch (e) {
       emit(state.copyWith(

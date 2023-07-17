@@ -19,7 +19,7 @@ class CafeOwnedCubit extends Cubit<CafeOwnedState> {
     ));
 
     try {
-      var cafes = await _cafeRepository.getCafeByOwner(ownerId);
+      var cafes = await _cafeRepository.user.getCafeByOwner(ownerId);
 
       emit(state.copyWith(cafes: cafes, status: CafeOwnedStatus.success));
     } on ResponseFailure {
@@ -33,7 +33,7 @@ class CafeOwnedCubit extends Cubit<CafeOwnedState> {
     emit(state.copyWith(status: CafeOwnedStatus.loading));
 
     try {
-      var cafes = await _cafeRepository.getCafeByOwner(state.ownerId);
+      var cafes = await _cafeRepository.user.getCafeByOwner(state.ownerId);
 
       emit(state.copyWith(cafes: cafes, status: CafeOwnedStatus.success));
     } on ResponseFailure {

@@ -14,11 +14,8 @@ extension FetchTypeExtension on FetchType {
   bool get isRating => this == FetchType.rating;
 }
 
-/// {@template todos_api}
-/// The interface for an API that provides access to a list of cafes.
-/// {@endtemplate}
-abstract class ICafeApi {
-  const ICafeApi();
+abstract class CafeUserApi {
+  const CafeUserApi();
 
   Stream<List<Cafe>> getCafes();
 
@@ -29,21 +26,7 @@ abstract class ICafeApi {
     double? longitude,
   });
 
-  Future<String> addLocation(Cafe cafe);
-
-  Future<void> updateLocation(Cafe cafe);
-
-  Future<void> addMenu(List<Menu> menus, String locationId);
-
-  Future<void> updateMenu(List<Menu> menus, String locationId);
-
   Future<List<Menu>?> getAllMenu(String locationId);
-
-  Future<void> addFacility(List<Facility> facilities, String locationId);
-
-  Future<void> updateFacility(List<Facility> facilities, String locationId);
-
-  Future<void> remove(String locationId);
 
   Future<void> search(SearchModel searchModel, {int page = 0});
 
@@ -62,6 +45,4 @@ abstract class ICafeApi {
   Future<bool> removeFromFavorite(String locationId);
 
   Future<void> toggleFavorite(int index);
-
-  // Future<List<Cafe>> filter(String query);
 }
