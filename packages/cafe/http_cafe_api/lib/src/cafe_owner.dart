@@ -39,7 +39,9 @@ class CafeOwner {
 
     final response = await _httpClient.delete(uri, headers: headers);
 
-    if (response.statusCode != 200) throw RequestFailure();
+    if (response.statusCode != 200 && response.statusCode != 200) {
+      throw RequestFailure();
+    }
   }
 
   Future<void> addMenu(List<Menu> menus, String locationId,
@@ -71,7 +73,9 @@ class CafeOwner {
         ? await _httpClient.post(uri, headers: headers, body: body)
         : await _httpClient.put(uri, headers: headers, body: body);
 
-    if (response.statusCode != 201) throw RequestFailure();
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw RequestFailure();
+    }
   }
 
   Future<void> addFacility(List<Facility> facilities, String locationId,
@@ -103,7 +107,9 @@ class CafeOwner {
         ? await _httpClient.post(uri, headers: headers, body: body)
         : await _httpClient.put(uri, headers: headers, body: body);
 
-    if (response.statusCode != 201) throw RequestFailure();
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw RequestFailure();
+    }
   }
 
   Future<String?> _location(Cafe cafe,
@@ -138,7 +144,8 @@ class CafeOwner {
 
     var streamedResponse = await request.send();
 
-    if (streamedResponse.statusCode != 201) throw RequestFailure();
+    if (streamedResponse.statusCode != 200 &&
+        streamedResponse.statusCode != 201) throw RequestFailure();
 
     if (!isAdd) return null;
 
