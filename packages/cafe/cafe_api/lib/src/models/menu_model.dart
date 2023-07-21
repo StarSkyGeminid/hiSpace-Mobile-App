@@ -21,7 +21,7 @@ class Menu extends Equatable {
 
   factory Menu.fromMap(Map<String, dynamic> json) {
     return Menu(
-      id: json['id'],
+      id: json['menuId'],
       name: json['name'],
       price: json['price'].toDouble(),
     );

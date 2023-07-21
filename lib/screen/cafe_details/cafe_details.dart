@@ -162,13 +162,14 @@ class _ViewState extends State<_View> {
                   child: Description(cafe: state.cafe),
                 ),
               ),
-              SliverToBoxAdapter(
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: kDefaultSpacing,
-                    ),
-                    child: Divider(color: ColorPallete.light.grey3)),
-              ),
+              if (state.cafe.menus != null && state.cafe.menus!.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: kDefaultSpacing,
+                      ),
+                      child: Divider(color: ColorPallete.light.grey3)),
+                ),
               if (state.cafe.menus != null)
                 SliverToBoxAdapter(
                   child: Padding(
@@ -207,13 +208,15 @@ class _ViewState extends State<_View> {
                     ),
                   ),
                 ),
-              SliverToBoxAdapter(
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: kDefaultSpacing,
-                    ),
-                    child: Divider(color: ColorPallete.light.grey3)),
-              ),
+              if (state.cafe.facilities != null &&
+                  state.cafe.facilities!.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: kDefaultSpacing,
+                      ),
+                      child: Divider(color: ColorPallete.light.grey3)),
+                ),
               if (state.cafe.facilities != null)
                 SliverToBoxAdapter(
                   child: Padding(

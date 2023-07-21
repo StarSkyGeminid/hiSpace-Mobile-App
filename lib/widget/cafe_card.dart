@@ -175,9 +175,19 @@ class _CarousselImageCard extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(kDefaultSpacing / 2),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.background,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                        color: Theme.of(context).colorScheme.background,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onBackground
+                                .withOpacity(0.2),
+                            offset: const Offset(0, 1),
+                            blurRadius: 1,
+                            spreadRadius: 0.5,
+                          )
+                        ]),
                     child: Icon(
                       cafe.isFavorite
                           ? Icons.favorite_rounded

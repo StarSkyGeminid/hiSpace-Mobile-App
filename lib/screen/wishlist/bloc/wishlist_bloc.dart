@@ -48,7 +48,10 @@ class WishlistBloc extends Bloc<WishlistEvent, WishlistState> {
     emit(state.copyWith(status: WishlistStatus.loading));
 
     _currentPage = 0;
-    _cafeRepository.user.getWishlist(page: _currentPage++);
+    
+    isFetching = true;
+    await _cafeRepository.user.getWishlist(page: _currentPage++);
+    isFetching = false;
   }
 
   Future<void> _onLoadMore(

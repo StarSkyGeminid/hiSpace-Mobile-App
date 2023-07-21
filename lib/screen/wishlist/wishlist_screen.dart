@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hispace_mobile_app/core/global/constans.dart';
 import 'package:hispace_mobile_app/screen/home/widget/infinite_list_builder.dart';
 import 'package:hispace_mobile_app/screen/wishlist/bloc/wishlist_bloc.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../widget/cafe_card.dart';
 
@@ -30,9 +29,6 @@ class WishlistScreenView extends StatefulWidget {
 }
 
 class _WishlistScreenViewState extends State<WishlistScreenView> {
-  final RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
-
   void _goToDetailsScreen(Cafe cafe) {
     Navigator.pushNamed(context, '/cafe-details', arguments: cafe.locationId);
   }
@@ -50,11 +46,11 @@ class _WishlistScreenViewState extends State<WishlistScreenView> {
         toolbarHeight: 80,
         centerTitle: true,
       ),
-      body:  SmartRefresher(
-        controller: _refreshController,
-        onRefresh: () => context.read<WishlistBloc>().add(WishlistOnRefresh()),
-        enablePullDown: true,
-        enablePullUp: false,
+      body: RefreshIndicator.adaptive(
+        onRefresh: () {
+          context.read<WishlistBloc>().add(WishlistOnRefresh());
+          return Future.delayed(const Duration(seconds: 1));
+        },
         child: BlocBuilder<WishlistBloc, WishlistState>(
           buildWhen: (previous, current) =>
               previous.cafes.length != current.cafes.length ||
@@ -97,6 +93,7 @@ class _WishlistScreenViewState extends State<WishlistScreenView> {
               onFetchedMore: () => context.read<WishlistBloc>().add(
                     WishlistOnLoadMore(),
                   ),
+              scrollPhysics: const AlwaysScrollableScrollPhysics(),
               itemBuilder: (context, index) =>
                   BlocBuilder<WishlistBloc, WishlistState>(
                 buildWhen: (previous, current) =>
