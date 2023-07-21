@@ -320,35 +320,35 @@ class HttpCafeUserApi extends CafeUserApi {
 
     if (!cached || cafe.galeries == null) return cafe;
 
-    // List<Galery> galeries = [];
+    List<Galery> galeries = [];
 
-    // final Directory temp = await getTemporaryDirectory();
+    var temp = (await getTemporaryDirectory()).path;
+    Directory(temp).delete(recursive: true);
 
-    // for (Galery galery in cafe.galeries!) {
-    //   final File imageFile =
-    //       File('${temp.path}/images/${basename(galery.url)}');
+    for (Galery galery in cafe.galeries!) {
+      final File imageFile = File('$temp/images/${basename(galery.url)}');
 
-    //   if (await imageFile.exists()) {
-    //     galeries.add(galery.copyWith(
-    //       url: imageFile.path,
-    //     ));
-    //   } else {
-    //     await imageFile.create(recursive: true);
+      if (await imageFile.exists()) {
+        galeries.add(galery.copyWith(
+          url: imageFile.path,
+        ));
+      } else {
+        await imageFile.create(recursive: true);
 
-    //     final response =
-    //         await _httpClient.get(Uri.parse(galery.url), headers: headers);
+        final response =
+            await _httpClient.get(Uri.parse(galery.url), headers: headers);
 
-    //     if (response.statusCode != 200) throw RequestFailure();
+        if (response.statusCode != 200) throw RequestFailure();
 
-    //     await imageFile.writeAsBytes(response.bodyBytes);
+        await imageFile.writeAsBytes(response.bodyBytes);
 
-    //     galeries.add(galery.copyWith(
-    //       url: imageFile.path,
-    //     ));
-    //   }
-    // }
+        galeries.add(galery.copyWith(
+          url: imageFile.path,
+        ));
+      }
+    }
 
-    return cafe;
+    return cafe.copyWith(galeries: galeries);
   }
 
   @override
