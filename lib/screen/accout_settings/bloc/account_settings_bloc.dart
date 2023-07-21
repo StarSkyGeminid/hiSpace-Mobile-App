@@ -87,11 +87,12 @@ class AccountSettingsBloc
 
       bool fullNameChanged = state.oldUser.fullName != state.fullName.value;
 
-      _userRepository.updateUser(
+      await _userRepository.updateUser(
         fullName: fullNameChanged ? state.fullName.value : null,
         imageBytes: imageBytes,
         fileName: imageBytes != null ? state.image!.path : null,
       );
+      
       emit(state.copyWith(
           status: FormzSubmissionStatus.success, isChanged: false));
     } catch (e) {

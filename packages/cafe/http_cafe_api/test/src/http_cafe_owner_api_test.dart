@@ -92,7 +92,7 @@ void main() {
       const locationId = "TestLocationId";
 
       const menus = [
-        Menu(name: 'menu1', price: 0),
+        Menu(id: 'id', name: 'menu1', price: 0),
       ];
 
       setUp(() async {
@@ -146,7 +146,7 @@ void main() {
       const locationId = "TestLocationId";
 
       const menu = [
-        Menu(name: 'menu1', price: 0),
+        Menu(id: 'id', name: 'menu1', price: 0),
       ];
 
       setUp(() async {

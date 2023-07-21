@@ -46,16 +46,6 @@ class CafeOwner {
 
   Future<void> addMenu(List<Menu> menus, String locationId,
       {required Map<String, String> headers}) async {
-    await _menu(menus, locationId, headers: headers, isAdd: true);
-  }
-
-  Future<void> updateMenu(List<Menu> menus, String locationId,
-      {required Map<String, String> headers}) async {
-    await _menu(menus, locationId, headers: headers, isAdd: false);
-  }
-
-  Future<void> _menu(List<Menu> menus, String locationId,
-      {required Map<String, String> headers, required bool isAdd}) async {
     final uri = Uri.https(
       _baseUrl,
       '/api/location/$locationId/menu',
@@ -69,12 +59,38 @@ class CafeOwner {
         ? json.encode(menus.map((e) => e.toMap()).toList())
         : menus[0].toJson();
 
-    final response = isAdd
-        ? await _httpClient.post(uri, headers: headers, body: body)
-        : await _httpClient.put(uri, headers: headers, body: body);
+    final response = await _httpClient.post(uri, headers: headers, body: body);
 
     if (response.statusCode != 200 && response.statusCode != 201) {
       throw RequestFailure();
+    }
+  }
+
+  Future<void> updateMenu(List<Menu> menus, String locationId,
+      {required Map<String, String> headers}) async {
+    var editedMenu = menus.where((element) => element.isNotEmpty).toList();
+    var newMenu = menus.where((element) => element.isEmpty).toList();
+
+    if (newMenu.isNotEmpty) {
+      await addMenu(newMenu, locationId, headers: headers);
+    }
+
+    for (var menu in editedMenu) {
+      final uri = Uri.https(
+        _baseUrl,
+        '/api/location/$locationId/menu/${menu.id}',
+      );
+
+      headers.addEntries([
+        const MapEntry('Content-Type', 'application/json'),
+      ]);
+
+      final response =
+          await _httpClient.post(uri, headers: headers, body: menu.toMap());
+
+      if (response.statusCode != 200) {
+        throw RequestFailure();
+      }
     }
   }
 
