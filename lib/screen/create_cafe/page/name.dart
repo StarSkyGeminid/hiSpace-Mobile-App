@@ -36,7 +36,14 @@ class NameForm extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         const SizedBox(height: kDefaultSpacing * 2),
-        const _NameFormField(),
+        BlocBuilder<CreateCafeBloc, CreateCafeState>(
+          buildWhen: (previous, current) => previous.status != current.status,
+          builder: (context, state) {
+            return state.status == CreateCafeStatus.loading
+                ? const Center(child: CircularProgressIndicator.adaptive())
+                : const _NameFormField();
+          },
+        ),
         const SizedBox(height: kDefaultSpacing / 2),
       ],
     );

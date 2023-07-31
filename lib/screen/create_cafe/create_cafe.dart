@@ -58,7 +58,7 @@ class _CreateCafeViewState extends State<CreateCafeView> {
       const FacilityForm(),
       const UploadData(),
     ];
-    
+
     _controller = PageController(initialPage: 0);
   }
 
@@ -92,10 +92,11 @@ class _CreateCafeViewState extends State<CreateCafeView> {
           }
         },
         buildWhen: (previous, current) =>
-            previous.currentPage != current.currentPage,
+            previous.currentPage != current.currentPage ||
+            previous.isEdit != current.isEdit,
         builder: (context, state) => Scaffold(
           appBar: AppBar(
-            title: const Text('Buat cafe'),
+            title: Text(state.isEdit ? 'Edit Cafe' : 'Buat cafe'),
             automaticallyImplyLeading: false,
           ),
           body: PageView.builder(

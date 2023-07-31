@@ -176,8 +176,11 @@ class _CafeDetailsHeaderState extends State<CafeDetailsHeader> {
           builder: (context, state) {
             return CarousselImage(
               cafePictureModel: state.cafe.galeries ?? [],
-              onTap: () => Navigator.of(context).pushNamed('/cafe/image-grid',
-                  arguments: state.cafe.galeries ?? []),
+              onTap: () =>
+                  state.cafe.galeries != null && state.cafe.galeries!.isNotEmpty
+                      ? Navigator.of(context).pushNamed('/cafe/image-grid',
+                          arguments: state.cafe.galeries ?? [])
+                      : () {},
             );
           },
         ),

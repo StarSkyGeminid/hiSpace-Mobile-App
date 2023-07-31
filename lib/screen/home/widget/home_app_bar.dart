@@ -1,6 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hispace_mobile_app/bloc/authentication/authentication_bloc.dart';
 import 'package:hispace_mobile_app/core/global/constans.dart';
 import 'package:hispace_mobile_app/widget/circular_profile_picture.dart';
 
@@ -45,7 +47,15 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           child: InkWell(
             radius: 30,
             onTap: onProfileTap,
-            child: const CircularProfilePicture(maxSize: 50),
+            child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+              buildWhen: (previous, current) => previous.user != current.user,
+              builder: (context, state) {
+                return CircularProfilePicture(
+                  url: state.user.profilePic,
+                  maxSize: 50,
+                );
+              },
+            ),
           ),
         ),
       ],

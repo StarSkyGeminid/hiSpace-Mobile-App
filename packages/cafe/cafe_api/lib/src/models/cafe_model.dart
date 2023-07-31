@@ -160,10 +160,14 @@ class Cafe extends Equatable {
       time: OpenTime.fromMap(jsonDecode(map['time'])),
       rating: map['rating'] != null ? map['rating'].toDouble() : 0.0,
       priceEnd: map.containsKey('startFrom')
-          ? int.parse((map['startFrom'] as String).split(' - ')[0])
+          ? map["startFrom"] is String
+              ? int.parse((map['startFrom'] as String).split(' - ')[1])
+              : null
           : null,
       priceStart: map.containsKey('startFrom')
-          ? int.parse((map['startFrom'] as String).split(' - ')[1])
+          ? map["startFrom"] is String
+              ? int.parse((map['startFrom'] as String).split(' - ')[0])
+              : null
           : null,
       isFavorite: map.containsKey('isWish') ? map['isWish'] as bool : false,
       reviews: map['reviews'] != null && map['reviews'].isNotEmpty

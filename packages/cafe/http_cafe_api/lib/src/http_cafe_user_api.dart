@@ -322,11 +322,11 @@ class HttpCafeUserApi extends CafeUserApi {
 
     List<Galery> galeries = [];
 
-    final Directory temp = await getTemporaryDirectory();
+    var temp = (await getTemporaryDirectory()).path;
+    Directory(temp).delete(recursive: true);
 
     for (Galery galery in cafe.galeries!) {
-      final File imageFile =
-          File('${temp.path}/images/${basename(galery.url)}');
+      final File imageFile = File('$temp/images/${basename(galery.url)}');
 
       if (await imageFile.exists()) {
         galeries.add(galery.copyWith(
@@ -385,10 +385,11 @@ class HttpCafeUserApi extends CafeUserApi {
 
     if (data.isEmpty) return;
 
-    var listCafes = _cafeStreamController.valueOrNull ?? [];
-
-    listCafes.addAll(List<Cafe>.from(
-        data.map((e) => Cafe.fromMap(e).copyWith(isFavorite: true)).toList()));
+    var listCafes = List<Cafe>.of([
+      ..._cafeStreamController.valueOrNull ?? [],
+      ...List<Cafe>.from(
+          data.map((e) => Cafe.fromMap(e).copyWith(isFavorite: true)).toList())
+    ]);
 
     _cafeStreamController.add(listCafes);
   }
