@@ -217,6 +217,6 @@ class Day {
   bool openOnTheDay() {
     return open != null &&
         close != null &&
-        (open!.hour != 0 && close!.hour != 0);
+        (open!.hour != 0 || close!.hour != 0);
   }
 }
