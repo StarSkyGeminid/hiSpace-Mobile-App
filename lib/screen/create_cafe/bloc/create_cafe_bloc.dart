@@ -372,10 +372,15 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
           .map((e) => e)
           .toList();
 
+      var menus = state.menus
+          .where((element) => element.name.isNotEmpty)
+          .map((e) => e)
+          .toList();
+
       if (state.isEdit) {
         await _cafeRepository.owner.updateLocation(cafe);
 
-        await _cafeRepository.owner.updateMenus(state.menus, cafe.locationId);
+        await _cafeRepository.owner.updateMenus(menus, cafe.locationId);
 
         await _cafeRepository.owner.updateFacility(facilities, cafe.locationId);
       } else {
