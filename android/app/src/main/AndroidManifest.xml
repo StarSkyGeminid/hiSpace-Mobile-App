@@ -14,9 +14,9 @@
         </intent>
     </queries>
     <application
-        android:label="hispace_mobile_app"
+        android:label="hiSpace"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
 
         <activity
             android:name=".MainActivity"

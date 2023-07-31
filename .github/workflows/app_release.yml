@@ -34,6 +34,7 @@ jobs:
                 channel: 'stable'
             - run: flutter --version
             - run: flutter pub get
+            - run: dart run flutter_launcher_icons
             - run: flutter build apk --release --split-per-abi
             - run: flutter build appbundle
             - name: Create a Release in GitHub

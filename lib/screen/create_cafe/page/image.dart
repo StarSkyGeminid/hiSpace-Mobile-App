@@ -58,6 +58,41 @@ class _ImageFormState extends State<ImageForm> {
     );
   }
 
+  void _popUpImage(String path) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return GestureDetector(
+          onVerticalDragEnd: (endDetails) {
+            double? velocity = endDetails.primaryVelocity;
+            if (velocity != null && velocity > 0) {
+              Navigator.pop(context);
+            }
+          },
+          child: Container(
+            color: Colors.black,
+            child: InteractiveViewer(
+              boundaryMargin: const EdgeInsets.all(0),
+              minScale: 0.1,
+              maxScale: 4,
+              child: Hero(
+                tag: 'AddImageCafe_$path',
+                child: Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: FileImage(File(path)),
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _requestDeleteImage(int index) async {
     final bloc = BlocProvider.of<CreateCafeBloc>(context);
 
@@ -157,9 +192,7 @@ class _ImageFormState extends State<ImageForm> {
                   return InkWell(
                     onLongPress: () => _requestDeleteImage(index),
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) {
-                        return _ImageDetail(image: state.images[index]);
-                      }));
+                      _popUpImage(state.images[index].path);
                     },
                     child: Hero(
                       tag: 'AddImageCafe_${state.images[index].path}',

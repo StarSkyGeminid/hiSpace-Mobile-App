@@ -14,8 +14,10 @@ class SplashScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // SvgPicture.asset('assets/svg/splash-icon.svg'),
-              Icon(Icons.coffee_rounded, size: size.width * .4),
+              SizedBox(
+                width: size.width * .4,
+                child: Image.asset('assets/images/hispace_logo.png'),
+              ),
               const SizedBox(height: kDefaultSpacing),
               const CircularProgressIndicator.adaptive(),
             ],

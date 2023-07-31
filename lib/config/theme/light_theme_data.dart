@@ -12,7 +12,7 @@ final kLightTheme = ThemeData(
   appBarTheme: AppBarTheme(
     systemOverlayStyle: SystemUiOverlayStyle(
       statusBarColor: lightColorScheme.background,
-      statusBarIconBrightness: Brightness.dark, // For Android (dark icons)
+      statusBarIconBrightness: Brightness.light, // For Android (dark icons)
       statusBarBrightness: Brightness.light, // For iOS (dark icons)
     ),
     backgroundColor: lightColorScheme.background,
