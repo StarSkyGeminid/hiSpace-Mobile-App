@@ -63,9 +63,12 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
       ));
 
       return;
+    } else {
+      emit(state.copyWith(
+        status: CreateCafeStatus.loading,
+        isEdit: isEdit,
+      ));
     }
-
-    if (event.cafe == null) return;
 
     try {
       locationId = event.cafe!.locationId;
@@ -75,9 +78,11 @@ class CreateCafeBloc extends Bloc<CreateCafeEvent, CreateCafeState> {
 
       List<File> images = [];
 
-      for (Galery image in cafe.galeries!) {
-        var file = File(image.url);
-        images.add(file);
+      if (cafe.galeries != null) {
+        for (Galery image in cafe.galeries!) {
+          var file = File(image.url);
+          images.add(file);
+        }
       }
 
       List<Facility> facilities = List<Facility>.from(state.facilities);

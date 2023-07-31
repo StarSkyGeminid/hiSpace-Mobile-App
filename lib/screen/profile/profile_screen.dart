@@ -43,8 +43,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: CustomScrollView(
         slivers: [
-          const SliverToBoxAdapter(
-              child: Center(child: CircularProfilePicture())),
+          SliverToBoxAdapter(
+              child: Center(
+                  child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            builder: (context, state) {
+              return CircularProfilePicture(
+                url: state.user.profilePic,
+              );
+            },
+          ))),
           SliverToBoxAdapter(
             child: Align(
               alignment: Alignment.topCenter,

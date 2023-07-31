@@ -61,9 +61,11 @@ class UserRepository {
 
     if (data.isEmpty) throw ResponseFailure();
 
-    _user = User.fromMap(data as Map<String, dynamic>);
+    var user = User.fromMap(data as Map<String, dynamic>);
 
-    return _user;
+    _user = user;
+
+    return user;
   }
 
   Future<void> updateUser(
