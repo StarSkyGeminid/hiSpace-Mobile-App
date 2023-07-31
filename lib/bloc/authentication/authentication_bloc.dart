@@ -72,7 +72,7 @@ class AuthenticationBloc
 
     if (user == null) return;
 
-    emit(state.copyWith(user: user));
+     emit(AuthenticationState.authenticated(user));
   }
 
   Future<User?> _tryGetUser() async {

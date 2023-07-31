@@ -34,29 +34,6 @@ class _DescriptionFormViewState extends State<_DescriptionFormView> {
     'Minggu'
   ];
 
-  // Future<void> overTimeWarning(bool isOpen) {
-  //   return showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: const Text('Peringatan!'),
-  //         content: Text(
-  //           isOpen
-  //               ? 'Jam buka tidak boleh lebih dari jam tutup'
-  //               : 'Jam tutup tidak boleh kurang dari jam buka',
-  //           style: Theme.of(context).textTheme.bodyMedium,
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () => Navigator.pop(context),
-  //             child: const Text('OK'),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
-
   Future<void> getTime(bool isOpen, int index, Days days) async {
     final bloc = BlocProvider.of<CreateCafeBloc>(context);
 
@@ -84,34 +61,6 @@ class _DescriptionFormViewState extends State<_DescriptionFormView> {
         ),
       ),
     );
-
-    // if (isOpen) {
-    //   TimeOfDay? currentTime = openTime.getFromIndex(index)?.close;
-
-    //   if (currentTime != null) {
-    //     double open = time.hour + time.minute / 60.0;
-    //     double close = currentTime.hour + currentTime.minute / 60.0;
-
-    //     if (open < close) {
-    //       overTimeWarning(true);
-    //       return;
-    //     }
-    //   }
-    // } else {
-    //   TimeOfDay? currentTime = openTime.getFromIndex(index)?.open;
-
-    //   if (currentTime != null) {
-    //     double close = time.hour + time.minute / 60.0;
-    //     double open = currentTime.hour + currentTime.minute / 60.0;
-
-    //     if (open > close) {
-    //       overTimeWarning(false);
-    //       return;
-    //     }
-    //   }
-    // }
-
-    // if (time == null) return;
 
     OpenTime openTime = bloc.state.openTime;
 
@@ -237,7 +186,9 @@ class _TimeInputState extends State<_TimeInput> {
       time = openTime.getFromIndex(widget.index)?.close;
     }
 
-    if (time == null) return '-';
+    if (time == null || !openTime.getFromIndex(widget.index)!.openOnTheDay()) {
+      return '-';
+    }
 
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   }

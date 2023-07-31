@@ -1,9 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:math' as math;
-
-import 'package:hispace_mobile_app/bloc/authentication/authentication_bloc.dart';
 
 class CircularProfilePicture extends StatelessWidget {
   const CircularProfilePicture(
@@ -25,12 +22,7 @@ class CircularProfilePicture extends StatelessWidget {
       decoration: const BoxDecoration(shape: BoxShape.circle),
       child: Builder(
         builder: (context) {
-          String? imageUrl = url ??
-              context.select(
-                (AuthenticationBloc bloc) => bloc.state.user.profilePic,
-              );
-
-          if (imageUrl == null || imageUrl.isEmpty) {
+          if (url == null || url!.isEmpty) {
             return CircleAvatar(
               backgroundColor: Theme.of(context)
                   .colorScheme
@@ -49,7 +41,7 @@ class CircularProfilePicture extends StatelessWidget {
 
           return isCached
               ? CachedNetworkImage(
-                  imageUrl: imageUrl,
+                  imageUrl: url!,
                   placeholder: (context, url) => CircleAvatar(
                     backgroundColor: Colors.grey,
                     radius: math.min(size.width, maxSize),
@@ -67,7 +59,7 @@ class CircularProfilePicture extends StatelessWidget {
                   ),
                 )
               : CircleAvatar(
-                  backgroundImage: NetworkImage(imageUrl),
+                  backgroundImage: NetworkImage(url!),
                   radius: math.min(size.width, maxSize),
                 );
         },

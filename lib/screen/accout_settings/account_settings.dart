@@ -194,7 +194,14 @@ class _ProfilePictureState extends State<_ProfilePicture> {
                 previous.isChanged != current.isChanged,
             builder: (context, state) {
               if (state.image == null || _bytes == null) {
-                return const CircularProfilePicture();
+                return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                    buildWhen: (previous, current) =>
+                        previous.user != current.user,
+                    builder: (context, state) {
+                      return CircularProfilePicture(
+                        url: state.user.profilePic,
+                      );
+                    });
               }
 
               return ClipOval(
@@ -224,10 +231,8 @@ class _ProfilePictureState extends State<_ProfilePicture> {
               icon: Icon(
                 Icons.camera_alt_outlined,
                 size: math.min(widget.size.width / 4, 60),
-                color: Theme.of(context)
-                    .colorScheme
-                    .background
-                    .withOpacity(0.4),
+                color:
+                    Theme.of(context).colorScheme.background.withOpacity(0.4),
               ),
               onPressed: _changeProfilePicture,
             ),

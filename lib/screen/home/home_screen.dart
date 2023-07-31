@@ -6,8 +6,6 @@ import 'package:hispace_mobile_app/screen/home/widget/cafe_tab_bar.dart';
 import 'package:hispace_mobile_app/screen/home/widget/home_app_bar.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:collection/collection.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart'
-    show SmartRefresher, RefreshController;
 
 import 'bloc/home_bloc.dart';
 import 'model/home_tab_model.dart';
@@ -64,12 +62,6 @@ class _TabView extends StatefulWidget {
 class _TabViewState extends State<_TabView> {
   final Distance distance = const Distance();
 
-  final List<RefreshController> _refreshController = [
-    RefreshController(initialRefresh: false),
-    RefreshController(initialRefresh: false),
-    RefreshController(initialRefresh: false),
-  ];
-
   void _goToDetailsScreen(Cafe cafe) {
     Navigator.pushNamed(context, '/cafe-details', arguments: cafe.locationId);
   }
@@ -82,30 +74,17 @@ class _TabViewState extends State<_TabView> {
       physics: const NeverScrollableScrollPhysics(),
       children: listHomeTabModel.mapIndexed(
         (index, tabModel) {
-          return SmartRefresher(
-            controller: _refreshController[index],
-            onRefresh: () =>
-                context.read<HomeBloc>().add(const HomeOnRefresh()),
-            enablePullDown: true,
-            enablePullUp: false,
+          return RefreshIndicator.adaptive(
+            onRefresh: () {
+              context.read<HomeBloc>().add(const HomeOnRefresh());
+              return Future.delayed(const Duration(seconds: 1));
+            },
             child: BlocBuilder<HomeBloc, HomeState>(
               buildWhen: (previous, current) =>
                   previous.cafes != current.cafes ||
                   previous.status != current.status,
               builder: (context, state) {
                 if (state.cafes.isEmpty || state.status != HomeStatus.success) {
-                  // return SmartRefresher(
-                  //   controller: _refreshController[index],
-                  //   onRefresh: () =>
-                  //       context.read<HomeBloc>().add(const HomeOnRefresh()),
-                  //   enablePullDown: true,
-                  //   enablePullUp: false,
-                  //   child: _LoadingBackground(
-                  //     size: size,
-                  //     status: state.status,
-                  //   ),
-                  // );
-
                   return _LoadingBackground(
                     size: size,
                     status: state.status,
@@ -113,6 +92,7 @@ class _TabViewState extends State<_TabView> {
                 }
 
                 return InfiniteListBuilder(
+                  scrollPhysics: const AlwaysScrollableScrollPhysics(),
                   key: PageStorageKey('HomeScreen_ListView_${tabModel.name}'),
                   primary: false,
                   onFetchedMore: () => context.read<HomeBloc>().add(

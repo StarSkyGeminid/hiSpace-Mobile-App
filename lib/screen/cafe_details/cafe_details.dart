@@ -8,6 +8,7 @@ import 'package:hispace_mobile_app/screen/cafe_details/widget/cafe_details_heade
 import 'package:hispace_mobile_app/screen/cafe_details/widget/description.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/widget/facility.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/widget/menu.dart';
+import 'package:hispace_mobile_app/screen/cafe_details/widget/open_hour.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/widget/owner.dart';
 import 'package:hispace_mobile_app/screen/cafe_details/widget/title.dart';
 
@@ -169,6 +170,21 @@ class _ViewState extends State<_View> {
                     ),
                     child: Divider(color: ColorPallete.light.grey3)),
               ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: kDefaultSpacing),
+                  child: OpenHour(cafe: state.cafe),
+                ),
+              ),
+              if (state.cafe.menus != null && state.cafe.menus!.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: kDefaultSpacing,
+                      ),
+                      child: Divider(color: ColorPallete.light.grey3)),
+                ),
               if (state.cafe.menus != null)
                 SliverToBoxAdapter(
                   child: Padding(
@@ -207,13 +223,15 @@ class _ViewState extends State<_View> {
                     ),
                   ),
                 ),
-              SliverToBoxAdapter(
-                child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: kDefaultSpacing,
-                    ),
-                    child: Divider(color: ColorPallete.light.grey3)),
-              ),
+              if (state.cafe.facilities != null &&
+                  state.cafe.facilities!.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: kDefaultSpacing,
+                      ),
+                      child: Divider(color: ColorPallete.light.grey3)),
+                ),
               if (state.cafe.facilities != null)
                 SliverToBoxAdapter(
                   child: Padding(

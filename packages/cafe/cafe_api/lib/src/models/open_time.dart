@@ -213,4 +213,10 @@ class Day {
   bool isValid() {
     return open != null && close != null || open == null && close == null;
   }
+
+  bool openOnTheDay() {
+    return open != null &&
+        close != null &&
+        (open!.hour != 0 || close!.hour != 0);
+  }
 }

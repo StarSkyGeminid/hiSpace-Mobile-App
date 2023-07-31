@@ -39,21 +39,23 @@ class CafeOwner {
 
     final response = await _httpClient.delete(uri, headers: headers);
 
-    if (response.statusCode != 200) throw RequestFailure();
+    if (response.statusCode != 200 && response.statusCode != 200) {
+      throw RequestFailure();
+    }
   }
 
   Future<void> addMenu(List<Menu> menus, String locationId,
       {required Map<String, String> headers}) async {
-    await _menu(menus, locationId, headers: headers, isAdd: true);
+    await _menu(menus, locationId, headers: headers);
   }
 
   Future<void> updateMenu(List<Menu> menus, String locationId,
       {required Map<String, String> headers}) async {
-    await _menu(menus, locationId, headers: headers, isAdd: false);
+    await _menu(menus, locationId, headers: headers);
   }
 
   Future<void> _menu(List<Menu> menus, String locationId,
-      {required Map<String, String> headers, required bool isAdd}) async {
+      {required Map<String, String> headers}) async {
     final uri = Uri.https(
       _baseUrl,
       '/api/location/$locationId/menu',
@@ -67,25 +69,23 @@ class CafeOwner {
         ? json.encode(menus.map((e) => e.toMap()).toList())
         : menus[0].toJson();
 
-    final response = isAdd
-        ? await _httpClient.post(uri, headers: headers, body: body)
-        : await _httpClient.put(uri, headers: headers, body: body);
+    final response = await _httpClient.post(uri, headers: headers, body: body);
 
     if (response.statusCode != 201) throw RequestFailure();
   }
 
   Future<void> addFacility(List<Facility> facilities, String locationId,
       {required Map<String, String> headers}) async {
-    await _facility(facilities, locationId, headers: headers, isAdd: true);
+    await _facility(facilities, locationId, headers: headers);
   }
 
   Future<void> updateFacility(List<Facility> facilities, String locationId,
       {required Map<String, String> headers}) async {
-    await _facility(facilities, locationId, headers: headers, isAdd: false);
+    await _facility(facilities, locationId, headers: headers);
   }
 
   Future<void> _facility(List<Facility> facilities, String locationId,
-      {required Map<String, String> headers, required bool isAdd}) async {
+      {required Map<String, String> headers}) async {
     final uri = Uri.https(
       _baseUrl,
       '/api/location/$locationId/facility',
@@ -99,11 +99,11 @@ class CafeOwner {
         ? jsonEncode(facilities.map((e) => e.toMap()).toList())
         : facilities[0].toJson();
 
-    final response = isAdd
-        ? await _httpClient.post(uri, headers: headers, body: body)
-        : await _httpClient.put(uri, headers: headers, body: body);
+    final response = await _httpClient.post(uri, headers: headers, body: body);
 
-    if (response.statusCode != 201) throw RequestFailure();
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      throw RequestFailure();
+    }
   }
 
   Future<String?> _location(Cafe cafe,
@@ -138,7 +138,8 @@ class CafeOwner {
 
     var streamedResponse = await request.send();
 
-    if (streamedResponse.statusCode != 201) throw RequestFailure();
+    if (streamedResponse.statusCode != 200 &&
+        streamedResponse.statusCode != 201) throw RequestFailure();
 
     if (!isAdd) return null;
 

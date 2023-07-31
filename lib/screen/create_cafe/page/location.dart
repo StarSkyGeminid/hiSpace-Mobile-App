@@ -220,19 +220,19 @@ class _SearchButton extends StatelessWidget {
                   FocusScope.of(context).unfocus();
                 }
               : null,
-          child: state.status != CreateCafeStatus.loading
-              ? const Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: kDefaultSpacing,
-                    vertical: kDefaultSpacing * 0.8,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: kDefaultSpacing,
+              vertical: kDefaultSpacing * 0.8,
+            ),
+            child: state.status != CreateCafeStatus.loading
+                ? const Text('Cari alamat')
+                : const SizedBox(
+                    height: kDefaultSpacing,
+                    width: kDefaultSpacing,
+                    child: CircularProgressIndicator.adaptive(),
                   ),
-                  child: Text('Cari alamat'),
-                )
-              : const SizedBox(
-                  height: kDefaultSpacing,
-                  width: kDefaultSpacing,
-                  child: CircularProgressIndicator.adaptive(),
-                ),
+          ),
         );
       },
     );
