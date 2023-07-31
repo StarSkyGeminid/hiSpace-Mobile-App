@@ -169,7 +169,7 @@ void main() {
       });
 
       test('throws RequestFailure on non-201 response', () async {
-        when(httpClient.put(baseUri,
+        when(httpClient.post(baseUri,
                 body: menu.length > 1
                     ? jsonEncode(menu.map((e) => e.toMap()).toList())
                     : menu[0].toJson(),
@@ -181,7 +181,7 @@ void main() {
       });
 
       test('throws RequestFailure on non-201 response', () async {
-        when(httpClient.put(baseUri,
+        when(httpClient.post(baseUri,
                 body: menu.length > 1
                     ? jsonEncode(menu.map((e) => e.toMap()).toList())
                     : menu[0].toJson(),
@@ -277,7 +277,7 @@ void main() {
       });
 
       test('throws RequestFailure on non-201 response', () async {
-        when(httpClient.put(baseUri,
+        when(httpClient.post(baseUri,
                 body: facilities.length > 1
                     ? jsonEncode(facilities.map((e) => e.toMap()).toList())
                     : facilities[0].toJson(),
@@ -289,7 +289,7 @@ void main() {
       });
 
       test('throws RequestFailure on non-201 response', () async {
-        when(httpClient.put(baseUri,
+        when(httpClient.post(baseUri,
                 body: facilities.length > 1
                     ? jsonEncode(facilities.map((e) => e.toMap()).toList())
                     : facilities[0].toJson(),
