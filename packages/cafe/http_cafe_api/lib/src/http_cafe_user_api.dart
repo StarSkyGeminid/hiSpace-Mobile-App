@@ -77,7 +77,7 @@ class HttpCafeUserApi extends CafeUserApi {
     List<Cafe> listCafes =
         List<Cafe>.from(data.map((e) => Cafe.fromMap(e)).toList());
 
-    _cafeStreamController.add([...listCafes]);
+    _cafeStreamController.sink.add([...listCafes]);
   }
 
   @override
@@ -386,19 +386,18 @@ class HttpCafeUserApi extends CafeUserApi {
     if (data.isEmpty) return;
 
     var listCafes = List<Cafe>.of([
-      ..._cafeStreamController.valueOrNull ?? [],
       ...List<Cafe>.from(
           data.map((e) => Cafe.fromMap(e).copyWith(isFavorite: true)).toList())
     ]);
 
-    _cafeStreamController.add(listCafes);
+    _cafeStreamController.add([...listCafes]);
   }
 
   @override
   Future<List<Menu>?> getAllMenu(String locationId) async {
     final uri = Uri.https(
       _baseUrl,
-      '/api/user/wishlist/$locationId/menu',
+      '/api/user/$locationId/menu',
     );
 
     var headers = getAuthorization();
